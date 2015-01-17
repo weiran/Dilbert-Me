@@ -26,12 +26,12 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        self.comics = [Comic allObjects];
+        self.comics = [[Comic allObjects] sortedResultsUsingProperty:@"identifier" ascending:NO];
     }
     return self;
 }
 
-- (PMKPromise *)getLatest {
+- (PMKPromise *)update {
     return [AFHTTPRequestOperation request:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://dilbert.com/"]]]
     .then(^(id responseObject) {
         NSString *html = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
@@ -112,49 +112,8 @@
 
 #pragma mark - QLPreviewPanelDelegate
 
-//- (BOOL)previewPanel:(QLPreviewPanel *)panel handleEvent:(NSEvent *)event {
-//    // redirect all key down events to the table view
-//    if ([event type] == NSKeyDown)
-//    {
-//        [self.downloadsTableView keyDown:event];
-//        return YES;
-//    }
-//    return NO;
-//}
-
-// This delegate method provides the rect on screen from which the panel will zoom.
 - (NSRect)previewPanel:(QLPreviewPanel *)panel sourceFrameOnScreenForPreviewItem:(id <QLPreviewItem>)item {
-    return CGRectMake(0, 0, 280, 900);
-    //    NSInteger index = [self.downloads indexOfObject:item];
-    //    if (index == NSNotFound)
-    //    {
-    //        return NSZeroRect;
-    //    }
-    //
-    //    NSRect iconRect = [self.downloadsTableView frameOfCellAtColumn:0 row:index];
-    //
-    //    // check that the icon rect is visible on screen
-    //    NSRect visibleRect = [self.downloadsTableView visibleRect];
-    //
-    //    if (!NSIntersectsRect(visibleRect, iconRect))
-    //    {
-    //        return NSZeroRect;
-    //    }
-    //
-    //    // convert icon rect to screen coordinates
-    //    iconRect = [self.downloadsTableView convertRectToBase:iconRect];
-    //    iconRect.origin = [[self.downloadsTableView window] convertBaseToScreen:iconRect.origin];
-    //
-    //    return iconRect;
+    return CGRectMake(0, 0, 900, 280);
 }
-//
-//// this delegate method provides a transition image between the table view and the preview panel
-////
-//- (id)previewPanel:(QLPreviewPanel *)panel transitionImageForPreviewItem:(id <QLPreviewItem>)item contentRect:(NSRect *)contentRect
-//{
-//    DownloadItem *downloadItem = (DownloadItem *)item;
-//    
-//    return downloadItem.iconImage;
-//}
 
 @end

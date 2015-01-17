@@ -13,6 +13,6 @@
 
 @interface DilbertManager : NSObject <QLPreviewPanelDataSource, QLPreviewPanelDelegate>
 
-- (PMKPromise *)getLatest;
+- (PMKPromise *)update;
 
 @end

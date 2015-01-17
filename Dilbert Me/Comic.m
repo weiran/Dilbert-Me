@@ -61,8 +61,14 @@
 }
 
 - (NSString *)previewItemTitle {
-    return @"Dilbert";
+    YLMoment *moment = [YLMoment momentWithDate:self.date];
+    NSString *formattedDate = nil;
+    if (moment.day == [YLMoment now].day) {
+        formattedDate = @"Today";
+    } else {
+        formattedDate = [moment format:@"EEEE, dd MMMM"];
+    }
+    return [NSString stringWithFormat:@"Daily Dilbert - %@", formattedDate];
 }
-
 
 @end

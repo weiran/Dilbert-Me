@@ -24,7 +24,7 @@
     [super viewDidLoad];
 
     self.manager = [[DilbertManager alloc] init];
-    [self.manager getLatest]
+    [self.manager update]
     .then(^(Comic *comic) {
         [self.view.window makeFirstResponder:self.view];
         [[QLPreviewPanel sharedPreviewPanel] setDataSource:self.manager];
