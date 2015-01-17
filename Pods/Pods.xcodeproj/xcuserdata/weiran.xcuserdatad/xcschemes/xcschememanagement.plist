@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>SchemeUserState</key>
+	<dict>
+		<key>Pods-Dilbert Me-AFNetworking.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>Pods-Dilbert Me-HTMLReader.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>Pods-Dilbert Me-OMGHTTPURLRQ.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>Pods-Dilbert Me-PromiseKit-AFNetworking.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>Pods-Dilbert Me-PromiseKit.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>Pods-Dilbert Me-Realm.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>Pods-Dilbert Me-YLMoment.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>Pods-Dilbert Me.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>YLMoment-OSX.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>4F5E1830C271101FB4F8427D</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>7FC7EEBB466DF226880FD173</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>8C4BAD06DBA0B7CCF7893324</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>94898A566555B5E89935BBF6</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>9AB9BE16F86C318D082E22C1</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>A163F5A100036BCF4A29A5BC</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>B3C7916407FD7B85A9791C5E</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>D756477A5777C1BA49F7B4A2</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>E5D35372FA678C6522975AA8</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+	</dict>
+</dict>
+</plist>

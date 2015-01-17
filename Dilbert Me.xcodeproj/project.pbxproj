@@ -1,0 +1,375 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		246D12921A6A6EAB00D77FD0 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 246D12911A6A6EAB00D77FD0 /* AppDelegate.m */; };
+		246D12941A6A6EAB00D77FD0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 246D12931A6A6EAB00D77FD0 /* main.m */; };
+		246D12971A6A6EAB00D77FD0 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 246D12961A6A6EAB00D77FD0 /* ViewController.m */; };
+		246D12991A6A6EAB00D77FD0 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 246D12981A6A6EAB00D77FD0 /* Images.xcassets */; };
+		246D129C1A6A6EAB00D77FD0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 246D129A1A6A6EAB00D77FD0 /* Main.storyboard */; };
+		246D12B31A6A711900D77FD0 /* DilbertManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 246D12B21A6A711900D77FD0 /* DilbertManager.m */; };
+		246D12B61A6A767900D77FD0 /* Comic.m in Sources */ = {isa = PBXBuildFile; fileRef = 246D12B51A6A767900D77FD0 /* Comic.m */; };
+		246D12B81A6A79D500D77FD0 /* QuickLook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 246D12B71A6A79D500D77FD0 /* QuickLook.framework */; };
+		246D12BA1A6A807600D77FD0 /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 246D12B91A6A807600D77FD0 /* Quartz.framework */; };
+		246D12BC1A6A807B00D77FD0 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 246D12BB1A6A807B00D77FD0 /* Cocoa.framework */; };
+		3621C539B2AA35C9E437D589 /* libPods-Dilbert Me.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F6DD069813AE85D5C8B927A7 /* libPods-Dilbert Me.a */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		1BBE9967E9CDF0CCBEB644A2 /* Pods-Dilbert Me.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Dilbert Me.release.xcconfig"; path = "Pods/Target Support Files/Pods-Dilbert Me/Pods-Dilbert Me.release.xcconfig"; sourceTree = "<group>"; };
+		246D128B1A6A6EAA00D77FD0 /* Dilbert Me.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Dilbert Me.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		246D128F1A6A6EAB00D77FD0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		246D12901A6A6EAB00D77FD0 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		246D12911A6A6EAB00D77FD0 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		246D12931A6A6EAB00D77FD0 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		246D12951A6A6EAB00D77FD0 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		246D12961A6A6EAB00D77FD0 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		246D12981A6A6EAB00D77FD0 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		246D129B1A6A6EAB00D77FD0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		246D12B11A6A711900D77FD0 /* DilbertManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DilbertManager.h; sourceTree = "<group>"; };
+		246D12B21A6A711900D77FD0 /* DilbertManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DilbertManager.m; sourceTree = "<group>"; };
+		246D12B41A6A767900D77FD0 /* Comic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Comic.h; sourceTree = "<group>"; };
+		246D12B51A6A767900D77FD0 /* Comic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Comic.m; sourceTree = "<group>"; };
+		246D12B71A6A79D500D77FD0 /* QuickLook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickLook.framework; path = System/Library/Frameworks/QuickLook.framework; sourceTree = SDKROOT; };
+		246D12B91A6A807600D77FD0 /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = System/Library/Frameworks/Quartz.framework; sourceTree = SDKROOT; };
+		246D12BB1A6A807B00D77FD0 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		CDB7089C1B13C7D92D267C50 /* Pods-Dilbert Me.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Dilbert Me.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Dilbert Me/Pods-Dilbert Me.debug.xcconfig"; sourceTree = "<group>"; };
+		F6DD069813AE85D5C8B927A7 /* libPods-Dilbert Me.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Dilbert Me.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		246D12881A6A6EAA00D77FD0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				246D12BC1A6A807B00D77FD0 /* Cocoa.framework in Frameworks */,
+				246D12BA1A6A807600D77FD0 /* Quartz.framework in Frameworks */,
+				246D12B81A6A79D500D77FD0 /* QuickLook.framework in Frameworks */,
+				3621C539B2AA35C9E437D589 /* libPods-Dilbert Me.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		246D12821A6A6EAA00D77FD0 = {
+			isa = PBXGroup;
+			children = (
+				246D128D1A6A6EAA00D77FD0 /* Dilbert Me */,
+				246D128C1A6A6EAA00D77FD0 /* Products */,
+				94BBDD13278B5A1EDB045008 /* Pods */,
+				2FCEDF7A098E83B0CE729866 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		246D128C1A6A6EAA00D77FD0 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				246D128B1A6A6EAA00D77FD0 /* Dilbert Me.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		246D128D1A6A6EAA00D77FD0 /* Dilbert Me */ = {
+			isa = PBXGroup;
+			children = (
+				246D12901A6A6EAB00D77FD0 /* AppDelegate.h */,
+				246D12911A6A6EAB00D77FD0 /* AppDelegate.m */,
+				246D12951A6A6EAB00D77FD0 /* ViewController.h */,
+				246D12961A6A6EAB00D77FD0 /* ViewController.m */,
+				246D12981A6A6EAB00D77FD0 /* Images.xcassets */,
+				246D129A1A6A6EAB00D77FD0 /* Main.storyboard */,
+				246D128E1A6A6EAA00D77FD0 /* Supporting Files */,
+				246D12B11A6A711900D77FD0 /* DilbertManager.h */,
+				246D12B21A6A711900D77FD0 /* DilbertManager.m */,
+				246D12B41A6A767900D77FD0 /* Comic.h */,
+				246D12B51A6A767900D77FD0 /* Comic.m */,
+			);
+			path = "Dilbert Me";
+			sourceTree = "<group>";
+		};
+		246D128E1A6A6EAA00D77FD0 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				246D128F1A6A6EAB00D77FD0 /* Info.plist */,
+				246D12931A6A6EAB00D77FD0 /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		2FCEDF7A098E83B0CE729866 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				246D12BB1A6A807B00D77FD0 /* Cocoa.framework */,
+				246D12B91A6A807600D77FD0 /* Quartz.framework */,
+				246D12B71A6A79D500D77FD0 /* QuickLook.framework */,
+				F6DD069813AE85D5C8B927A7 /* libPods-Dilbert Me.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		94BBDD13278B5A1EDB045008 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				CDB7089C1B13C7D92D267C50 /* Pods-Dilbert Me.debug.xcconfig */,
+				1BBE9967E9CDF0CCBEB644A2 /* Pods-Dilbert Me.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		246D128A1A6A6EAA00D77FD0 /* Dilbert Me */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 246D12AB1A6A6EAB00D77FD0 /* Build configuration list for PBXNativeTarget "Dilbert Me" */;
+			buildPhases = (
+				F6F9030A37253A4FED67CA2C /* Check Pods Manifest.lock */,
+				246D12871A6A6EAA00D77FD0 /* Sources */,
+				246D12881A6A6EAA00D77FD0 /* Frameworks */,
+				246D12891A6A6EAA00D77FD0 /* Resources */,
+				5F4167AA18A8837997907524 /* Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Dilbert Me";
+			productName = "Dilbert Me";
+			productReference = 246D128B1A6A6EAA00D77FD0 /* Dilbert Me.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		246D12831A6A6EAA00D77FD0 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0610;
+				ORGANIZATIONNAME = "Weiran Zhang";
+				TargetAttributes = {
+					246D128A1A6A6EAA00D77FD0 = {
+						CreatedOnToolsVersion = 6.1.1;
+					};
+				};
+			};
+			buildConfigurationList = 246D12861A6A6EAA00D77FD0 /* Build configuration list for PBXProject "Dilbert Me" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 246D12821A6A6EAA00D77FD0;
+			productRefGroup = 246D128C1A6A6EAA00D77FD0 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				246D128A1A6A6EAA00D77FD0 /* Dilbert Me */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		246D12891A6A6EAA00D77FD0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				246D12991A6A6EAB00D77FD0 /* Images.xcassets in Resources */,
+				246D129C1A6A6EAB00D77FD0 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		5F4167AA18A8837997907524 /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Dilbert Me/Pods-Dilbert Me-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F6F9030A37253A4FED67CA2C /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		246D12871A6A6EAA00D77FD0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				246D12B31A6A711900D77FD0 /* DilbertManager.m in Sources */,
+				246D12971A6A6EAB00D77FD0 /* ViewController.m in Sources */,
+				246D12941A6A6EAB00D77FD0 /* main.m in Sources */,
+				246D12921A6A6EAB00D77FD0 /* AppDelegate.m in Sources */,
+				246D12B61A6A767900D77FD0 /* Comic.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		246D129A1A6A6EAB00D77FD0 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				246D129B1A6A6EAB00D77FD0 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		246D12A91A6A6EAB00D77FD0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		246D12AA1A6A6EAB00D77FD0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		246D12AC1A6A6EAB00D77FD0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CDB7089C1B13C7D92D267C50 /* Pods-Dilbert Me.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = "Dilbert Me/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		246D12AD1A6A6EAB00D77FD0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1BBE9967E9CDF0CCBEB644A2 /* Pods-Dilbert Me.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = "Dilbert Me/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		246D12861A6A6EAA00D77FD0 /* Build configuration list for PBXProject "Dilbert Me" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				246D12A91A6A6EAB00D77FD0 /* Debug */,
+				246D12AA1A6A6EAB00D77FD0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		246D12AB1A6A6EAB00D77FD0 /* Build configuration list for PBXNativeTarget "Dilbert Me" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				246D12AC1A6A6EAB00D77FD0 /* Debug */,
+				246D12AD1A6A6EAB00D77FD0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 246D12831A6A6EAA00D77FD0 /* Project object */;
+}
