@@ -17,6 +17,9 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
+        NSNib *menuNib = [[NSNib alloc] initWithNibNamed:@"DilbertMenu" bundle:nil];
+        [menuNib instantiateWithOwner:self topLevelObjects:nil];
+
         self.statusItem = [[NSStatusBar systemStatusBar] statusItemWithLength:NSVariableStatusItemLength];
         [self.statusItem setMenu:self.statusMenu];
         [self.statusItem setTitle:@"D"];

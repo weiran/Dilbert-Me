@@ -14,7 +14,7 @@
         <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
         <menu title="Hi there" id="l5F-sZ-V2D">
             <items>
-                <menuItem title="Item 1" id="zzh-n8-DQa">
+                <menuItem title="Ope" id="zzh-n8-DQa">
                     <modifierMask key="keyEquivalentModifierMask"/>
                 </menuItem>
                 <menuItem title="Item 2" id="KVy-2o-NMP">
@@ -24,9 +24,6 @@
                     <modifierMask key="keyEquivalentModifierMask"/>
                 </menuItem>
             </items>
-            <connections>
-                <binding destination="-3" name="font" keyPath="self.statusMenu" id="ai4-Me-LKo"/>
-            </connections>
             <point key="canvasLocation" x="637" y="270.5"/>
         </menu>
     </objects>
