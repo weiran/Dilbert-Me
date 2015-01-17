@@ -7,7 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <Cocoa/Cocoa.h>
 
 @interface DilbertMenu : NSObject
+
+@property (strong, nonatomic) IBOutlet NSMenu *statusMenu;
 
 @end

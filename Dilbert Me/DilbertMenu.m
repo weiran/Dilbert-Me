@@ -8,6 +8,20 @@
 
 #import "DilbertMenu.h"
 
+@interface DilbertMenu ()
+@property (strong, nonatomic) NSStatusItem *statusItem;
+@end
+
 @implementation DilbertMenu
 
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        self.statusItem = [[NSStatusBar systemStatusBar] statusItemWithLength:NSVariableStatusItemLength];
+        [self.statusItem setMenu:self.statusMenu];
+        [self.statusItem setTitle:@"D"];
+        [self.statusItem setHighlightMode:YES];
+    }
+    return self;
+}
 @end
