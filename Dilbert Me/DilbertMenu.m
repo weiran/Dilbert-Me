@@ -32,6 +32,7 @@
         [self.statusItem setHighlightMode:YES];
         
         self.manager = [[DilbertManager alloc] init];
+        [self.manager update];
     }
     return self;
 }
