@@ -15,4 +15,6 @@
 
 - (PMKPromise *)update;
 
+- (Comic *)latestComic;
+
 @end

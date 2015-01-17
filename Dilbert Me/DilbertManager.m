@@ -31,6 +31,10 @@
     return self;
 }
 
+- (Comic *)latestComic {
+    return [self.comics firstObject];
+}
+
 - (PMKPromise *)update {
     return [AFHTTPRequestOperation request:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://dilbert.com/"]]]
     .then(^(id responseObject) {
@@ -78,8 +82,6 @@
         });
     }];
 }
-
-
 
 
 #pragma mark - Quick Look panel support

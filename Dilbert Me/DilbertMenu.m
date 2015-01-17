@@ -8,8 +8,14 @@
 
 #import "DilbertMenu.h"
 
+#import "DilbertManager.h"
+#import "Comic.h"
+
 @interface DilbertMenu ()
+@property (nonatomic, strong) DilbertManager *manager;
+
 @property (strong, nonatomic) NSStatusItem *statusItem;
+@property (strong) IBOutlet NSMenu *olderDilbertsMenu;
 @end
 
 @implementation DilbertMenu
@@ -24,7 +30,23 @@
         [self.statusItem setMenu:self.statusMenu];
         [self.statusItem setTitle:@"D"];
         [self.statusItem setHighlightMode:YES];
+        
+        self.manager = [[DilbertManager alloc] init];
     }
     return self;
 }
+
+- (IBAction)didPressTodaysDilbert:(id)sender {
+    [[QLPreviewPanel sharedPreviewPanel] setDataSource:self.manager];
+    if ([QLPreviewPanel sharedPreviewPanelExists] && [[QLPreviewPanel sharedPreviewPanel] isVisible]) {
+        [[QLPreviewPanel sharedPreviewPanel] orderOut:nil];
+    } else {
+        [[QLPreviewPanel sharedPreviewPanel] makeKeyAndOrderFront:nil];
+    }
+}
+
+- (IBAction)didPressQuit:(id)sender {
+    [NSApp terminate:self];
+}
+
 @end
