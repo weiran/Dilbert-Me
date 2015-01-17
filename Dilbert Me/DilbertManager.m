@@ -49,10 +49,18 @@
         return [PMKPromise when:promises];
     })
     .then(^(NSArray* comics) {
+        Comic *latestComic = [self.comics firstObject];
+        Comic *newestComic = [comics firstObject];
+        BOOL hasNewerComics = ![latestComic.identifier isEqualToString:newestComic.identifier];
+        
+        return PMKManifold(comics, hasNewerComics);
+    })
+    .then(^(NSArray* comics, BOOL hasNewerComics) {
         RLMRealm *realm = [RLMRealm defaultRealm];
         [realm beginWriteTransaction];
         [realm addOrUpdateObjectsFromArray:comics];
         [realm commitWriteTransaction];
+        return PMKManifold(hasNewerComics);
     })
     .catch(^(NSError *error){
         NSLog(@"error: %@", error.localizedDescription);

@@ -11,7 +11,7 @@
 #import "DilbertManager.h"
 #import "Comic.h"
 
-@interface DilbertMenu ()
+@interface DilbertMenu () <NSUserNotificationCenterDelegate>
 @property (nonatomic, strong) DilbertManager *manager;
 
 @property (strong, nonatomic) NSStatusItem *statusItem;
@@ -32,22 +32,50 @@
         [self.statusItem setHighlightMode:YES];
         
         self.manager = [[DilbertManager alloc] init];
-        [self.manager update];
+        [self checkForUpdate];
+        
+        NSInteger oneHour = 60 * 60;
+        [NSTimer scheduledTimerWithTimeInterval:oneHour target:self selector:@selector(checkForUpdate) userInfo:nil repeats:YES];
     }
     return self;
 }
 
-- (IBAction)didPressTodaysDilbert:(id)sender {
+- (void)checkForUpdate {
+    [self.manager update]
+    .then(^(BOOL hasNewerComics) {
+        if (hasNewerComics) {
+            [[NSUserNotificationCenter defaultUserNotificationCenter] setDelegate:self];
+            NSUserNotification *notification = [[NSUserNotification alloc] init];
+            notification.title = @"Daily Dilbert";
+            notification.informativeText = @"There's a new Daily Dilbert";
+            notification.soundName = NSUserNotificationDefaultSoundName;
+            [[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification:notification];
+        }
+    });
+}
+
+- (void)showDilbert {
     [[QLPreviewPanel sharedPreviewPanel] setDataSource:self.manager];
     if ([QLPreviewPanel sharedPreviewPanelExists] && [[QLPreviewPanel sharedPreviewPanel] isVisible]) {
         [[QLPreviewPanel sharedPreviewPanel] orderOut:nil];
     } else {
         [[QLPreviewPanel sharedPreviewPanel] makeKeyAndOrderFront:nil];
-    }
+    }}
+
+- (IBAction)didPressTodaysDilbert:(id)sender {
+    [self showDilbert];
 }
 
 - (IBAction)didPressQuit:(id)sender {
     [NSApp terminate:self];
+}
+
+- (BOOL)userNotificationCenter:(NSUserNotificationCenter *)center shouldPresentNotification:(NSUserNotification *)notification {
+    return YES;
+}
+
+- (void)userNotificationCenter:(NSUserNotificationCenter *)center didActivateNotification:(NSUserNotification *)notification {
+    [self showDilbert];
 }
 
 @end

@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		246D12921A6A6EAB00D77FD0 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 246D12911A6A6EAB00D77FD0 /* AppDelegate.m */; };
 		246D12941A6A6EAB00D77FD0 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 246D12931A6A6EAB00D77FD0 /* main.m */; };
-		246D12971A6A6EAB00D77FD0 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 246D12961A6A6EAB00D77FD0 /* ViewController.m */; };
 		246D12991A6A6EAB00D77FD0 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 246D12981A6A6EAB00D77FD0 /* Images.xcassets */; };
 		246D129C1A6A6EAB00D77FD0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 246D129A1A6A6EAB00D77FD0 /* Main.storyboard */; };
 		246D12B31A6A711900D77FD0 /* DilbertManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 246D12B21A6A711900D77FD0 /* DilbertManager.m */; };
@@ -29,8 +28,6 @@
 		246D12901A6A6EAB00D77FD0 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		246D12911A6A6EAB00D77FD0 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		246D12931A6A6EAB00D77FD0 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		246D12951A6A6EAB00D77FD0 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		246D12961A6A6EAB00D77FD0 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		246D12981A6A6EAB00D77FD0 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		246D129B1A6A6EAB00D77FD0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		246D12B11A6A711900D77FD0 /* DilbertManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DilbertManager.h; sourceTree = "<group>"; };
@@ -86,11 +83,6 @@
 			children = (
 				246D12901A6A6EAB00D77FD0 /* AppDelegate.h */,
 				246D12911A6A6EAB00D77FD0 /* AppDelegate.m */,
-				246D12951A6A6EAB00D77FD0 /* ViewController.h */,
-				246D12961A6A6EAB00D77FD0 /* ViewController.m */,
-				246D12981A6A6EAB00D77FD0 /* Images.xcassets */,
-				246D129A1A6A6EAB00D77FD0 /* Main.storyboard */,
-				246D128E1A6A6EAA00D77FD0 /* Supporting Files */,
 				246D12B11A6A711900D77FD0 /* DilbertManager.h */,
 				246D12B21A6A711900D77FD0 /* DilbertManager.m */,
 				246D12B41A6A767900D77FD0 /* Comic.h */,
@@ -98,6 +90,9 @@
 				246D12BE1A6ABF8400D77FD0 /* DilbertMenu.xib */,
 				246D12C01A6AC06F00D77FD0 /* DilbertMenu.h */,
 				246D12C11A6AC06F00D77FD0 /* DilbertMenu.m */,
+				246D129A1A6A6EAB00D77FD0 /* Main.storyboard */,
+				246D12981A6A6EAB00D77FD0 /* Images.xcassets */,
+				246D128E1A6A6EAA00D77FD0 /* Supporting Files */,
 			);
 			path = "Dilbert Me";
 			sourceTree = "<group>";
@@ -238,7 +233,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				246D12B31A6A711900D77FD0 /* DilbertManager.m in Sources */,
-				246D12971A6A6EAB00D77FD0 /* ViewController.m in Sources */,
 				246D12941A6A6EAB00D77FD0 /* main.m in Sources */,
 				246D12921A6A6EAB00D77FD0 /* AppDelegate.m in Sources */,
 				246D12B61A6A767900D77FD0 /* Comic.m in Sources */,
