@@ -15,24 +15,25 @@
 #import <QuickLook/QuickLook.h>
 #import <Quartz/Quartz.h>
 
+@interface ViewController ()
+@property (nonatomic, strong) DilbertManager *manager;
+@end
+
 @implementation ViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    DilbertManager *manager = [[DilbertManager alloc] init];
-    [manager getLatest]
+    self.manager = [[DilbertManager alloc] init];
+    [self.manager getLatest]
     .then(^(Comic *comic) {
-        [[QLPreviewPanel sharedPreviewPanel] setDataSource:comic];
-        if ([QLPreviewPanel sharedPreviewPanelExists] && [[QLPreviewPanel sharedPreviewPanel] isVisible])
-        {
+        [self.view.window makeFirstResponder:self.view];
+        [[QLPreviewPanel sharedPreviewPanel] setDataSource:self.manager];
+        if ([QLPreviewPanel sharedPreviewPanelExists] && [[QLPreviewPanel sharedPreviewPanel] isVisible]) {
             [[QLPreviewPanel sharedPreviewPanel] orderOut:nil];
-        }
-        else
-        {
+        } else {
             [[QLPreviewPanel sharedPreviewPanel] makeKeyAndOrderFront:nil];
         }
-        
     });
 }
 

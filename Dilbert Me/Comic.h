@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <Quartz/Quartz.h>
 
-@interface Comic : NSObject <QLPreviewPanelDataSource, QLPreviewPanelDelegate>
+@interface Comic : NSObject <QLPreviewItem>
 
 - (instancetype)initWithDate:(NSDate *)date image:(NSImage *)image;
 

@@ -7,10 +7,13 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <Quartz/Quartz.h>
 
 @class Comic, PMKPromise;
 
-@interface DilbertManager : NSObject
+@interface DilbertManager : NSObject <QLPreviewPanelDataSource, QLPreviewPanelDelegate>
+
+@property (nonatomic, strong) NSArray *comics;
 
 - (PMKPromise *)getLatest;
 
