@@ -17,6 +17,8 @@
 		246D12B81A6A79D500D77FD0 /* QuickLook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 246D12B71A6A79D500D77FD0 /* QuickLook.framework */; };
 		246D12BA1A6A807600D77FD0 /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 246D12B91A6A807600D77FD0 /* Quartz.framework */; };
 		246D12BC1A6A807B00D77FD0 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 246D12BB1A6A807B00D77FD0 /* Cocoa.framework */; };
+		246D12BF1A6ABF8400D77FD0 /* DilbertMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 246D12BE1A6ABF8400D77FD0 /* DilbertMenu.xib */; };
+		246D12C21A6AC06F00D77FD0 /* DilbertMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 246D12C11A6AC06F00D77FD0 /* DilbertMenu.m */; };
 		3621C539B2AA35C9E437D589 /* libPods-Dilbert Me.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F6DD069813AE85D5C8B927A7 /* libPods-Dilbert Me.a */; };
 /* End PBXBuildFile section */
 
@@ -39,6 +41,9 @@
 		246D12B91A6A807600D77FD0 /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = System/Library/Frameworks/Quartz.framework; sourceTree = SDKROOT; };
 		246D12BB1A6A807B00D77FD0 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		246D12BD1A6AB1D800D77FD0 /* DilbertMe-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DilbertMe-Prefix.pch"; sourceTree = "<group>"; };
+		246D12BE1A6ABF8400D77FD0 /* DilbertMenu.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DilbertMenu.xib; sourceTree = "<group>"; };
+		246D12C01A6AC06F00D77FD0 /* DilbertMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DilbertMenu.h; sourceTree = "<group>"; };
+		246D12C11A6AC06F00D77FD0 /* DilbertMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DilbertMenu.m; sourceTree = "<group>"; };
 		CDB7089C1B13C7D92D267C50 /* Pods-Dilbert Me.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Dilbert Me.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Dilbert Me/Pods-Dilbert Me.debug.xcconfig"; sourceTree = "<group>"; };
 		F6DD069813AE85D5C8B927A7 /* libPods-Dilbert Me.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Dilbert Me.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -90,6 +95,9 @@
 				246D12B21A6A711900D77FD0 /* DilbertManager.m */,
 				246D12B41A6A767900D77FD0 /* Comic.h */,
 				246D12B51A6A767900D77FD0 /* Comic.m */,
+				246D12BE1A6ABF8400D77FD0 /* DilbertMenu.xib */,
+				246D12C01A6AC06F00D77FD0 /* DilbertMenu.h */,
+				246D12C11A6AC06F00D77FD0 /* DilbertMenu.m */,
 			);
 			path = "Dilbert Me";
 			sourceTree = "<group>";
@@ -184,6 +192,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				246D12991A6A6EAB00D77FD0 /* Images.xcassets in Resources */,
+				246D12BF1A6ABF8400D77FD0 /* DilbertMenu.xib in Resources */,
 				246D129C1A6A6EAB00D77FD0 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -233,6 +242,7 @@
 				246D12941A6A6EAB00D77FD0 /* main.m in Sources */,
 				246D12921A6A6EAB00D77FD0 /* AppDelegate.m in Sources */,
 				246D12B61A6A767900D77FD0 /* Comic.m in Sources */,
+				246D12C21A6AC06F00D77FD0 /* DilbertMenu.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -8,15 +8,17 @@
 
 #import "AppDelegate.h"
 
+#import "DilbertMenu.h"
+
 @interface AppDelegate ()
-@property (strong, nonatomic) IBOutlet NSMenu *statusMenu;
-@property (strong, nonatomic) NSStatusItem *statusItem;
+@property (strong) DilbertMenu *menu;
 @end
 
 @implementation AppDelegate
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
     // Insert code here to initialize your application
+    self.menu = [[DilbertMenu alloc] init];
 }
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification {
