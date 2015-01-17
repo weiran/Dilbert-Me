@@ -11,7 +11,6 @@
 #import "DilbertManager.h"
 #import "Comic.h"
 
-#import <PromiseKit/PromiseKit.h>
 #import <QuickLook/QuickLook.h>
 #import <Quartz/Quartz.h>
 
@@ -35,12 +34,6 @@
             [[QLPreviewPanel sharedPreviewPanel] makeKeyAndOrderFront:nil];
         }
     });
-}
-
-- (void)setRepresentedObject:(id)representedObject {
-    [super setRepresentedObject:representedObject];
-
-    // Update the view, if already loaded.
 }
 
 @end

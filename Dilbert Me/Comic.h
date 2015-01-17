@@ -9,12 +9,16 @@
 #import <Foundation/Foundation.h>
 #import <Quartz/Quartz.h>
 
-@interface Comic : NSObject <QLPreviewItem>
+@interface Comic : RLMObject <QLPreviewItem>
 
 - (instancetype)initWithDate:(NSDate *)date image:(NSImage *)image;
 
-@property (nonatomic, strong) NSDate *date;
-@property (nonatomic, strong) NSImage *image;
+@property NSString *identifier;
+@property NSDate *date;
+@property NSImage *image;
+@property NSString *imageCacheURLString;
+@property BOOL seen;
 @property (nonatomic, strong) NSURL *imageCacheURL;
 
 @end
+RLM_ARRAY_TYPE(Comic)

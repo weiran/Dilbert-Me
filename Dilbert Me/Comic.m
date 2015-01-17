@@ -17,9 +17,19 @@
     if (self) {
         self.date = date;
         self.image = image;
+        self.identifier = [[YLMoment momentWithDate:self.date] format:@"yyyyMMdd"];
+        self.seen = NO;
         [self saveToCache];
     }
     return self;
+}
+
++ (NSArray *)ignoredProperties {
+    return @[@"imageCacheURL", @"image"];
+}
+
++ (NSString *)primaryKey {
+    return @"identifier";
 }
 
 - (void)saveToCache {
@@ -31,13 +41,19 @@
     NSBitmapImageRep *imageRep = [NSBitmapImageRep imageRepWithData:imageData];
     imageData = [imageRep representationUsingType:NSPNGFileType properties:nil];
     
-    YLMoment *momentDate = [YLMoment momentWithDate:self.date];
-    NSString *fileName = [momentDate format:@"'dilbert_'yyyyMMdd'.png'"];
-    
+    NSString *fileName = [NSString stringWithFormat:@"dilbert_%@.png", self.identifier];
     NSString *filePath = [cachePath stringByAppendingPathComponent:fileName];
     [imageData writeToFile:filePath atomically:NO];
     
-    self.imageCacheURL = [NSURL URLWithString:[NSString stringWithFormat:@"file://%@", filePath]];
+    self.imageCacheURLString = [NSString stringWithFormat:@"file://%@", filePath];
+    _imageCacheURL = nil;
+}
+
+- (NSURL *)imageCacheURL {
+    if (!_imageCacheURL) {
+        _imageCacheURL = [NSURL URLWithString:self.imageCacheURLString];
+    }
+    return _imageCacheURL;
 }
 
 - (NSURL *)previewItemURL {

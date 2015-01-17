@@ -11,48 +11,44 @@
 #import "Comic.h"
 
 #import <AFNetworking/AFNetworking.h>
-#import <HTMLReader/HTMLReader.h>
-#import <PromiseKit/Promise.h>
 #import <PromiseKit-AFNetworking/AFNetworking+PromiseKit.h>
+#import <HTMLReader/HTMLReader.h>
 #import <YLMoment/YLMoment.h>
 #import <QuickLook/QuickLook.h>
 
 @interface DilbertManager ()
 @property (strong) QLPreviewPanel *previewPanel;
+@property (strong) RLMResults *comics;
 @end
 
 @implementation DilbertManager
 
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        self.comics = [Comic allObjects];
+    }
+    return self;
+}
+
 - (PMKPromise *)getLatest {
     return [AFHTTPRequestOperation request:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://dilbert.com/"]]]
     .then(^(id responseObject) {
-        return [PMKPromise new:^(PMKPromiseFulfiller fulfill, PMKPromiseRejecter reject) {
-            NSString *html = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
-            HTMLDocument *document = [HTMLDocument documentWithString:html];
-            
-            // get date
-            HTMLElement *todaysComicDateElement = [document firstNodeMatchingSelector:@"h3.comic-item-date span a date"];
-            NSString *todaysComicDateString = [todaysComicDateElement textContent];
-            NSDate *todaysComicDate = [[YLMoment momentWithDateAsString:todaysComicDateString] date];
-            
-            // get image
-            HTMLElement *todaysComicImgElement = [document firstNodeMatchingSelector:@"img.img-comic"];
-            NSString *todaysComicImageURL = [todaysComicImgElement attributes][@"src"];
-            
-            [AFHTTPRequestOperation request:[NSURLRequest requestWithURL:[NSURL URLWithString:todaysComicImageURL]]]
-            .then(^(id responseObject) {
-                NSImage *image = [[NSImage alloc] initWithData:responseObject];
-                Comic *comic = [[Comic alloc] initWithDate:todaysComicDate image:image];
-                fulfill(comic);
-            })
-            .catch(^(NSError *error){
-                reject(error);
-            });
-        }];
+        NSString *html = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
+        HTMLDocument *document = [HTMLDocument documentWithString:html];
+        NSArray *comicItems = [document nodesMatchingSelector:@".comic-item"];
+        
+        NSMutableArray *promises = [NSMutableArray array];
+        for (HTMLElement *element in comicItems) {
+            [promises addObject:[DilbertManager parseComic:element]];
+        }
+        return [PMKPromise when:promises];
     })
-    .then(^(Comic *comic) {
-        self.comics = [NSArray arrayWithObjects:comic, nil];
-        return comic;
+    .then(^(NSArray* comics) {
+        RLMRealm *realm = [RLMRealm defaultRealm];
+        [realm beginWriteTransaction];
+        [realm addOrUpdateObjectsFromArray:comics];
+        [realm commitWriteTransaction];
     })
     .catch(^(NSError *error){
         NSLog(@"error: %@", error.localizedDescription);
@@ -60,6 +56,28 @@
     });
 }
 
+
++ (PMKPromise *)parseComic:(HTMLElement *)element {
+    return [PMKPromise new:^(PMKPromiseFulfiller fulfill, PMKPromiseRejecter reject) {
+        // get date
+        NSString *comicDateString = [[element firstNodeMatchingSelector:@"h3.comic-item-date span a date"] textContent];
+        NSDate *comicDate = [[YLMoment momentWithDateAsString:comicDateString] date];
+        
+        // get image
+        HTMLElement *todaysComicImgElement = [element firstNodeMatchingSelector:@"img.img-comic"];
+        NSString *todaysComicImageURL = [todaysComicImgElement attributes][@"src"];
+        
+        [AFHTTPRequestOperation request:[NSURLRequest requestWithURL:[NSURL URLWithString:todaysComicImageURL]]]
+        .then(^(id responseObject) {
+            NSImage *image = [[NSImage alloc] initWithData:responseObject];
+            Comic *comic = [[Comic alloc] initWithDate:comicDate image:image];
+            fulfill(comic);
+        })
+        .catch(^(NSError *error){
+            reject(error);
+        });
+    }];
+}
 
 
 
