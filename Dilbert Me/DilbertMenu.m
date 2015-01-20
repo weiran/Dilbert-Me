@@ -29,6 +29,7 @@
         self.statusItem = [[NSStatusBar systemStatusBar] statusItemWithLength:NSVariableStatusItemLength];
         [self.statusItem setMenu:self.statusMenu];
         [self.statusItem setImage:[NSImage imageNamed:@"DilbertMenuBarIcon"]];
+        [self.statusItem setAlternateImage:[NSImage imageNamed:@"DilbertMenuBarIconInverted"]];
         [self.statusItem setHighlightMode:YES];
         
         self.manager = [[DilbertManager alloc] init];
