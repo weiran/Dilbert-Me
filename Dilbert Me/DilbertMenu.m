@@ -27,10 +27,10 @@
         [menuNib instantiateWithOwner:self topLevelObjects:nil];
 
         self.statusItem = [[NSStatusBar systemStatusBar] statusItemWithLength:NSVariableStatusItemLength];
-        [self.statusItem setMenu:self.statusMenu];
-        [self.statusItem setImage:[NSImage imageNamed:@"DilbertMenuBarIcon"]];
-        [self.statusItem setAlternateImage:[NSImage imageNamed:@"DilbertMenuBarIconInverted"]];
-        [self.statusItem setHighlightMode:YES];
+        self.statusItem.menu = self.statusMenu;
+        NSImage *menuBarIcon = [NSImage imageNamed:@"DilbertMenuBarIcon"];
+        [menuBarIcon setTemplate:YES];
+        self.statusItem.image = menuBarIcon;
         
         self.manager = [[DilbertManager alloc] init];
         [self checkForUpdate];
