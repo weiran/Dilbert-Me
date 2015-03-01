@@ -15,7 +15,7 @@
         <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
         <menu title="Hi there" autoenablesItems="NO" id="l5F-sZ-V2D">
             <items>
-                <menuItem title="Today's Dilbert" id="zzh-n8-DQa">
+                <menuItem title="Today’s Dilbert" id="zzh-n8-DQa">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="didPressTodaysDilbert:" target="-2" id="6Is-wf-3Jc"/>
