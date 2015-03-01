@@ -70,25 +70,18 @@
 
 
 + (PMKPromise *)parseComic:(HTMLElement *)element {
-    return [PMKPromise new:^(PMKPromiseFulfiller fulfill, PMKPromiseRejecter reject) {
-        // get date
-        NSString *comicDateString = [[element firstNodeMatchingSelector:@"h3.comic-item-date span a date"] textContent];
-        NSDate *comicDate = [[YLMoment momentWithDateAsString:comicDateString] date];
-        
-        // get image
-        HTMLElement *todaysComicImgElement = [element firstNodeMatchingSelector:@"img.img-comic"];
-        NSString *todaysComicImageURL = [todaysComicImgElement attributes][@"src"];
-        
-        [AFHTTPRequestOperation request:[NSURLRequest requestWithURL:[NSURL URLWithString:todaysComicImageURL]]]
-        .then(^(id responseObject) {
-            NSImage *image = [[NSImage alloc] initWithData:responseObject];
-            Comic *comic = [[Comic alloc] initWithDate:comicDate image:image];
-            fulfill(comic);
-        })
-        .catch(^(NSError *error){
-            reject(error);
-        });
-    }];
+    NSString *comicDateString = [[element firstNodeMatchingSelector:@"h3.comic-item-date span a date"] textContent];
+    NSDate *comicDate = [[YLMoment momentWithDateAsString:comicDateString] date];
+    
+    // get image
+    HTMLElement *todaysComicImgElement = [element firstNodeMatchingSelector:@"img.img-comic"];
+    NSString *todaysComicImageURL = [todaysComicImgElement attributes][@"src"];
+    
+    return [AFHTTPRequestOperation request:[NSURLRequest requestWithURL:[NSURL URLWithString:todaysComicImageURL]]]
+    .then(^(id responseObject) {
+        NSImage *image = [[NSImage alloc] initWithData:responseObject];
+        return [[Comic alloc] initWithDate:comicDate image:image];
+    });
 }
 
 
