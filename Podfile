@@ -4,7 +4,8 @@ target 'Dilbert Me' do
 pod 'AFNetworking'
 pod 'Realm'
 pod 'HTMLReader'
-pod 'PromiseKit'
+pod 'PromiseKit/Promise'
+pod 'PromiseKit/When'
 pod 'PromiseKit-AFNetworking'
 pod 'YLMoment'
 end

@@ -48,7 +48,7 @@
             [[NSUserNotificationCenter defaultUserNotificationCenter] setDelegate:self];
             NSUserNotification *notification = [[NSUserNotification alloc] init];
             notification.title = @"Daily Dilbert";
-            notification.informativeText = @"There's a new Daily Dilbert";
+            notification.informativeText = @"There’s a new Daily Dilbert";
             notification.soundName = NSUserNotificationDefaultSoundName;
             [[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification:notification];
         }
