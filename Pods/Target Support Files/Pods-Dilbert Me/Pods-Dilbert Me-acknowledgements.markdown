@@ -3,7 +3,7 @@ This application makes use of the following third party libraries:
 
 ## AFNetworking
 
-Copyright (c) 2013-2014 AFNetworking (http://afnetworking.com/)
+Copyright (c) 2013-2015 AFNetworking (http://afnetworking.com/)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -27,33 +27,6 @@ THE SOFTWARE.
 ## HTMLReader
 
 HTMLReader is in the public domain.
-
-
-## OMGHTTPURLRQ
-
-See README.markdown for full license text.
-
-## PromiseKit
-
-Copyright 2014 Max Howell <mxcl@me.com>
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
 
 
 ## PromiseKit-AFNetworking
@@ -80,7 +53,38 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
+## PromiseKit
+
+Copyright 2014 Max Howell <mxcl@me.com>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+
 ## Realm
+
+TABLE OF CONTENTS
+
+1. Apache License version 2.0
+2. Realm Components
+3. Export Compliance
+
+-------------------------------------------------------------------------------
 
                                  Apache License
                            Version 2.0, January 2004
@@ -325,6 +329,24 @@ For the Realm Core (TightDB) component
   CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
   POSSIBILITY OF SUCH DAMAGE.
+
+EXPORT COMPLIANCE
+
+You understand that the Software may contain cryptographic functions that may be
+subject to export restrictions, and you represent and warrant that you are not
+located in a country that is subject to United States export restriction or embargo,
+including Cuba, Iran, North Korea, Sudan, or Syria, and that you are not on the
+Department of Commerce list of Denied Persons, Unverified Parties, or affiliated
+with a Restricted Entity.
+
+You agree to comply with all export, re-export and import restrictions and
+regulations of the Department of Commerce or other agency or authority of the
+United States or other applicable countries. You also agree not to transfer, or
+authorize the transfer of, directly or indirectly, the Software to any prohibited
+country, including Cuba, Iran, North Korea, Sudan, or Syria, or to any person or
+organization on or affiliated with the Department of Commerce lists of Denied
+Persons, Unverified Parties or Restricted Entities, or otherwise in violation of any
+such restrictions or regulations.
 
 
 ## YLMoment

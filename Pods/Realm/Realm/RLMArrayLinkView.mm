@@ -17,13 +17,13 @@
 ////////////////////////////////////////////////////////////////////////////
 
 #import "RLMArray_Private.hpp"
-#import "RLMConstants.h"
-#import "RLMObjectSchema_Private.hpp"
-#import "RLMObjectStore.hpp"
-#import "RLMObject_Private.h"
-#import "RLMProperty_Private.h"
+#import "RLMObject_Private.hpp"
 #import "RLMQueryUtil.hpp"
 #import "RLMRealm_Private.hpp"
+#import "RLMObjectSchema_Private.hpp"
+#import "RLMProperty_Private.h"
+#import "RLMObjectStore.h"
+#import "RLMConstants.h"
 #import "RLMSchema.h"
 #import "RLMUtil.hpp"
 
@@ -50,27 +50,24 @@
 //
 // validation helpers
 //
-static inline void RLMLinkViewArrayValidateAttached(__unsafe_unretained RLMArrayLinkView *ar) {
+static inline void RLMLinkViewArrayValidateAttached(__unsafe_unretained RLMArrayLinkView *const ar) {
     if (!ar->_backingLinkView->is_attached()) {
-        @throw [NSException exceptionWithName:@"RLMException" reason:@"RLMArray is no longer valid" userInfo:nil];
+        @throw RLMException(@"RLMArray is no longer valid");
     }
     RLMCheckThread(ar->_realm);
 }
-static inline void RLMLinkViewArrayValidateInWriteTransaction(__unsafe_unretained RLMArrayLinkView *ar) {
+static inline void RLMLinkViewArrayValidateInWriteTransaction(__unsafe_unretained RLMArrayLinkView *const ar) {
     // first verify attached
     RLMLinkViewArrayValidateAttached(ar);
 
     if (!ar->_realm->_inWriteTransaction) {
-        @throw [NSException exceptionWithName:@"RLMException"
-                                       reason:@"Can't mutate a persisted array outside of a write transaction."
-                                     userInfo:nil];
+        @throw RLMException(@"Can't mutate a persisted array outside of a write transaction.");
     }
 }
-static inline void RLMValidateObjectClass(__unsafe_unretained RLMObject *obj, __unsafe_unretained NSString *expected) {
+static inline void RLMValidateObjectClass(__unsafe_unretained RLMObject *const obj, __unsafe_unretained NSString *const expected) {
     NSString *objectClassName = obj.objectSchema.className;
     if (![objectClassName isEqualToString:expected]) {
-        @throw [NSException exceptionWithName:@"RLMException" reason:@"Attempting to insert wrong object type"
-                                     userInfo:@{@"expected class" : expected, @"actual class" : objectClassName}];
+        @throw RLMException(@"Attempting to insert wrong object type", @{@"expected class" : expected, @"actual class" : objectClassName});
     }
 }
 
@@ -80,6 +77,10 @@ static inline void RLMValidateObjectClass(__unsafe_unretained RLMObject *obj, __
 - (NSUInteger)count {
     RLMLinkViewArrayValidateAttached(self);
     return _backingLinkView->size();
+}
+
+- (BOOL)isInvalidated {
+    return !_backingLinkView->is_attached();
 }
 
 - (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state objects:(__unsafe_unretained id [])buffer count:(NSUInteger)len {
@@ -92,6 +93,11 @@ static inline void RLMValidateObjectClass(__unsafe_unretained RLMObject *obj, __
         state->extra[1] = _backingLinkView->size();
     }
     else {
+        // FIXME: mutationsPtr should be pointing to a value updated by core
+        // whenever the linkview is changed rather than doing this check
+        if (state->extra[1] != self.count) {
+            @throw RLMException(@"Collection was mutated while being enumerated.");
+        }
         items = (__bridge id)(void *)state->extra[0];
         [items resize:len];
     }
@@ -123,10 +129,9 @@ static inline void RLMValidateObjectClass(__unsafe_unretained RLMObject *obj, __
     RLMLinkViewArrayValidateAttached(self);
 
     if (index >= _backingLinkView->size()) {
-        @throw [NSException exceptionWithName:@"RLMException" reason:@"Index is out of bounds." userInfo:@{@"index": @(index)}];
+        @throw RLMException(@"Index is out of bounds.", @{@"index": @(index)});
     }
-    return RLMCreateObjectAccessor(_realm, _objectSchema,
-                                   _backingLinkView->get(index).get_index());
+    return RLMCreateObjectAccessor(_realm, _objectSchema, _backingLinkView->get(index).get_index());
 }
 
 - (void)addObject:(RLMObject *)object {
@@ -153,8 +158,7 @@ static inline void RLMValidateObjectClass(__unsafe_unretained RLMObject *obj, __
     RLMLinkViewArrayValidateInWriteTransaction(self);
 
     if (index >= _backingLinkView->size()) {
-        @throw [NSException exceptionWithName:@"RLMException"
-                                       reason:@"Trying to remove object at invalid index" userInfo:nil];
+        @throw RLMException(@"Trying to remove object at invalid index");
     }
     _backingLinkView->remove(index);
 }
@@ -179,8 +183,7 @@ static inline void RLMValidateObjectClass(__unsafe_unretained RLMObject *obj, __
 
     RLMValidateObjectClass(object, self.objectClassName);
     if (index >= _backingLinkView->size()) {
-        @throw [NSException exceptionWithName:@"RLMException"
-                                       reason:@"Trying to replace object at invalid index" userInfo:nil];
+        @throw RLMException(@"Trying to replace object at invalid index");
     }
     if (object.realm != self.realm) {
         [self.realm addObject:object];
@@ -192,14 +195,12 @@ static inline void RLMValidateObjectClass(__unsafe_unretained RLMObject *obj, __
     // check attached for table and object
     RLMLinkViewArrayValidateAttached(self);
     if (object->_realm && !object->_row.is_attached()) {
-        @throw [NSException exceptionWithName:@"RLMException" reason:@"RLMObject is no longer valid" userInfo:nil];
+        @throw RLMException(@"RLMObject is no longer valid");
     }
 
     // check that object types align
     if (![_objectClassName isEqualToString:object.objectSchema.className]) {
-        @throw [NSException exceptionWithName:@"RLMException"
-                                       reason:@"Object type does not match RLMArray"
-                                     userInfo:nil];
+        @throw RLMException(@"Object type does not match RLMArray");
     }
 
     // if different tables then no match

@@ -67,11 +67,12 @@ typedef NS_ENUM(NSInteger, HTMLInsertionMode)
     BOOL _fragmentParsingAlgorithm;
 }
 
-- (instancetype)initWithString:(NSString *)string context:(HTMLElement *)context
+- (instancetype)initWithString:(NSString *)string encoding:(HTMLStringEncoding)encoding context:(HTMLElement *)context
 {
     if ((self = [super init])) {
         _tokenizer = [[HTMLTokenizer alloc] initWithString:string];
         _tokenizer.parser = self;
+        _encoding = encoding;
         _context = context;
         _insertionMode = HTMLInitialInsertionMode;
         _stackOfOpenElements = [NSMutableArray new];
@@ -81,17 +82,24 @@ typedef NS_ENUM(NSInteger, HTMLInsertionMode)
         _fragmentParsingAlgorithm = !!context;
         
         if (context) {
-            if (StringIsEqualToAnyOf(context.tagName, @"title", @"textarea")) {
-                _tokenizer.state = HTMLRCDATATokenizerState;
-            } else if (StringIsEqualToAnyOf(context.tagName, @"style", @"xmp", @"iframe", @"noembed", @"noframes")) {
-                _tokenizer.state = HTMLRAWTEXTTokenizerState;
-            } else if ([context.tagName isEqualToString:@"script"]) {
-                _tokenizer.state = HTMLScriptDataTokenizerState;
-            } else if ([context.tagName isEqualToString:@"noscript"]) {
-                _tokenizer.state = HTMLRAWTEXTTokenizerState;
-            } else if ([context.tagName isEqualToString:@"plaintext"]) {
-                _tokenizer.state = HTMLPLAINTEXTTokenizerState;
+            if (context.htmlNamespace == HTMLNamespaceHTML) {
+                if (StringIsEqualToAnyOf(context.tagName, @"title", @"textarea")) {
+                    _tokenizer.state = HTMLRCDATATokenizerState;
+                } else if (StringIsEqualToAnyOf(context.tagName, @"style", @"xmp", @"iframe", @"noembed", @"noframes")) {
+                    _tokenizer.state = HTMLRAWTEXTTokenizerState;
+                } else if ([context.tagName isEqualToString:@"script"]) {
+                    _tokenizer.state = HTMLScriptDataTokenizerState;
+                } else if ([context.tagName isEqualToString:@"noscript"]) {
+                    _tokenizer.state = HTMLRAWTEXTTokenizerState;
+                } else if ([context.tagName isEqualToString:@"plaintext"]) {
+                    _tokenizer.state = HTMLPLAINTEXTTokenizerState;
+                }
             }
+            
+            _encoding = (HTMLStringEncoding){
+                .encoding = NSUTF8StringEncoding,
+                .confidence = Irrelevant
+            };
         }
     }
     return self;
@@ -431,6 +439,55 @@ typedef NS_ENUM(NSInteger, HTMLInsertionMode)
     } else if ([token.tagName isEqualToString:@"meta"]) {
         [self insertElementForToken:token];
         [_stackOfOpenElements removeLastObject];
+        if (self.encoding.confidence == Tentative) {
+            NSString *charset = token.attributes[@"charset"];
+            if (charset) {
+                NSStringEncoding encoding = StringEncodingForLabel(charset);
+                if (encoding != InvalidStringEncoding() && (IsASCIICompatibleEncoding(encoding) || IsUTF16Encoding(encoding))) {
+                    [self changeEncoding:encoding];
+                }
+            } else if (token.attributes[@"http-equiv"] && [token.attributes[@"http-equiv"] caseInsensitiveCompare:@"Content-Type"] == NSOrderedSame) {
+                NSString *content = token.attributes[@"content"];
+                if (content) {
+                    NSScanner *scanner = [NSScanner scannerWithString:content];
+                    NSString *encodingLabel;
+                    for (;;) {
+                        [scanner scanUpToString:@"charset" intoString:nil];
+                        if (![scanner scanString:@"charset" intoString:nil]) {
+                            break;
+                        }
+                        
+                        if ([scanner scanString:@"=" intoString:nil]) {
+                            NSString *quote;
+                            if ([scanner scanString:@"\"" intoString:nil]) {
+                                quote = @"\"";
+                            } else if ([scanner scanString:@"'" intoString:nil]) {
+                                quote = @"'";
+                            }
+                            if (quote) {
+                                NSRange labelRange = NSMakeRange(scanner.scanLocation, 0);
+                                [scanner scanUpToString:quote intoString:nil];
+                                if ([scanner scanString:quote intoString:nil]) {
+                                    labelRange.length = scanner.scanLocation - 1 - labelRange.location;
+                                    encodingLabel = [scanner.string substringWithRange:labelRange];
+                                }
+                            } else {
+                                [scanner scanUpToString:@";" intoString:&encodingLabel];
+                            }
+                            
+                            break;
+                        }
+                    }
+                    
+                    if (encodingLabel) {
+                        NSStringEncoding encoding = StringEncodingForLabel(encodingLabel);
+                        if (encoding != InvalidStringEncoding() && (IsASCIICompatibleEncoding(encoding) || IsUTF16Encoding(encoding))) {
+                            [self changeEncoding:encoding];
+                        }
+                    }
+                }
+            }
+        }
     } else if ([token.tagName isEqualToString:@"title"]) {
         [self followGenericRCDATAElementParsingAlgorithmForToken:token];
     } else if (StringIsEqualToAnyOf(token.tagName, @"noscript", @"noframes", @"style")) {
@@ -447,6 +504,33 @@ typedef NS_ENUM(NSInteger, HTMLInsertionMode)
         [self addParseError:@"<head> already started"];
     } else {
         [self inHeadInsertionModeHandleAnythingElse:token];
+    }
+}
+
+- (void)changeEncoding:(NSStringEncoding)newEncoding
+{
+    HTMLStringEncoding encoding = self.encoding;
+    if (IsUTF16Encoding(encoding.encoding)) {
+        encoding.confidence = Certain;
+        _encoding = encoding;
+        return;
+    }
+    
+    if (IsUTF16Encoding(newEncoding)) {
+        newEncoding = NSUTF8StringEncoding;
+    }
+    
+    if (encoding.encoding == newEncoding) {
+        encoding.confidence = Certain;
+        _encoding = encoding;
+        return;
+    }
+    
+    if (self.changeEncoding) {
+        self.changeEncoding((HTMLStringEncoding){ .encoding = newEncoding, .confidence = Certain });
+        [self stopParsing];
+    } else {
+        [self addParseError:@"Wanted to change string encoding but couldn't; continuing with misinterpreted resource"];
     }
 }
 
@@ -649,7 +733,7 @@ typedef NS_ENUM(NSInteger, HTMLInsertionMode)
             [_stackOfOpenElements removeLastObject];
             goto done;
         }
-        if (IsSpecialElement(node) && !(node.namespace == HTMLNamespaceHTML && StringIsEqualToAnyOf(node.tagName, @"address", @"div", @"p"))) {
+        if (IsSpecialElement(node) && !(node.htmlNamespace == HTMLNamespaceHTML && StringIsEqualToAnyOf(node.tagName, @"address", @"div", @"p"))) {
             goto done;
         }
         node = [_stackOfOpenElements objectAtIndex:[_stackOfOpenElements indexOfObject:node] - 1];
@@ -682,7 +766,7 @@ typedef NS_ENUM(NSInteger, HTMLInsertionMode)
                 }
                 [_stackOfOpenElements removeLastObject];
                 break;
-            } else if (IsSpecialElement(node) && !(node.namespace == HTMLNamespaceHTML && StringIsEqualToAnyOf(node.tagName, @"address", @"div", @"p"))) {
+            } else if (IsSpecialElement(node) && !(node.htmlNamespace == HTMLNamespaceHTML && StringIsEqualToAnyOf(node.tagName, @"address", @"div", @"p"))) {
                 break;
             }
         }
@@ -1129,11 +1213,11 @@ typedef NS_ENUM(NSInteger, HTMLInsertionMode)
 
 static BOOL IsSpecialElement(HTMLElement *element)
 {
-    if (element.namespace == HTMLNamespaceHTML) {
+    if (element.htmlNamespace == HTMLNamespaceHTML) {
         return StringIsEqualToAnyOf(element.tagName, @"address", @"applet", @"area", @"article", @"aside", @"base", @"basefont", @"bgsound", @"blockquote", @"body", @"br", @"button", @"caption", @"center", @"col", @"colgroup", @"dd", @"details", @"dir", @"div", @"dl", @"dt", @"embed", @"fieldset", @"figcaption", @"figure", @"footer", @"form", @"frame", @"frameset", @"h1", @"h2", @"h3", @"h4", @"h5", @"h6", @"head", @"header", @"hgroup", @"hr", @"html", @"iframe", @"img", @"input", @"isindex", @"li", @"link", @"listing", @"main", @"marquee", @"menu", @"menuitem", @"meta", @"nav", @"noembed", @"noframes", @"noscript", @"object", @"ol", @"p", @"param", @"plaintext", @"pre", @"script", @"section", @"select", @"source", @"style", @"summary", @"table", @"tbody", @"td", @"template", @"textarea", @"tfoot", @"th", @"thead", @"title", @"tr", @"track", @"ul", @"wbr", @"xmp");
-    } else if (element.namespace == HTMLNamespaceMathML) {
+    } else if (element.htmlNamespace == HTMLNamespaceMathML) {
         return StringIsEqualToAnyOf(element.tagName, @"mi", @"mo", @"mn", @"ms", @"mtext", @"annotation-xml");
-    } else if (element.namespace == HTMLNamespaceSVG) {
+    } else if (element.htmlNamespace == HTMLNamespaceSVG) {
         return StringIsEqualToAnyOf(element.tagName, @"foreignObject", @"desc", @"title");
     } else {
         return NO;
@@ -1851,14 +1935,13 @@ static BOOL IsSpecialElement(HTMLElement *element)
 
 - (void)inFramesetInsertionModeHandleCharacterToken:(HTMLCharacterToken *)token
 {
-    HTMLCharacterToken *leadingWhitespace = [token leadingWhitespaceToken];
-    if (leadingWhitespace) {
-        [self insertString:leadingWhitespace.string];
-    }
-    HTMLCharacterToken *afterLeadingWhitespace = [token afterLeadingWhitespaceToken];
-    if (afterLeadingWhitespace) {
-        [self inFramesetInsertionModeHandleAnythingElse:afterLeadingWhitespace];
-    }
+    EnumerateLongCharacters(token.string, ^(UTF32Char character) {
+        if (is_whitespace(character)) {
+            [self insertString:StringWithLongCharacter(character)];
+        } else {
+            [self addParseError:@"Unexpected token in <frameset>"];
+        }
+    });
 }
 
 - (void)inFramesetInsertionModeHandleCommentToken:(HTMLCommentToken *)token
@@ -1924,14 +2007,13 @@ static BOOL IsSpecialElement(HTMLElement *element)
 
 - (void)afterFramesetInsertionModeHandleCharacterToken:(HTMLCharacterToken *)token
 {
-    HTMLCharacterToken *leadingWhitespace = [token leadingWhitespaceToken];
-    if (leadingWhitespace) {
-        [self insertString:leadingWhitespace.string];
-    }
-    HTMLCharacterToken *afterLeadingWhitespace = [token afterLeadingWhitespaceToken];
-    if (afterLeadingWhitespace) {
-        [self afterFramesetInsertionModeHandleAnythingElse:afterLeadingWhitespace];
-    }
+    EnumerateLongCharacters(token.string, ^(UTF32Char character) {
+        if (is_whitespace(character)) {
+            [self insertString:StringWithLongCharacter(character)];
+        } else {
+            [self addParseError:@"Unexpected token after <frameset>"];
+        }
+    });
 }
 
 - (void)afterFramesetInsertionModeHandleCommentToken:(HTMLCommentToken *)token
@@ -2102,7 +2184,7 @@ static BOOL IsSpecialElement(HTMLElement *element)
             return;
         }
         [_stackOfOpenElements removeLastObject];
-        while (!(self.currentNode.namespace == HTMLNamespaceHTML ||
+        while (!(self.currentNode.htmlNamespace == HTMLNamespaceHTML ||
                  IsMathMLTextIntegrationPoint(self.currentNode) ||
                  IsHTMLIntegrationPoint(self.currentNode)))
         {
@@ -2116,14 +2198,14 @@ static BOOL IsSpecialElement(HTMLElement *element)
 
 - (void)foreignContentInsertionModeHandleAnyOtherStartTagToken:(HTMLStartTagToken *)token
 {
-    if (self.adjustedCurrentNode.namespace == HTMLNamespaceMathML) {
+    if (self.adjustedCurrentNode.htmlNamespace == HTMLNamespaceMathML) {
         AdjustMathMLAttributesForToken(token);
-    } else if (self.adjustedCurrentNode.namespace == HTMLNamespaceSVG) {
+    } else if (self.adjustedCurrentNode.htmlNamespace == HTMLNamespaceSVG) {
         FixSVGTagNameCaseForToken(token);
         AdjustSVGAttributesForToken(token);
     }
     AdjustForeignAttributesForToken(token);
-    [self insertForeignElementForToken:token inNamespace:self.adjustedCurrentNode.namespace];
+    [self insertForeignElementForToken:token inNamespace:self.adjustedCurrentNode.htmlNamespace];
     if (token.selfClosingFlag) {
         [_stackOfOpenElements removeLastObject];
     }
@@ -2193,12 +2275,8 @@ static void AdjustSVGAttributesForToken(HTMLStartTagToken *token)
         @"baseprofile": @"baseProfile",
         @"calcmode": @"calcMode",
         @"clippathunits": @"clipPathUnits",
-        @"contentscripttype": @"contentScriptType",
-        @"contentstyletype": @"contentStyleType",
         @"diffuseconstant": @"diffuseConstant",
         @"edgemode": @"edgeMode",
-        @"externalresourcesrequired": @"externalResourcesRequired",
-        @"filterres": @"filterRes",
         @"filterunits": @"filterUnits",
         @"glyphref": @"glyphRef",
         @"gradienttransform": @"gradientTransform",
@@ -2280,7 +2358,7 @@ static void AdjustForeignAttributesForToken(HTMLStartTagToken *token)
             return;
         }
         node = _stackOfOpenElements[nodeIndex - 1];
-        if (node.namespace == HTMLNamespaceHTML) break;
+        if (node.htmlNamespace == HTMLNamespaceHTML) break;
     }
     [self processToken:token usingRulesForInsertionMode:_insertionMode];
 }
@@ -2291,7 +2369,7 @@ static void AdjustForeignAttributesForToken(HTMLStartTagToken *token)
 {
     if (^(HTMLElement *node){
         if (!node) return YES;
-        if (node.namespace == HTMLNamespaceHTML) return YES;
+        if (node.htmlNamespace == HTMLNamespaceHTML) return YES;
         if (IsMathMLTextIntegrationPoint(node)) {
             if ([token isKindOfClass:[HTMLStartTagToken class]] &&
                 !StringIsEqualToAnyOf([token tagName], @"mglyph", @"malignmark"))
@@ -2302,7 +2380,7 @@ static void AdjustForeignAttributesForToken(HTMLStartTagToken *token)
                 return YES;
             }
         }
-        if (node.namespace == HTMLNamespaceMathML &&
+        if (node.htmlNamespace == HTMLNamespaceMathML &&
             [node.tagName isEqualToString:@"annotation-xml"] &&
             [token isKindOfClass:[HTMLStartTagToken class]] &&
             [[token tagName] isEqualToString:@"svg"])
@@ -2326,13 +2404,13 @@ static void AdjustForeignAttributesForToken(HTMLStartTagToken *token)
 
 static BOOL IsMathMLTextIntegrationPoint(HTMLElement *node)
 {
-    if (node.namespace != HTMLNamespaceMathML) return NO;
+    if (node.htmlNamespace != HTMLNamespaceMathML) return NO;
     return StringIsEqualToAnyOf(node.tagName, @"mi", @"mo", @"mn", @"ms", @"mtext");
 }
 
 static BOOL IsHTMLIntegrationPoint(HTMLElement *node)
 {
-    if (node.namespace == HTMLNamespaceMathML && [node.tagName isEqualToString:@"annotation-xml"]) {
+    if (node.htmlNamespace == HTMLNamespaceMathML && [node.tagName isEqualToString:@"annotation-xml"]) {
         
         // SPEC We're told that "an annotation-xml element in the MathML namespace whose *start tag
         //      token* had an attribute with the name 'encoding'..." (emphasis mine) is an HTML
@@ -2346,7 +2424,7 @@ static BOOL IsHTMLIntegrationPoint(HTMLElement *node)
                 return YES;
             }
         }
-    } else if (node.namespace == HTMLNamespaceSVG) {
+    } else if (node.htmlNamespace == HTMLNamespaceSVG) {
         return StringIsEqualToAnyOf(node.tagName, @"foreignObject", @"desc", @"title");
     }
     return NO;
@@ -2743,7 +2821,7 @@ static inline NSDictionary * ElementTypesForSpecificScope(NSArray *additionalHTM
 {
     for (HTMLElement *node in _stackOfOpenElements.reverseObjectEnumerator) {
         if ([tagNames containsObject:node.tagName]) return node;
-        if ([elementTypes[@(node.namespace)] containsObject:node.tagName]) return nil;
+        if ([elementTypes[@(node.htmlNamespace)] containsObject:node.tagName]) return nil;
     }
     return nil;
 }
@@ -2769,7 +2847,7 @@ static inline NSDictionary * ElementTypesForSpecificScope(NSArray *additionalHTM
 {
     for (HTMLElement *node in _stackOfOpenElements.reverseObjectEnumerator) {
         if ([node.tagName isEqualToString:@"select"]) return node;
-        if (!(node.namespace == HTMLNamespaceHTML && StringIsEqualToAnyOf(node.tagName, @"optgroup", @"option"))) {
+        if (!(node.htmlNamespace == HTMLNamespaceHTML && StringIsEqualToAnyOf(node.tagName, @"optgroup", @"option"))) {
             return nil;
         }
     }
@@ -2781,7 +2859,7 @@ static inline NSDictionary * ElementTypesForSpecificScope(NSArray *additionalHTM
     NSDictionary *elementTypes = ElementTypesForSpecificScope(nil);
     for (HTMLElement *node in _stackOfOpenElements.reverseObjectEnumerator) {
         if ([node isEqual:element]) return YES;
-        if ([elementTypes[@(node.namespace)] containsObject:node.tagName]) return NO;
+        if ([elementTypes[@(node.htmlNamespace)] containsObject:node.tagName]) return NO;
     }
     return NO;
 }
@@ -2857,7 +2935,7 @@ static inline NSDictionary * ElementTypesForSpecificScope(NSArray *additionalHTM
 - (HTMLElement *)createElementForToken:(HTMLTagToken *)token inNamespace:(HTMLNamespace)namespace
 {
     HTMLElement *element = [[HTMLElement alloc] initWithTagName:token.tagName attributes:token.attributes];
-    element.namespace = namespace;
+    element.htmlNamespace = namespace;
     return element;
 }
 
@@ -3126,3 +3204,17 @@ static HTMLMarker *instance = nil;
 }
 
 @end
+
+HTMLParser * ParserWithDataAndContentType(NSData *data, NSString *contentType)
+{
+    HTMLStringEncoding initialEncoding = DeterminedStringEncodingForData(data, contentType);
+    NSString *initialString = [[NSString alloc] initWithData:data encoding:initialEncoding.encoding];
+    HTMLParser *initialParser = [[HTMLParser alloc] initWithString:initialString encoding:initialEncoding context:nil];
+    __block HTMLParser *parser = initialParser;
+    initialParser.changeEncoding = ^(HTMLStringEncoding newEncoding) {
+        NSString *correctedString = [[NSString alloc] initWithData:data encoding:newEncoding.encoding];
+        parser = [[HTMLParser alloc] initWithString:correctedString encoding:newEncoding context:nil];
+    };
+    [initialParser document];
+    return parser;
+}

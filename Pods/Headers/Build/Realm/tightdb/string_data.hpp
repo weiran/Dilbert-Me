@@ -1,1 +1,0 @@
-../../../../Realm/include-osx/tightdb/string_data.hpp

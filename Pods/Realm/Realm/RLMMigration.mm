@@ -17,14 +17,18 @@
 ////////////////////////////////////////////////////////////////////////////
 
 #import "RLMMigration_Private.h"
-#import "RLMRealm_Private.hpp"
-#import "RLMProperty_Private.h"
-#import "RLMSchema_Private.h"
-#import "RLMObjectSchema_Private.hpp"
-#import "RLMObject_Private.h"
-#import "RLMObjectStore.hpp"
-#import "RLMArray.h"
 
+#import "RLMAccessor.h"
+#import "RLMObject.h"
+#import "RLMObjectSchema_Private.hpp"
+#import "RLMObjectStore.h"
+#import "RLMProperty_Private.h"
+#import "RLMRealm_Dynamic.h"
+#import "RLMRealm_Private.hpp"
+#import "RLMResults_Private.h"
+#import "RLMSchema_Private.h"
+
+#import <tightdb/link_view.hpp>
 #import <tightdb/table_view.hpp>
 
 // The source realm for a migration has to use a SharedGroup to be able to share
@@ -39,30 +43,28 @@
 }
 
 - (void)beginWriteTransaction {
-    @throw [NSException exceptionWithName:@"RLMException"
-                                   reason:@"Cannot modify the source Realm in a migration"
-                                 userInfo:nil];
+    @throw RLMException(@"Cannot modify the source Realm in a migration");
 }
 @end
 
 @implementation RLMMigration
 
-+ (instancetype)migrationForRealm:(RLMRealm *)realm key:(NSData *)key error:(NSError **)error {
-    RLMMigration *migration = [RLMMigration new];
-    
-    // create rw realm to migrate with current on disk table
-    migration->_realm = realm;
-    
-    // create read only realm used during migration with current on disk schema
-    migration->_oldRealm = [[RLMMigrationRealm alloc] initWithPath:realm.path key:key readOnly:NO inMemory:NO error:error];
-    if (migration->_oldRealm) {
-        RLMRealmSetSchema(migration->_oldRealm, [RLMSchema dynamicSchemaFromRealm:migration->_oldRealm]);
+- (instancetype)initWithRealm:(RLMRealm *)realm key:(NSData *)key error:(NSError **)error {
+    self = [super init];
+    if (self) {
+        // create rw realm to migrate with current on disk table
+        _realm = realm;
+
+        // create read only realm used during migration with current on disk schema
+        _oldRealm = [[RLMMigrationRealm alloc] initWithPath:realm.path key:key readOnly:NO inMemory:NO dynamic:YES error:error];
+        if (_oldRealm) {
+            RLMRealmSetSchema(_oldRealm, [RLMSchema dynamicSchemaFromRealm:_oldRealm], true);
+        }
+        if (error && *error) {
+            return nil;
+        }
     }
-    if (error && *error) {
-        return nil;
-    }
-    
-    return migration;
+    return self;
 }
 
 - (RLMSchema *)oldSchema {
@@ -70,13 +72,14 @@
 }
 
 - (RLMSchema *)newSchema {
-    return [RLMSchema sharedSchema];
+    return self.realm.schema;
 }
 
 - (void)enumerateObjects:(NSString *)className block:(RLMObjectMigrationBlock)block {
     // get all objects
     RLMResults *objects = [_realm.schema schemaForClassName:className] ? [_realm allObjects:className] : nil;
     RLMResults *oldObjects = [_oldRealm.schema schemaForClassName:className] ? [_oldRealm allObjects:className] : nil;
+
     if (objects && oldObjects) {
         for (long i = oldObjects.count - 1; i >= 0; i--) {
             block(oldObjects[i], objects[i]);
@@ -111,14 +114,14 @@
                 }
                 if (table->get_distinct_view(primaryProperty.column).size() != count) {
                     NSString *reason = [NSString stringWithFormat:@"Primary key property '%@' has duplicate values after migration.", primaryProperty.name];
-                    @throw [NSException exceptionWithName:@"RLMException" reason:reason userInfo:nil];
+                    @throw RLMException(reason);
                 }
             }
             else {
                 for (NSUInteger i = 0; i < count; i++) {
                     if (table->count_int(primaryProperty.column, table->get_int(primaryProperty.column, i)) > 1) {
                         NSString *reason = [NSString stringWithFormat:@"Primary key property '%@' has duplicate values after migration.", primaryProperty.name];
-                        @throw [NSException exceptionWithName:@"RLMException" reason:reason userInfo:nil];
+                        @throw RLMException(reason);
                     }
                 }
             }
@@ -126,14 +129,8 @@
     }
 }
 
-- (void)migrateWithBlock:(RLMMigrationBlock)block version:(NSUInteger)newVersion {
-    // start write transaction
-    [_realm beginWriteTransaction];
-
-    @try {
-        // add new tables/columns for the current shared schema
-        RLMRealmCreateTables(_realm, [RLMSchema sharedSchema], true);
-
+- (void)execute:(RLMMigrationBlock)block {
+    @autoreleasepool {
         // disable all primary keys for migration
         for (RLMObjectSchema *objectSchema in _realm.schema.objectSchema) {
             objectSchema.primaryKeyProperty.isPrimary = NO;
@@ -145,13 +142,6 @@
 
         // verify uniqueness for any new unique columns before committing
         [self verifyPrimaryKeyUniqueness];
-
-        // update new version
-        RLMRealmSetSchemaVersion(_realm, newVersion);
-    }
-    @finally {
-        // end transaction
-        [_realm commitWriteTransaction];
     }
 }
 

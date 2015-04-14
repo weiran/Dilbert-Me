@@ -1,5 +1,6 @@
 #include "Pods-Dilbert Me-PromiseKit.xcconfig"
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1 ${PODS_DILBERT_ME_PROMISEKIT_GCC_PREPROCESSOR_DEFINITIONS}
-HEADER_SEARCH_PATHS = "${PODS_ROOT}/Headers/Build" "${PODS_ROOT}/Headers/Build/PromiseKit" "${PODS_ROOT}/Headers/Public" "${PODS_ROOT}/Headers/Public/AFNetworking" "${PODS_ROOT}/Headers/Public/HTMLReader" "${PODS_ROOT}/Headers/Public/OMGHTTPURLRQ" "${PODS_ROOT}/Headers/Public/PromiseKit" "${PODS_ROOT}/Headers/Public/PromiseKit-AFNetworking" "${PODS_ROOT}/Headers/Public/Realm" "${PODS_ROOT}/Headers/Public/Realm/Realm" "${PODS_ROOT}/Headers/Public/Realm/tightdb" "${PODS_ROOT}/Headers/Public/Realm/tightdb/util" "${PODS_ROOT}/Headers/Public/YLMoment" "${PODS_ROOT}/Headers/Public/core/include" "${PODS_ROOT}/Headers/Public/core/include/tightdb" "${PODS_ROOT}/Headers/Public/core/include/tightdb/impl" "${PODS_ROOT}/Headers/Public/core/include/tightdb/util"
+HEADER_SEARCH_PATHS = "${PODS_ROOT}/Headers/Private" "${PODS_ROOT}/Headers/Private/PromiseKit" "${PODS_ROOT}/Headers/Public" "${PODS_ROOT}/Headers/Public/AFNetworking" "${PODS_ROOT}/Headers/Public/HTMLReader" "${PODS_ROOT}/Headers/Public/PromiseKit" "${PODS_ROOT}/Headers/Public/PromiseKit-AFNetworking" "${PODS_ROOT}/Headers/Public/Realm" "${PODS_ROOT}/Headers/Public/Realm/Realm" "${PODS_ROOT}/Headers/Public/YLMoment"
 OTHER_LDFLAGS = ${PODS_DILBERT_ME_PROMISEKIT_OTHER_LDFLAGS} -ObjC
 PODS_ROOT = ${SRCROOT}
+SKIP_INSTALL = YES

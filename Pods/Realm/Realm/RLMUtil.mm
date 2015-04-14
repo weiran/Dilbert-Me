@@ -16,15 +16,18 @@
 //
 ////////////////////////////////////////////////////////////////////////////
 
-#import <Foundation/Foundation.h>
-
 #import "RLMUtil.hpp"
 
 #import "RLMArray_Private.hpp"
-#import "RLMObject_Private.h"
 #import "RLMObjectSchema_Private.hpp"
+#import "RLMObject_Private.h"
 #import "RLMProperty_Private.h"
 #import "RLMSwiftSupport.h"
+#import "RLMSchema_Private.h"
+
+#if !defined(REALM_VERSION)
+#import "RLMVersion.h"
+#endif
 
 static inline bool nsnumber_is_like_integer(NSNumber *obj)
 {
@@ -130,7 +133,7 @@ BOOL RLMIsObjectValidForProperty(id obj, RLMProperty *property) {
         case RLMPropertyTypeObject: {
             // only NSNull, nil, or objects which derive from RLMObject and match the given
             // object class are valid
-            BOOL isValidObject = [RLMDynamicCast<RLMObject>(obj).objectSchema.className isEqualToString:property.objectClassName];
+            BOOL isValidObject = [RLMDynamicCast<RLMObjectBase>(obj).objectSchema.className isEqualToString:property.objectClassName];
             return isValidObject || obj == nil || obj == NSNull.null;
         }
         case RLMPropertyTypeArray: {
@@ -140,7 +143,7 @@ BOOL RLMIsObjectValidForProperty(id obj, RLMProperty *property) {
             if (NSArray *array = RLMDynamicCast<NSArray>(obj)) {
                 // check each element for compliance
                 for (id el in array) {
-                    if (![RLMDynamicCast<RLMObject>(el).objectSchema.className isEqualToString:property.objectClassName]) {
+                    if (![RLMDynamicCast<RLMObjectBase>(el).objectSchema.className isEqualToString:property.objectClassName]) {
                         return NO;
                     }
                 }
@@ -152,7 +155,7 @@ BOOL RLMIsObjectValidForProperty(id obj, RLMProperty *property) {
             return NO;
         }
     }
-    @throw [NSException exceptionWithName:@"RLMException" reason:@"Invalid RLMPropertyType specified" userInfo:nil];
+    @throw RLMException(@"Invalid RLMPropertyType specified");
 }
 
 id RLMValidatedObjectForProperty(id obj, RLMProperty *prop, RLMSchema *schema) {
@@ -175,19 +178,23 @@ id RLMValidatedObjectForProperty(id obj, RLMProperty *prop, RLMSchema *schema) {
 
         // if not a literal throw
         NSString *message = [NSString stringWithFormat:@"Invalid value '%@' for property '%@'", obj ?: @"nil", prop.name];
-        @throw [NSException exceptionWithName:@"RLMException" reason:message userInfo:nil];
+        @throw RLMException(message);
     }
     return obj;
 }
 
 NSDictionary *RLMDefaultValuesForObjectSchema(RLMObjectSchema *objectSchema) {
+    if (!objectSchema.isSwiftClass) {
+        return [objectSchema.objectClass defaultPropertyValues];
+    }
+
+    // for swift merge
+    // FIXME: for new apis only return swift initialized values
     NSMutableDictionary *defaults = [NSMutableDictionary dictionaryWithDictionary:[objectSchema.objectClass defaultPropertyValues]];
-    if ([RLMSwiftSupport isSwiftClassName:NSStringFromClass(objectSchema.objectClass)]) {
-        RLMObject *defaultObject = [[objectSchema.objectClass alloc] init];
-        for (RLMProperty *prop in objectSchema.properties) {
-            if (!defaults[prop.name] && defaultObject[prop.name]) {
-                defaults[prop.name] = defaultObject[prop.name];
-            }
+    RLMObject *defaultObject = [[objectSchema.objectClass alloc] init];
+    for (RLMProperty *prop in objectSchema.properties) {
+        if (!defaults[prop.name] && defaultObject[prop.name]) {
+            defaults[prop.name] = defaultObject[prop.name];
         }
     }
     return defaults;
@@ -196,12 +203,16 @@ NSDictionary *RLMDefaultValuesForObjectSchema(RLMObjectSchema *objectSchema) {
 NSDictionary *RLMValidatedDictionaryForObjectSchema(id value, RLMObjectSchema *objectSchema, RLMSchema *schema, bool allowMissing) {
     NSArray *properties = objectSchema.properties;
     NSMutableDictionary *outDict = [NSMutableDictionary dictionaryWithCapacity:properties.count];
+    NSDictionary *defaultValues = nil;
     for (RLMProperty *prop in properties) {
         id obj = [value valueForKey:prop.name];
 
         // get default for nil object
         if (!obj && !allowMissing) {
-            obj = objectSchema.defaultValues[prop.name];
+            if (!defaultValues) {
+                defaultValues = RLMDefaultValuesForObjectSchema(objectSchema);
+            }
+            obj = defaultValues[prop.name];
         }
 
         // validate if object is not nil, or for nil if we don't allow missing values
@@ -218,9 +229,7 @@ NSDictionary *RLMValidatedDictionaryForObjectSchema(id value, RLMObjectSchema *o
 NSArray *RLMValidatedArrayForObjectSchema(NSArray *array, RLMObjectSchema *objectSchema, RLMSchema *schema) {
     NSArray *props = objectSchema.properties;
     if (array.count != props.count) {
-        @throw [NSException exceptionWithName:@"RLMException"
-                                       reason:@"Invalid array input. Number of array elements does not match number of properties."
-                                     userInfo:nil];
+        @throw RLMException(@"Invalid array input. Number of array elements does not match number of properties.");
     }
 
     // validate all values
@@ -230,3 +239,43 @@ NSArray *RLMValidatedArrayForObjectSchema(NSArray *array, RLMObjectSchema *objec
     }
     return outArray;
 };
+
+NSException *RLMException(NSString *reason, NSDictionary *userInfo) {
+    NSMutableDictionary *info = [NSMutableDictionary dictionaryWithDictionary:userInfo];
+    [info addEntriesFromDictionary:@{
+                                     RLMRealmVersionKey : REALM_VERSION,
+                                     RLMRealmCoreVersionKey : @TIGHTDB_VERSION
+                                     }];
+
+    return [NSException exceptionWithName:RLMExceptionName reason:reason userInfo:info];
+}
+
+NSException *RLMException(std::exception const& exception) {
+    return RLMException(@(exception.what()));
+}
+
+NSError *RLMMakeError(RLMError code, std::exception const& exception) {
+    return [NSError errorWithDomain:RLMErrorDomain
+                               code:code
+                           userInfo:@{NSLocalizedDescriptionKey: @(exception.what()),
+                                      @"Error Code": @(code)}];
+}
+
+void RLMSetErrorOrThrow(NSError *error, NSError **outError) {
+    if (outError) {
+        *outError = error;
+    }
+    else {
+        @throw RLMException(error.localizedDescription, error.userInfo);
+    }
+}
+
+// Determines if class1 descends from class2
+static inline BOOL RLMIsSubclass(Class class1, Class class2) {
+    class1 = class_getSuperclass(class1);
+    return RLMIsKindOfclass(class1, class2);
+}
+
+BOOL RLMIsObjectSubclass(Class klass) {
+    return RLMIsSubclass(class_getSuperclass(klass), RLMObjectBase.class);
+}
