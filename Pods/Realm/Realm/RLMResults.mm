@@ -17,25 +17,26 @@
 ////////////////////////////////////////////////////////////////////////////
 
 #import "RLMResults_Private.h"
-#import "RLMObject_Private.hpp"
+
+
 #import "RLMArray_Private.hpp"
-#import "RLMRealm_Private.hpp"
-#import "RLMSchema_Private.h"
+#import "RLMObject_Private.hpp"
 #import "RLMObjectSchema_Private.hpp"
 #import "RLMObjectStore.h"
 #import "RLMQueryUtil.hpp"
-#import "RLMConstants.h"
+#import "RLMRealm_Private.hpp"
+#import "RLMSchema_Private.h"
 #import "RLMUtil.hpp"
 
 #import <objc/runtime.h>
-#import <tightdb/table_view.hpp>
+#import <realm/table_view.hpp>
 
 //
 // RLMResults implementation
 //
 @implementation RLMResults {
-    std::unique_ptr<tightdb::Query> _backingQuery;
-    tightdb::TableView _backingView;
+    std::unique_ptr<realm::Query> _backingQuery;
+    realm::TableView _backingView;
     BOOL _viewCreated;
     RowIndexes::Sorter _sortOrder;
 
@@ -50,13 +51,13 @@
 }
 
 + (instancetype)resultsWithObjectClassName:(NSString *)objectClassName
-                                     query:(std::unique_ptr<tightdb::Query>)query
+                                     query:(std::unique_ptr<realm::Query>)query
                                      realm:(RLMRealm *)realm {
     return [self resultsWithObjectClassName:objectClassName query:move(query) sort:RowIndexes::Sorter{} realm:realm];
 }
 
 + (instancetype)resultsWithObjectClassName:(NSString *)objectClassName
-                                     query:(std::unique_ptr<tightdb::Query>)query
+                                     query:(std::unique_ptr<realm::Query>)query
                                       sort:(RowIndexes::Sorter const&)sorter
                                      realm:(RLMRealm *)realm {
     RLMResults *ar = [[self alloc] initPrivate];
@@ -70,8 +71,8 @@
 }
 
 + (instancetype)resultsWithObjectClassName:(NSString *)objectClassName
-                                     query:(std::unique_ptr<tightdb::Query>)query
-                                      view:(tightdb::TableView)view
+                                     query:(std::unique_ptr<realm::Query>)query
+                                      view:(realm::TableView)view
                                      realm:(RLMRealm *)realm {
     RLMResults *ar = [[RLMResults alloc] initPrivate];
     ar->_objectClassName = objectClassName;
@@ -99,7 +100,7 @@ static inline void RLMResultsValidateAttached(__unsafe_unretained RLMResults *co
         ar->_backingView = ar->_backingQuery->find_all();
         ar->_viewCreated = YES;
         if (!ar->_sortOrder.m_columns.empty()) {
-            ar->_backingView.sort(ar->_sortOrder.m_columns, ar->_sortOrder.m_ascending);
+            ar->_backingView.sort(ar->_sortOrder.m_column_indexes, ar->_sortOrder.m_ascending);
         }
     }
     // otherwise we're backed by a table and don't need to update anything
@@ -158,7 +159,7 @@ static inline void RLMResultsValidateInWriteTransaction(__unsafe_unretained RLMR
     Class accessorClass = _objectSchema.accessorClass;
     while (index < count && batchCount < len) {
         // get acessor fot the object class
-        RLMObject *accessor = [[accessorClass alloc] initWithRealm:_realm schema:_objectSchema defaultValues:NO];
+        RLMObject *accessor = [[accessorClass alloc] initWithRealm:_realm schema:_objectSchema];
         accessor->_row = (*_objectSchema.table)[[self indexInSource:index++]];
         items->array[batchCount] = accessor;
         buffer[batchCount] = accessor;
@@ -237,11 +238,27 @@ static inline void RLMResultsValidateInWriteTransaction(__unsafe_unretained RLMR
 
     size_t object_ndx = object->_row.get_index();
     size_t result = _backingView.find_by_source_ndx(object_ndx);
-    if (result == tightdb::not_found) {
+    if (result == realm::not_found) {
         return NSNotFound;
     }
 
     return result;
+}
+
+- (id)valueForKey:(NSString *)key {
+    RLMResultsValidate(self);
+    const size_t size = _backingView.size();
+    return RLMCollectionValueForKey(key, _realm, _objectSchema, size, ^size_t(size_t index) {
+        return _backingView.get_source_ndx(index);
+    });
+}
+
+- (void)setValue:(id)value forKey:(NSString *)key {
+    RLMResultsValidateInWriteTransaction(self);
+    const size_t size = _backingView.size();
+    RLMCollectionSetValueForKey(value, key, _realm, _objectSchema, size, ^size_t(size_t index) {
+        return _backingView.get_source_ndx(index);
+    });
 }
 
 - (RLMResults *)objectsWhere:(NSString *)predicateFormat, ... {
@@ -304,7 +321,7 @@ static id minOfProperty(TableType const& table, RLMRealm *realm, NSString *objec
         case RLMPropertyTypeFloat:
             return @(table.minimum_float(colIndex));
         case RLMPropertyTypeDate: {
-            tightdb::DateTime dt = table.minimum_datetime(colIndex);
+            realm::DateTime dt = table.minimum_datetime(colIndex);
             return [NSDate dateWithTimeIntervalSince1970:dt.get_datetime()];
         }
         default:
@@ -336,7 +353,7 @@ static id maxOfProperty(TableType const& table, RLMRealm *realm, NSString *objec
         case RLMPropertyTypeFloat:
             return @(table.maximum_float(colIndex));
         case RLMPropertyTypeDate: {
-            tightdb::DateTime dt = table.maximum_datetime(colIndex);
+            realm::DateTime dt = table.maximum_datetime(colIndex);
             return [NSDate dateWithTimeIntervalSince1970:dt.get_datetime()];
         }
         default:
@@ -415,21 +432,13 @@ static NSNumber *averageOfProperty(TableType const& table, RLMRealm *realm, NSSt
 }
 
 - (NSString *)description {
-    return [self descriptionWithMaxDepth:5];
-}
-
-- (NSString *)descriptionWithMaxDepth:(NSUInteger)depth {
-    if (depth == 0) {
-        return @"<Maximum depth exceeded>";
-    }
-
     const NSUInteger maxObjects = 100;
     NSMutableString *mString = [NSMutableString stringWithFormat:@"RLMResults <0x%lx> (\n", (long)self];
     unsigned long index = 0, skipped = 0;
     for (id obj in self) {
         NSString *sub;
         if ([obj respondsToSelector:@selector(descriptionWithMaxDepth:)]) {
-            sub = [obj descriptionWithMaxDepth:depth - 1];
+            sub = [obj descriptionWithMaxDepth:RLMDescriptionMaxDepth - 1];
         }
         else {
             sub = [obj description];
@@ -455,7 +464,7 @@ static NSNumber *averageOfProperty(TableType const& table, RLMRealm *realm, NSSt
 }
 
 - (std::unique_ptr<Query>)cloneQuery {
-    return std::make_unique<tightdb::Query>(*_backingQuery, tightdb::Query::TCopyExpressionTag{});
+    return std::make_unique<realm::Query>(*_backingQuery, realm::Query::TCopyExpressionTag{});
 }
 
 - (NSUInteger)indexInSource:(NSUInteger)index {
@@ -465,7 +474,7 @@ static NSNumber *averageOfProperty(TableType const& table, RLMRealm *realm, NSSt
 @end
 
 @implementation RLMTableResults {
-    tightdb::TableRef _table;
+    realm::TableRef _table;
 }
 
 + (RLMResults *)tableResultsWithObjectSchema:(RLMObjectSchema *)objectSchema realm:(RLMRealm *)realm {
@@ -481,6 +490,22 @@ static NSNumber *averageOfProperty(TableType const& table, RLMRealm *realm, NSSt
     return _table->size();
 }
 
+- (id)valueForKey:(NSString *)key {
+    RLMResultsValidate(self);
+    const size_t size = _table->size();
+    return RLMCollectionValueForKey(key, _realm, _objectSchema, size, ^size_t(size_t index) {
+        return index;
+    });
+}
+
+- (void)setValue:(id)value forKey:(NSString *)key {
+    RLMResultsValidateInWriteTransaction(self);
+    const size_t size = _table->size();
+    RLMCollectionSetValueForKey(value, key, _realm, _objectSchema, size, ^size_t(size_t index) {
+        return index;
+    });
+}
+
 - (NSUInteger)indexOfObject:(RLMObject *)object {
     RLMCheckThread(_realm);
     if (object.invalidated) {
@@ -493,7 +518,7 @@ static NSNumber *averageOfProperty(TableType const& table, RLMRealm *realm, NSSt
     }
 
     size_t ndx = object->_row.get_index();
-    return ndx == tightdb::not_found ? NSNotFound : ndx;
+    return ndx == realm::not_found ? NSNotFound : ndx;
 }
 
 - (id)minOfProperty:(NSString *)property {
@@ -522,7 +547,7 @@ static NSNumber *averageOfProperty(TableType const& table, RLMRealm *realm, NSSt
 }
 
 - (std::unique_ptr<Query>)cloneQuery {
-    return std::make_unique<tightdb::Query>(_table->where(), tightdb::Query::TCopyExpressionTag{});
+    return std::make_unique<realm::Query>(_table->where(), realm::Query::TCopyExpressionTag{});
 }
 
 - (NSUInteger)indexInSource:(NSUInteger)index {
@@ -558,6 +583,15 @@ static NSNumber *averageOfProperty(TableType const& table, RLMRealm *realm, NSSt
 
 - (id)objectAtIndex:(NSUInteger)index {
     @throw RLMException(@"Index is out of bounds.", @{@"index": @(index)});
+}
+
+- (id)valueForKey:(NSString *)key {
+    RLMResultsValidate(self);
+    return @[];
+}
+
+- (void)setValue:(__unused id)value forKey:(__unused NSString *)key {
+    RLMResultsValidateInWriteTransaction(self);
 }
 
 - (RLMResults *)objectsWithPredicate:(NSPredicate *)predicate {

@@ -1,1 +1,1 @@
-../../../../Realm/include/Realm/RLMObjectSchema_Private.h
+../../../../Realm/include/realm/RLMObjectSchema_Private.h

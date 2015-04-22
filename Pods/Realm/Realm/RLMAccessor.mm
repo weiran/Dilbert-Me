@@ -62,7 +62,7 @@ static inline void RLMSetValueUnique(__unsafe_unretained RLMObjectBase *const ob
     if (row == obj->_row.get_index()) {
         return;
     }
-    if (row != tightdb::not_found) {
+    if (row != realm::not_found) {
         NSString *reason = [NSString stringWithFormat:@"Can't set primary key property '%@' to existing value '%lld'.", propName, val];
         @throw RLMException(reason);
     }
@@ -116,12 +116,12 @@ static inline void RLMSetValue(__unsafe_unretained RLMObjectBase *const obj, NSU
 static inline void RLMSetValueUnique(__unsafe_unretained RLMObjectBase *const obj, NSUInteger colIndex, NSString *propName,
                                      __unsafe_unretained NSString *const val) {
     RLMVerifyInWriteTransaction(obj);
-    tightdb::StringData str = RLMStringDataWithNSString(val);
+    realm::StringData str = RLMStringDataWithNSString(val);
     size_t row = obj->_row.get_table()->find_first_string(colIndex, str);
     if (row == obj->_row.get_index()) {
         return;
     }
-    if (row != tightdb::not_found) {
+    if (row != realm::not_found) {
         NSString *reason = [NSString stringWithFormat:@"Can't set primary key property '%@' to existing value '%@'.", propName, val];
         @throw RLMException(reason);
     }
@@ -136,19 +136,19 @@ static inline void RLMSetValueUnique(__unsafe_unretained RLMObjectBase *const ob
 // date getter/setter
 static inline NSDate *RLMGetDate(__unsafe_unretained RLMObjectBase *const obj, NSUInteger colIndex) {
     RLMVerifyAttached(obj);
-    tightdb::DateTime dt = obj->_row.get_datetime(colIndex);
+    realm::DateTime dt = obj->_row.get_datetime(colIndex);
     return [NSDate dateWithTimeIntervalSince1970:dt.get_datetime()];
 }
 static inline void RLMSetValue(__unsafe_unretained RLMObjectBase *const obj, NSUInteger colIndex, __unsafe_unretained NSDate *const date) {
     RLMVerifyInWriteTransaction(obj);
     std::time_t time = date.timeIntervalSince1970;
-    obj->_row.set_datetime(colIndex, tightdb::DateTime(time));
+    obj->_row.set_datetime(colIndex, realm::DateTime(time));
 }
 
 // data getter/setter
 static inline NSData *RLMGetData(__unsafe_unretained RLMObjectBase *const obj, NSUInteger colIndex) {
     RLMVerifyAttached(obj);
-    tightdb::BinaryData data = obj->_row.get_binary(colIndex);
+    realm::BinaryData data = obj->_row.get_binary(colIndex);
     return [NSData dataWithBytes:data.data() length:data.size()];
 }
 static inline void RLMSetValue(__unsafe_unretained RLMObjectBase *const obj, NSUInteger colIndex, __unsafe_unretained NSData *const data) {
@@ -168,13 +168,13 @@ static inline size_t RLMAddLinkedObject(RLMObjectBase *link,
     if (link.isInvalidated) {
         @throw RLMException(@"Adding a deleted or invalidated object to a Realm is not permitted");
     }
-    else if (link.realm != realm) {
+    else if (link->_realm != realm) {
         // only try to update if link object has primary key
-        if ((options & RLMCreationOptionsUpdateOrCreate) && link.objectSchema.primaryKeyProperty) {
-            link = [link.class createOrUpdateInRealm:realm withObject:link];
+        if ((options & RLMCreationOptionsUpdateOrCreate) && link->_objectSchema.primaryKeyProperty) {
+            link = RLMCreateObjectInRealmWithValue(realm, link->_objectSchema.className, link, RLMCreationOptionsUpdateOrCreate | RLMCreationOptionsAllowCopy);
         }
         else if (options & RLMCreationOptionsAllowCopy) {
-            link = [link.class createInRealm:realm withObject:link];
+            link = RLMCreateObjectInRealmWithValue(realm, link->_objectSchema.className, link, RLMCreationOptionsAllowCopy);
         }
         else {
             RLMAddObjectToRealm(link, realm, options);
@@ -191,7 +191,7 @@ static inline RLMObjectBase *RLMGetLink(__unsafe_unretained RLMObjectBase *const
         return nil;
     }
     NSUInteger index = obj->_row.get_link(colIndex);
-    return RLMCreateObjectAccessor(obj.realm, obj.realm.schema[objectClassName], index);
+    return RLMCreateObjectAccessor(obj->_realm, obj->_realm.schema[objectClassName], index);
 }
 static inline void RLMSetValue(__unsafe_unretained RLMObjectBase *const obj, NSUInteger colIndex,
                                __unsafe_unretained RLMObjectBase *const val, RLMCreationOptions options=0) {
@@ -203,13 +203,15 @@ static inline void RLMSetValue(__unsafe_unretained RLMObjectBase *const obj, NSU
     }
     else {
         // make sure it is the correct type
-        if (![[obj.objectSchema.properties[colIndex] objectClassName] isEqualToString:val.objectSchema.className]) {
+        RLMObjectSchema *valSchema = val->_objectSchema;
+        RLMObjectSchema *objSchema = obj->_objectSchema;
+        if (![[objSchema.properties[colIndex] objectClassName] isEqualToString:valSchema.className]) {
             NSString *reason = [NSString stringWithFormat:@"Can't set object of type '%@' to property of type '%@'",
-                                val.objectSchema.className, [obj.objectSchema.properties[colIndex] objectClassName]];
+                                valSchema.className, [objSchema.properties[colIndex] objectClassName]];
             @throw RLMException(reason);
         }
 
-        obj->_row.set_link(colIndex, RLMAddLinkedObject(val, obj.realm, options));
+        obj->_row.set_link(colIndex, RLMAddLinkedObject(val, obj->_realm, options));
     }
 }
 
@@ -217,10 +219,10 @@ static inline void RLMSetValue(__unsafe_unretained RLMObjectBase *const obj, NSU
 static inline RLMArray *RLMGetArray(__unsafe_unretained RLMObjectBase *const obj, NSUInteger colIndex, __unsafe_unretained NSString *const objectClassName) {
     RLMVerifyAttached(obj);
 
-    tightdb::LinkViewRef linkView = obj->_row.get_linklist(colIndex);
+    realm::LinkViewRef linkView = obj->_row.get_linklist(colIndex);
     RLMArrayLinkView *ar = [RLMArrayLinkView arrayWithObjectClassName:objectClassName
                                                                  view:linkView
-                                                                realm:obj.realm];
+                                                                realm:obj->_realm];
     return ar;
 }
 static inline void RLMSetValue(__unsafe_unretained RLMObjectBase *const obj, NSUInteger colIndex,
@@ -228,13 +230,13 @@ static inline void RLMSetValue(__unsafe_unretained RLMObjectBase *const obj, NSU
                                RLMCreationOptions options=0) {
     RLMVerifyInWriteTransaction(obj);
 
-    tightdb::LinkViewRef linkView = obj->_row.get_linklist(colIndex);
+    realm::LinkViewRef linkView = obj->_row.get_linklist(colIndex);
     // remove all old
     // FIXME: make sure delete rules don't purge objects
     linkView->clear();
     if ((id)val != NSNull.null) {
         for (RLMObjectBase *link in val) {
-            linkView->add(RLMAddLinkedObject(link, obj.realm, options));
+            linkView->add(RLMAddLinkedObject(link, obj->_realm, options));
         }
     }
 }
@@ -243,7 +245,7 @@ static inline void RLMSetValue(__unsafe_unretained RLMObjectBase *const obj, NSU
 static inline id RLMGetAnyProperty(__unsafe_unretained RLMObjectBase *const obj, NSUInteger col_ndx) {
     RLMVerifyAttached(obj);
 
-    tightdb::Mixed mixed = obj->_row.get_mixed(col_ndx);
+    realm::Mixed mixed = obj->_row.get_mixed(col_ndx);
     switch (mixed.get_type()) {
         case RLMPropertyTypeString:
             return RLMStringDataToNSString(mixed.get_string());
@@ -258,7 +260,7 @@ static inline id RLMGetAnyProperty(__unsafe_unretained RLMObjectBase *const obj,
         case RLMPropertyTypeDate:
             return [NSDate dateWithTimeIntervalSince1970:mixed.get_datetime().get_datetime()];
         case RLMPropertyTypeData: {
-            tightdb::BinaryData bd = mixed.get_binary();
+            realm::BinaryData bd = mixed.get_binary();
             NSData *d = [NSData dataWithBytes:bd.data() length:bd.size()];
             return d;
         }
@@ -286,7 +288,7 @@ static inline void RLMSetValue(__unsafe_unretained RLMObjectBase *const obj, NSU
         return;
     }
     if (NSDate *date = RLMDynamicCast<NSDate>(val)) {
-        obj->_row.set_mixed(col_ndx, tightdb::DateTime(time_t([date timeIntervalSince1970])));
+        obj->_row.set_mixed(col_ndx, realm::DateTime(time_t([date timeIntervalSince1970])));
         return;
     }
     if (NSData *data = RLMDynamicCast<NSData>(val)) {
@@ -313,7 +315,7 @@ static inline void RLMSetValue(__unsafe_unretained RLMObjectBase *const obj, NSU
                 return;
         }
     }
-    @throw RLMException([NSString stringWithFormat:@"Inserting invalid object of class %@ for an RLMPropertyTypeAny property (%@).", [val class], [obj.objectSchema.properties[col_ndx] name]]);
+    @throw RLMException([NSString stringWithFormat:@"Inserting invalid object of class %@ for an RLMPropertyTypeAny property (%@).", [val class], [obj->_objectSchema.properties[col_ndx] name]]);
 }
 
 // dynamic getter with column closure
@@ -416,7 +418,7 @@ static IMP RLMAccessorSetter(RLMProperty *prop, char accessorCode) {
 // call getter for superclass for property at colIndex
 static id RLMSuperGet(RLMObjectBase *obj, NSString *propName) {
     typedef id (*getter_type)(RLMObjectBase *, SEL);
-    RLMProperty *prop = obj.objectSchema[propName];
+    RLMProperty *prop = obj->_objectSchema[propName];
     Class superClass = class_getSuperclass(obj.class);
     getter_type superGetter = (getter_type)[superClass instanceMethodForSelector:prop.getterSel];
     return superGetter(obj, prop.getterSel);
@@ -425,7 +427,7 @@ static id RLMSuperGet(RLMObjectBase *obj, NSString *propName) {
 // call setter for superclass for property at colIndex
 static void RLMSuperSet(RLMObjectBase *obj, NSString *propName, id val) {
     typedef void (*setter_type)(RLMObjectBase *, SEL, RLMArray *ar);
-    RLMProperty *prop = obj.objectSchema[propName];
+    RLMProperty *prop = obj->_objectSchema[propName];
     Class superClass = class_getSuperclass(obj.class);
     setter_type superSetter = (setter_type)[superClass instanceMethodForSelector:prop.setterSel];
     superSetter(obj, prop.setterSel, val);
@@ -470,7 +472,7 @@ static IMP RLMAccessorStandaloneSetter(RLMProperty *prop, char accessorCode) {
 
 // getter type strings
 // NOTE: this typecode is really the the first charachter of the objc/runtime.h type
-//       the @ type maps to multiple tightdb types (string, date, array, mixed, any which are id in objc)
+//       the @ type maps to multiple core types (string, date, array, mixed, any which are id in objc)
 static const char *getterTypeStringForObjcCode(char code) {
     switch (code) {
         case 's': return GETTER_TYPES("s");
@@ -488,7 +490,7 @@ static const char *getterTypeStringForObjcCode(char code) {
 
 // setter type strings
 // NOTE: this typecode is really the the first charachter of the objc/runtime.h type
-//       the @ type maps to multiple tightdb types (string, date, array, mixed, any which are id in objc)
+//       the @ type maps to multiple core types (string, date, array, mixed, any which are id in objc)
 static const char *setterTypeStringForObjcCode(char code) {
     switch (code) {
         case 's': return SETTER_TYPES("s");
@@ -598,12 +600,12 @@ Class RLMStandaloneAccessorClassForObjectClass(Class objectClass, RLMObjectSchem
 }
 
 void RLMDynamicValidatedSet(RLMObjectBase *obj, NSString *propName, id val) {
-    RLMObjectSchema *schema = obj.objectSchema;
+    RLMObjectSchema *schema = obj->_objectSchema;
     RLMProperty *prop = schema[propName];
     if (!prop) {
         @throw RLMException(@"Invalid property name",
                             @{@"Property name:" : propName ?: @"nil",
-                              @"Class name": obj.objectSchema.className});
+                              @"Class name": obj->_objectSchema.className});
     }
     if (!RLMIsObjectValidForProperty(val, prop)) {
         @throw RLMException(@"Invalid property name",
@@ -666,12 +668,12 @@ void RLMDynamicSet(__unsafe_unretained RLMObjectBase *const obj, __unsafe_unreta
     }
 }
 
-id RLMDynamicGet(__unsafe_unretained RLMObjectBase *const obj, __unsafe_unretained NSString *const propName) {
-    RLMProperty *prop = obj.objectSchema[propName];
+id RLMDynamicGet(__unsafe_unretained RLMObjectBase *obj, __unsafe_unretained NSString *propName) {
+    RLMProperty *prop = obj->_objectSchema[propName];
     if (!prop) {
         @throw RLMException(@"Invalid property name",
                             @{@"Property name:" : propName ?: @"nil",
-                              @"Class name": obj.objectSchema.className});
+                              @"Class name": obj->_objectSchema.className});
     }
     NSUInteger col = prop.column;
     switch (accessorCodeForType(prop.objcType, prop.type)) {

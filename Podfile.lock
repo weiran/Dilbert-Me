@@ -1,33 +1,33 @@
 PODS:
-  - AFNetworking (2.5.2):
-    - AFNetworking/NSURLConnection (= 2.5.2)
-    - AFNetworking/NSURLSession (= 2.5.2)
-    - AFNetworking/Reachability (= 2.5.2)
-    - AFNetworking/Security (= 2.5.2)
-    - AFNetworking/Serialization (= 2.5.2)
-    - AFNetworking/UIKit (= 2.5.2)
-  - AFNetworking/NSURLConnection (2.5.2):
+  - AFNetworking (2.5.3):
+    - AFNetworking/NSURLConnection (= 2.5.3)
+    - AFNetworking/NSURLSession (= 2.5.3)
+    - AFNetworking/Reachability (= 2.5.3)
+    - AFNetworking/Security (= 2.5.3)
+    - AFNetworking/Serialization (= 2.5.3)
+    - AFNetworking/UIKit (= 2.5.3)
+  - AFNetworking/NSURLConnection (2.5.3):
     - AFNetworking/Reachability
     - AFNetworking/Security
     - AFNetworking/Serialization
-  - AFNetworking/NSURLSession (2.5.2):
+  - AFNetworking/NSURLSession (2.5.3):
     - AFNetworking/Reachability
     - AFNetworking/Security
     - AFNetworking/Serialization
-  - AFNetworking/Reachability (2.5.2)
-  - AFNetworking/Security (2.5.2)
-  - AFNetworking/Serialization (2.5.2)
+  - AFNetworking/Reachability (2.5.3)
+  - AFNetworking/Security (2.5.3)
+  - AFNetworking/Serialization (2.5.3)
   - HTMLReader (0.7.1)
   - PromiseKit-AFNetworking (0.1.6):
     - AFNetworking (~> 2.0)
     - PromiseKit/Promise
     - PromiseKit/When
-  - PromiseKit/Promise (1.5.0)
-  - PromiseKit/When (1.5.0):
+  - PromiseKit/Promise (1.5.1)
+  - PromiseKit/When (1.5.1):
     - PromiseKit/Promise
-  - Realm (0.91.1):
-    - Realm/Headers (= 0.91.1)
-  - Realm/Headers (0.91.1)
+  - Realm (0.91.3):
+    - Realm/Headers (= 0.91.3)
+  - Realm/Headers (0.91.3)
   - YLMoment (0.5.1)
 
 DEPENDENCIES:
@@ -40,11 +40,11 @@ DEPENDENCIES:
   - YLMoment
 
 SPEC CHECKSUMS:
-  AFNetworking: fefbce9660acb17f48ae0011292d4da0f457bf36
+  AFNetworking: e1d86c2a96bb5d2e7408da36149806706ee122fe
   HTMLReader: e6ba09514d125f45e810b6c6c1cebf3542f04d89
-  PromiseKit: 66308afa36e1f7dba6d53721c359e4d074a895b4
+  PromiseKit: b1145ebb1dd0780566952689191ea31466198ee8
   PromiseKit-AFNetworking: fbdd97205d6a78bb94d96d0d56311d1733569aae
-  Realm: b9c1fd9defa26aa7276ce938a8df52ec81f24528
+  Realm: 4bfdac6f0f3170a3947c7196e2e9a2e49c943719
   YLMoment: 5c2cc5235b235912c3706c4a9de36c496d80b127
 
-COCOAPODS: 0.36.3
+COCOAPODS: 0.36.4

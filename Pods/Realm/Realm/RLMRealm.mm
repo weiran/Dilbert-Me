@@ -20,24 +20,24 @@
 
 #import "RLMArray_Private.hpp"
 #import "RLMMigration_Private.h"
+#import "RLMObject_Private.h"
 #import "RLMObjectSchema_Private.hpp"
 #import "RLMObjectStore.h"
-#import "RLMObject_Private.h"
 #import "RLMQueryUtil.hpp"
 #import "RLMRealmUtil.h"
 #import "RLMSchema_Private.h"
 #import "RLMUpdateChecker.hpp"
 #import "RLMUtil.hpp"
 
-#include <sys/types.h>
 #include <sys/sysctl.h>
+#include <sys/types.h>
 
-#include <tightdb/version.hpp>
-#include <tightdb/commit_log.hpp>
+#include <realm/commit_log.hpp>
+#include <realm/version.hpp>
 
 using namespace std;
-using namespace tightdb;
-using namespace tightdb::util;
+using namespace realm;
+using namespace realm::util;
 
 // Notification Token
 
@@ -51,15 +51,15 @@ using namespace tightdb::util;
 {
     if (_realm || _block) {
         NSLog(@"RLMNotificationToken released without unregistering a notification. You must hold "
-               "on to the RLMNotificationToken returned from addNotificationBlock and call "
-               "removeNotification: when you no longer wish to recieve RLMRealm notifications.");
+              @"on to the RLMNotificationToken returned from addNotificationBlock and call "
+              @"removeNotification: when you no longer wish to recieve RLMRealm notifications.");
     }
 }
 @end
 
 using namespace std;
-using namespace tightdb;
-using namespace tightdb::util;
+using namespace realm;
+using namespace realm::util;
 
 //
 // Global encryption key cache and validation
@@ -144,7 +144,7 @@ static NSString * const c_defaultRealmFileName = @"default.realm";
 }
 
 + (BOOL)isCoreDebug {
-    return tightdb::Version::has_feature(tightdb::feature_Debug);
+    return realm::Version::has_feature(realm::feature_Debug);
 }
 
 + (void)initialize {
@@ -175,8 +175,8 @@ static NSString * const c_defaultRealmFileName = @"default.realm";
                 _group = _readGroup.get();
             }
             else {
-                _replication.reset(tightdb::makeWriteLogCollector(path.UTF8String, false,
-                                                                  static_cast<const char *>(key.bytes)));
+                _replication = realm::makeWriteLogCollector(path.UTF8String, false,
+                                                            static_cast<const char *>(key.bytes));
                 SharedGroup::DurabilityLevel durability = inMemory ? SharedGroup::durability_MemOnly :
                                                                      SharedGroup::durability_Full;
                 _sharedGroup = make_unique<SharedGroup>(*_replication, durability,
@@ -221,7 +221,7 @@ static NSString * const c_defaultRealmFileName = @"default.realm";
     return self;
 }
 
-- (tightdb::Group *)getOrCreateGroup {
+- (realm::Group *)getOrCreateGroup {
     if (!_group) {
         _group = &const_cast<Group&>(_sharedGroup->begin_read());
     }
@@ -362,7 +362,8 @@ static id RLMAutorelease(id value) {
         if (readonly || (dynamic && !customSchema)) {
             // for readonly realms and dynamic realms without a custom schema just set the schema
             if (RLMRealmSchemaVersion(realm) == RLMNotVersioned) {
-                @throw RLMException(@"Cannot open an uninitialized realm in read-only mode");
+                RLMSetErrorOrThrow([NSError errorWithDomain:RLMErrorDomain code:RLMErrorFail userInfo:@{NSLocalizedDescriptionKey:@"Cannot open an uninitialized realm in read-only mode"}], outError);
+                return nil;
             }
             RLMSchema *targetSchema = readonly ? [RLMSchema.sharedSchema copy] : [RLMSchema dynamicSchemaFromRealm:realm];
             RLMRealmSetSchema(realm, targetSchema, true);
@@ -436,6 +437,7 @@ static id RLMAutorelease(id value) {
     clearMigrationCache();
     clearKeyCache();
     RLMClearRealmCache();
+    s_defaultRealmPath = [RLMRealm writeablePathForFile:c_defaultRealmFileName];
 }
 
 static void CheckReadWrite(RLMRealm *realm, NSString *msg=@"Cannot write to a read-only Realm") {
