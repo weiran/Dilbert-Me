@@ -11,7 +11,7 @@
 #import "Comic.h"
 
 #import <AFNetworking/AFNetworking.h>
-#import <PromiseKit-AFNetworking/AFNetworking+PromiseKit.h>
+#import "AFNetworking+PromiseKit.h"
 #import <HTMLReader/HTMLReader.h>
 #import <YLMoment/YLMoment.h>
 #import <QuickLook/QuickLook.h>
@@ -46,7 +46,7 @@
         for (HTMLElement *element in comicItems) {
             [promises addObject:[DilbertManager parseComic:element]];
         }
-        return [PMKPromise when:promises];
+        return PMKWhen(promises);
     })
     .then(^(NSArray* comics) {
         Comic *latestComic = [self.comics firstObject];
@@ -70,18 +70,25 @@
 
 
 + (PMKPromise *)parseComic:(HTMLElement *)element {
-    NSString *comicDateString = [[element firstNodeMatchingSelector:@"h3.comic-item-date span a date"] textContent];
-    NSDate *comicDate = [[YLMoment momentWithDateAsString:comicDateString] date];
-    
-    // get image
-    HTMLElement *todaysComicImgElement = [element firstNodeMatchingSelector:@"img.img-comic"];
-    NSString *todaysComicImageURL = [todaysComicImgElement attributes][@"src"];
-    
-    return [AFHTTPRequestOperation request:[NSURLRequest requestWithURL:[NSURL URLWithString:todaysComicImageURL]]]
-    .then(^(id responseObject) {
-        NSImage *image = [[NSImage alloc] initWithData:responseObject];
-        return [[Comic alloc] initWithDate:comicDate image:image];
-    });
+    return [PMKPromise promiseWithResolverBlock:^(PMKResolver resolve) {
+        // get date
+        NSString *comicDateString = [[element firstNodeMatchingSelector:@"date span:first-of-type"] textContent];
+        NSDate *comicDate = [[YLMoment momentWithDateAsString:comicDateString] date];
+        
+        // get image
+        HTMLElement *todaysComicImgElement = [element firstNodeMatchingSelector:@"img.img-comic"];
+        NSString *todaysComicImageURL = [todaysComicImgElement attributes][@"src"];
+        
+        [AFHTTPRequestOperation request:[NSURLRequest requestWithURL:[NSURL URLWithString:todaysComicImageURL]]]
+        .then(^(id responseObject) {
+            NSImage *image = [[NSImage alloc] initWithData:responseObject];
+            Comic *comic = [[Comic alloc] initWithDate:comicDate image:image];
+            resolve(comic);
+        })
+        .catch(^(NSError *error){
+            resolve(error);
+        });
+    }];
 }
 
 
