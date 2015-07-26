@@ -105,6 +105,11 @@ typedef NS_ENUM(NSInteger, HTMLInsertionMode)
     return self;
 }
 
+- (instancetype)init
+{
+    return [self initWithString:@"" encoding:(HTMLStringEncoding){.encoding = NSUTF8StringEncoding, .confidence = Tentative} context:nil];
+}
+
 - (NSString *)string
 {
     return _tokenizer.string;
@@ -196,7 +201,7 @@ typedef NS_ENUM(NSInteger, HTMLInsertionMode)
     {
         [self addParseError:@"Invalid DOCTYPE"];
     }
-    _document.documentType = [[HTMLDocumentType alloc] initWithName:token.name
+    _document.documentType = [[HTMLDocumentType alloc] initWithName:(token.name ?: @"html")
                                                    publicIdentifier:token.publicIdentifier
                                                    systemIdentifier:token.systemIdentifier];
     _document.quirksMode = ^{
@@ -3176,11 +3181,6 @@ static HTMLMarker *instance = nil;
 + (instancetype)marker
 {
     return instance;
-}
-
-- (id)init
-{
-    return self;
 }
 
 #pragma mark NSCopying

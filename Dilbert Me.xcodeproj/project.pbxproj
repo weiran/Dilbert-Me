@@ -18,7 +18,7 @@
 		246D12BC1A6A807B00D77FD0 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 246D12BB1A6A807B00D77FD0 /* Cocoa.framework */; };
 		246D12BF1A6ABF8400D77FD0 /* DilbertMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 246D12BE1A6ABF8400D77FD0 /* DilbertMenu.xib */; };
 		246D12C21A6AC06F00D77FD0 /* DilbertMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 246D12C11A6AC06F00D77FD0 /* DilbertMenu.m */; };
-		3621C539B2AA35C9E437D589 /* libPods-Dilbert Me.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F6DD069813AE85D5C8B927A7 /* libPods-Dilbert Me.a */; };
+		E3F55030FA1E07DB33E34251 /* Pods_Dilbert_Me.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D73F6CE14AA0C5931ABA9FD /* Pods_Dilbert_Me.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,8 +41,8 @@
 		246D12BE1A6ABF8400D77FD0 /* DilbertMenu.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DilbertMenu.xib; sourceTree = "<group>"; };
 		246D12C01A6AC06F00D77FD0 /* DilbertMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DilbertMenu.h; sourceTree = "<group>"; };
 		246D12C11A6AC06F00D77FD0 /* DilbertMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DilbertMenu.m; sourceTree = "<group>"; };
+		5D73F6CE14AA0C5931ABA9FD /* Pods_Dilbert_Me.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Dilbert_Me.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CDB7089C1B13C7D92D267C50 /* Pods-Dilbert Me.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Dilbert Me.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Dilbert Me/Pods-Dilbert Me.debug.xcconfig"; sourceTree = "<group>"; };
-		F6DD069813AE85D5C8B927A7 /* libPods-Dilbert Me.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Dilbert Me.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,7 +53,7 @@
 				246D12BC1A6A807B00D77FD0 /* Cocoa.framework in Frameworks */,
 				246D12BA1A6A807600D77FD0 /* Quartz.framework in Frameworks */,
 				246D12B81A6A79D500D77FD0 /* QuickLook.framework in Frameworks */,
-				3621C539B2AA35C9E437D589 /* libPods-Dilbert Me.a in Frameworks */,
+				E3F55030FA1E07DB33E34251 /* Pods_Dilbert_Me.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -113,7 +113,7 @@
 				246D12BB1A6A807B00D77FD0 /* Cocoa.framework */,
 				246D12B91A6A807600D77FD0 /* Quartz.framework */,
 				246D12B71A6A79D500D77FD0 /* QuickLook.framework */,
-				F6DD069813AE85D5C8B927A7 /* libPods-Dilbert Me.a */,
+				5D73F6CE14AA0C5931ABA9FD /* Pods_Dilbert_Me.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -139,6 +139,7 @@
 				246D12881A6A6EAA00D77FD0 /* Frameworks */,
 				246D12891A6A6EAA00D77FD0 /* Resources */,
 				5F4167AA18A8837997907524 /* Copy Pods Resources */,
+				3C968807D4A90ABF91AB3D9C /* Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -160,6 +161,7 @@
 				TargetAttributes = {
 					246D128A1A6A6EAA00D77FD0 = {
 						CreatedOnToolsVersion = 6.1.1;
+						DevelopmentTeam = 2KB59GPA9B;
 					};
 				};
 			};
@@ -195,6 +197,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		3C968807D4A90ABF91AB3D9C /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Dilbert Me/Pods-Dilbert Me-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		5F4167AA18A8837997907524 /* Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -335,6 +352,7 @@
 			baseConfigurationReference = CDB7089C1B13C7D92D267C50 /* Pods-Dilbert Me.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREFIX_HEADER = "Dilbert Me/DilbertMe-Prefix.pch";
 				INFOPLIST_FILE = "Dilbert Me/Info.plist";
@@ -348,6 +366,7 @@
 			baseConfigurationReference = 1BBE9967E9CDF0CCBEB644A2 /* Pods-Dilbert Me.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREFIX_HEADER = "Dilbert Me/DilbertMe-Prefix.pch";
 				INFOPLIST_FILE = "Dilbert Me/Info.plist";

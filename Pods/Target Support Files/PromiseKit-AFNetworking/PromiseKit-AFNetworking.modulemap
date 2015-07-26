@@ -1,0 +1,6 @@
+framework module PromiseKit_AFNetworking {
+  umbrella header "PromiseKit-AFNetworking-umbrella.h"
+
+  export *
+  module * { export * }
+}

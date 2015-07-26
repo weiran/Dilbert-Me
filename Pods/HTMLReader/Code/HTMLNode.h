@@ -2,11 +2,12 @@
 //
 //  Public domain. https://github.com/nolanw/HTMLReader
 
-#import <Foundation/Foundation.h>
+#import <HTMLReader/HTMLNamespace.h>
+#import <HTMLReader/HTMLSupport.h>
 @class HTMLDocument;
 @class HTMLElement;
-#import "HTMLNamespace.h"
-#import "HTMLSupport.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
     HTMLNode is an abstract class representing a node in a parsed HTML tree.
@@ -21,22 +22,22 @@
 - (instancetype)init NS_DESIGNATED_INITIALIZER;
 
 /// The document in which this node appears, or nil if the node is not in a tree with a document at its root.
-@property (readonly, strong, nonatomic) HTMLDocument *document;
+@property (readonly, strong, nonatomic) HTMLDocument * __nullable document;
 
 /// The node's parent, or nil if the node is a root node.
-@property (weak, nonatomic) HTMLNode *parentNode;
+@property (weak, nonatomic) HTMLNode * __nullable parentNode;
 
 /// The node's parent if it is an instance of HTMLElement, otherwise nil. Setter is equivalent to calling -setParentNode:.
-@property (weak, nonatomic) HTMLElement *parentElement;
+@property (weak, nonatomic) HTMLElement * __nullable parentElement;
 
 /// Removes the node from its parent, effectively detaching it from the tree.
 - (void)removeFromParentNode;
 
 /// The node's children. Each is an instance of HTMLNode. Key-Value Coding compliant for accessing and mutation.
-@property (readonly, copy, nonatomic) NSOrderedSet *children;
+@property (readonly, copy, nonatomic) HTMLOrderedSetOf(HTMLNode *) *children;
 
 /// Convenience method that returns a mutable proxy for children. The proxy returned by -mutableChildren is much faster than the one obtained by calling -mutableOrderedSetValueForKey: yourself.
-@property (readonly, nonatomic) NSMutableOrderedSet *mutableChildren;
+@property (readonly, nonatomic) HTMLMutableOrderedSetOf(HTMLNode *) *mutableChildren;
 
 /**
     The number of nodes that have the node as their parent.
@@ -60,17 +61,17 @@
 - (NSUInteger)indexOfChild:(HTMLNode *)child;
 
 /// The node's children which are instances of HTMLElement.
-@property (readonly, copy, nonatomic) NSArray *childElementNodes;
+@property (readonly, copy, nonatomic) HTMLArrayOf(HTMLElement *) *childElementNodes;
 
 /**
     Emits in tree order the nodes in the subtree rooted at the node.
  
     For more information, see http://www.whatwg.org/specs/web-apps/current-work/multipage/infrastructure.html#tree-order
  */
-- (NSEnumerator *)treeEnumerator;
+- (HTMLEnumeratorOf(HTMLNode *) *)treeEnumerator;
 
 /// Emits in tree order the node in the subree rooted at the node, except children are enumerated back to front.
-- (NSEnumerator *)reversedTreeEnumerator;
+- (HTMLEnumeratorOf(HTMLNode *) *)reversedTreeEnumerator;
 
 /**
     The combined text content of the node and its descendants. The setter replaces the node's text, removing all descendants.
@@ -88,3 +89,5 @@
 - (void)insertString:(NSString *)string atChildNodeIndex:(NSUInteger)childNodeIndex;
 
 @end
+
+NS_ASSUME_NONNULL_END

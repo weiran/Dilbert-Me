@@ -7,19 +7,21 @@
 #import "HTMLTextNode.h"
 #import "HTMLTreeEnumerator.h"
 
-@interface HTMLChildrenRelationshipProxy : NSMutableOrderedSet
+NS_ASSUME_NONNULL_BEGIN
 
-- (instancetype)initWithNode:(HTMLNode *)node children:(NSMutableOrderedSet *)children;
+@interface HTMLChildrenRelationshipProxy : HTMLGenericOf(NSMutableOrderedSet, HTMLNode *)
+
+- (instancetype)initWithNode:(HTMLNode *)node children:(HTMLMutableOrderedSetOf(HTMLNode *) *)children;
 
 @property (readonly, strong, nonatomic) HTMLNode *node;
 
-@property (readonly, strong, nonatomic) NSMutableOrderedSet *children;
+@property (readonly, strong, nonatomic) HTMLMutableOrderedSetOf(HTMLNode *) *children;
 
 @end
 
 @implementation HTMLNode
 {
-    NSMutableOrderedSet *_children;
+    HTMLMutableOrderedSetOf(HTMLNode *) *_children;
 }
 
 - (instancetype)init
@@ -30,7 +32,7 @@
     return self;
 }
 
-- (HTMLDocument *)document
+- (HTMLDocument * __nullable)document
 {
     HTMLNode *currentNode = self.parentNode;
     while (currentNode && ![currentNode isKindOfClass:[HTMLDocument class]]) {
@@ -39,12 +41,12 @@
     return (HTMLDocument *)currentNode;
 }
 
-- (void)setParentNode:(HTMLNode *)parentNode
+- (void)setParentNode:(HTMLNode * __nullable)parentNode
 {
     [self setParentNode:parentNode updateChildren:YES];
 }
 
-- (void)setParentNode:(HTMLNode *)parentNode updateChildren:(BOOL)updateChildren
+- (void)setParentNode:(HTMLNode * __nullable)parentNode updateChildren:(BOOL)updateChildren
 {
     [_parentNode removeChild:self updateParentNode:NO];
     _parentNode = parentNode;
@@ -53,13 +55,13 @@
     }
 }
 
-- (HTMLElement *)parentElement
+- (HTMLElement * __nullable)parentElement
 {
     HTMLNode *parent = self.parentNode;
     return [parent isKindOfClass:[HTMLElement class]] ? (HTMLElement *)parent : nil;
 }
 
-- (void)setParentElement:(HTMLElement *)parentElement
+- (void)setParentElement:(HTMLElement * __nullable)parentElement
 {
     self.parentNode = parentElement;
 }
@@ -69,7 +71,7 @@
     [self.parentNode.mutableChildren removeObject:self];
 }
 
-- (NSOrderedSet *)children
+- (HTMLOrderedSetOf(HTMLNode *) *)children
 {
     return [_children copy];
 }
@@ -86,7 +88,7 @@
 //
 // Note that -mutableOrderedSetValueForKey: will still work for the key "children", it'll just be slow.
 
-- (NSMutableOrderedSet *)mutableChildren
+- (HTMLMutableOrderedSetOf(HTMLNode *) *)mutableChildren
 {
     return [[HTMLChildrenRelationshipProxy alloc] initWithNode:self children:_children];
 }
@@ -162,6 +164,8 @@
 
 - (void)insertString:(NSString *)string atChildNodeIndex:(NSUInteger)index
 {
+    NSParameterAssert(string);
+    
     id candidate = index > 0 ? _children[index - 1] : nil;
     HTMLTextNode *textNode;
     if ([candidate isKindOfClass:[HTMLTextNode class]]) {
@@ -173,7 +177,7 @@
     [textNode appendString:string];
 }
 
-- (NSArray *)childElementNodes
+- (HTMLArrayOf(HTMLElement *) *)childElementNodes
 {
 	NSMutableArray *childElements = [NSMutableArray arrayWithCapacity:self.numberOfChildren];
 	for (id node in _children) {
@@ -184,12 +188,12 @@
 	return childElements;
 }
 
-- (NSEnumerator *)treeEnumerator
+- (HTMLEnumeratorOf(HTMLNode *) *)treeEnumerator
 {
     return [[HTMLTreeEnumerator alloc] initWithNode:self reversed:NO];
 }
 
-- (NSEnumerator *)reversedTreeEnumerator
+- (HTMLEnumeratorOf(HTMLNode *) *)reversedTreeEnumerator
 {
 	return [[HTMLTreeEnumerator alloc] initWithNode:self reversed:YES];
 }
@@ -207,6 +211,8 @@
 
 - (void)setTextContent:(NSString *)textContent
 {
+    NSParameterAssert(textContent);
+    
     [[self mutableChildren] removeAllObjects];
     if (textContent.length > 0) {
         HTMLTextNode *textNode = [[HTMLTextNode alloc] initWithData:textContent];
@@ -216,7 +222,7 @@
 
 #pragma mark NSCopying
 
-- (id)copyWithZone:(NSZone *)zone
+- (id)copyWithZone:(NSZone * __nullable)zone
 {
     return [[self.class allocWithZone:zone] init];
 }
@@ -278,3 +284,5 @@
 }
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -29,12 +29,18 @@
 #import "RLMUpdateChecker.hpp"
 #import "RLMUtil.hpp"
 
+<<<<<<< HEAD
+#include <realm/commit_log.hpp>
+#include <realm/version.hpp>
+
+=======
 #include <sys/sysctl.h>
 #include <sys/types.h>
 
 #include <realm/commit_log.hpp>
 #include <realm/version.hpp>
 
+>>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
 using namespace std;
 using namespace realm;
 using namespace realm::util;
@@ -64,8 +70,38 @@ using namespace realm::util;
 //
 // Global encryption key cache and validation
 //
+<<<<<<< HEAD
+
+static bool shouldForciblyDisableEncryption()
+{
+    static bool disableEncryption = getenv("REALM_DISABLE_ENCRYPTION");
+    return disableEncryption;
+}
+
 static NSMutableDictionary *s_keysPerPath = [NSMutableDictionary new];
 static NSData *keyForPath(NSString *path) {
+    if (shouldForciblyDisableEncryption()) {
+        return nil;
+=======
+static NSMutableDictionary *s_keysPerPath = [NSMutableDictionary new];
+static NSData *keyForPath(NSString *path) {
+    @synchronized (s_keysPerPath) {
+        return s_keysPerPath[path];
+    }
+}
+
+static void setKeyForPath(NSData *key, NSString *path) {
+    @synchronized (s_keysPerPath) {
+        if (key) {
+            s_keysPerPath[path] = key;
+        }
+        else {
+            [s_keysPerPath removeObjectForKey:path];
+        }
+>>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
+    }
+
+<<<<<<< HEAD
     @synchronized (s_keysPerPath) {
         return s_keysPerPath[path];
     }
@@ -85,10 +121,34 @@ static void setKeyForPath(NSData *key, NSString *path) {
 static void clearKeyCache() {
     @synchronized(s_keysPerPath) {
         [s_keysPerPath removeAllObjects];
+=======
+static void clearKeyCache() {
+    @synchronized(s_keysPerPath) {
+        [s_keysPerPath removeAllObjects];
     }
 }
 
 static NSData *validatedKey(NSData *key) {
+    if (key && key.length != 64) {
+        @throw RLMException(@"Encryption key must be exactly 64 bytes long");
+>>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
+    }
+    return key;
+}
+
+<<<<<<< HEAD
+static void validateNotInDebugger()
+{
+    if (RLMIsDebuggerAttached()) {
+        @throw RLMException(@"Cannot open an encrypted Realm with a debugger attached to the process");
+    }
+}
+
+static NSData *validatedKey(NSData *key) {
+    if (shouldForciblyDisableEncryption()) {
+        return nil;
+    }
+
     if (key && key.length != 64) {
         @throw RLMException(@"Encryption key must be exactly 64 bytes long");
     }
@@ -115,6 +175,28 @@ static RLMMigrationBlock migrationBlockForPath(NSString *path) {
     @synchronized(s_migrationBlocks) {
         return s_migrationBlocks[path];
     }
+=======
+//
+// Schema version and migration blocks
+//
+static NSMutableDictionary *s_migrationBlocks = [NSMutableDictionary new];
+static NSMutableDictionary *s_schemaVersions = [NSMutableDictionary new];
+
+static NSUInteger schemaVersionForPath(NSString *path) {
+    @synchronized(s_migrationBlocks) {
+        NSNumber *version = s_schemaVersions[path];
+        if (version) {
+            return [version unsignedIntegerValue];
+        }
+        return 0;
+    }
+}
+
+static RLMMigrationBlock migrationBlockForPath(NSString *path) {
+    @synchronized(s_migrationBlocks) {
+        return s_migrationBlocks[path];
+    }
+>>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
 }
 
 static void clearMigrationCache() {
@@ -170,6 +252,11 @@ static NSString * const c_defaultRealmFileName = @"default.realm";
 
         NSError *error = nil;
         try {
+            // NOTE: we do these checks here as is this is the first time encryption keys are used
+            if ((key = validatedKey(key))) {
+                validateNotInDebugger();
+            }
+
             if (readonly) {
                 _readGroup = make_unique<Group>(path.UTF8String, static_cast<const char *>(key.bytes));
                 _group = _readGroup.get();
@@ -192,6 +279,7 @@ static NSString * const c_defaultRealmFileName = @"default.realm";
         }
         catch (File::Exists const& ex) {
             error = RLMMakeError(RLMErrorFileExists, ex);
+<<<<<<< HEAD
         }
         catch (File::AccessError const& ex) {
             error = RLMMakeError(RLMErrorFileAccessError, ex);
@@ -217,6 +305,33 @@ static NSString * const c_defaultRealmFileName = @"default.realm";
             return nil;
         }
 
+=======
+        }
+        catch (File::AccessError const& ex) {
+            error = RLMMakeError(RLMErrorFileAccessError, ex);
+        }
+        catch (IncompatibleLockFile const&) {
+            NSString *err = @"Realm file is currently open in another process "
+                             "which cannot share access with this process. All "
+                             "processes sharing a single file must be the same "
+                             "architecture. For sharing files between the Realm "
+                             "Browser and an iOS simulator, this means that you "
+                             "must use a 64-bit simulator.";
+            error = [NSError errorWithDomain:RLMErrorDomain
+                                        code:RLMErrorIncompatibleLockFile
+                                    userInfo:@{NSLocalizedDescriptionKey: err,
+                                               @"Error Code": @(RLMErrorIncompatibleLockFile)}];
+        }
+        catch (exception const& ex) {
+            error = RLMMakeError(RLMErrorFail, ex);
+        }
+
+        if (error) {
+            RLMSetErrorOrThrow(error, outError);
+            return nil;
+        }
+
+>>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
     }
     return self;
 }
@@ -349,7 +464,11 @@ static id RLMAutorelease(id value) {
         return RLMAutorelease(realm);
     }
 
+<<<<<<< HEAD
+    key = key ?: keyForPath(path);
+=======
     key = validatedKey(key) ?: keyForPath(path);
+>>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
     realm = [[RLMRealm alloc] initWithPath:path key:key readOnly:readonly inMemory:inMemory dynamic:dynamic error:outError];
     if (outError && *outError) {
         return nil;
@@ -581,7 +700,52 @@ static void CheckReadWrite(RLMRealm *realm, NSString *msg=@"Cannot write to a re
     _group = nullptr;
     for (RLMObjectSchema *objectSchema in _schema.objectSchema) {
         objectSchema.table = nullptr;
+<<<<<<< HEAD
     }
+}
+
+/**
+ Replaces all string columns in this Realm with a string enumeration column and compacts the
+ database file.
+ 
+ Cannot be called from a write transaction.
+
+ Compaction will not occur if other `RLMRealm` instances exist.
+ 
+ While compaction is in progress, attempts by other threads or processes to open the database will
+ wait.
+ 
+ Be warned that resource requirements for compaction is proportional to the amount of live data in
+ the database.
+ 
+ Compaction works by writing the database contents to a temporary database file and then replacing
+ the database with the temporary one. The name of the temporary file is formed by appending
+ `.tmp_compaction_space` to the name of the database.
+
+ @return YES if the compaction succeeded.
+ */
+- (BOOL)compact
+{
+    RLMCheckThread(self);
+    BOOL compactSucceeded = NO;
+    if (!_inWriteTransaction) {
+        try {
+            for (RLMObjectSchema *objectSchema in _schema.objectSchema) {
+                objectSchema.table->optimize();
+            }
+            _sharedGroup->end_read();
+            compactSucceeded = _sharedGroup->compact();
+            _sharedGroup->begin_read();
+        }
+        catch (std::exception& ex) {
+            @throw RLMException(ex);
+        }
+    } else {
+        @throw RLMException(@"Can't compact a Realm within a write transaction");
+=======
+>>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
+    }
+    return compactSucceeded;
 }
 
 - (void)dealloc {
@@ -644,8 +808,13 @@ static void CheckReadWrite(RLMRealm *realm, NSString *msg=@"Cannot write to a re
     }
 }
 
+<<<<<<< HEAD
+- (void)addObject:(__unsafe_unretained RLMObject *const)object {
+    RLMAddObjectToRealm(object, self, false);
+=======
 - (void)addObject:(RLMObject *)object {
     RLMAddObjectToRealm(object, self, RLMCreationOptionsNone);
+>>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
 }
 
 - (void)addObjects:(id<NSFastEnumeration>)array {
@@ -665,7 +834,11 @@ static void CheckReadWrite(RLMRealm *realm, NSString *msg=@"Cannot write to a re
         @throw RLMException(reason);
     }
 
+<<<<<<< HEAD
+    RLMAddObjectToRealm(object, self, true);
+=======
     RLMAddObjectToRealm(object, self, RLMCreationOptionsUpdateOrCreate);
+>>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
 }
 
 - (void)addOrUpdateObjectsFromArray:(id)array {
@@ -728,15 +901,88 @@ static void CheckReadWrite(RLMRealm *realm, NSString *msg=@"Cannot write to a re
     return RLMGetObjects(self, objectClassName, predicate);
 }
 
+<<<<<<< HEAD
++ (void)setDefaultRealmSchemaVersion:(uint64_t)version withMigrationBlock:(RLMMigrationBlock)block {
+    [RLMRealm setSchemaVersion:version forRealmAtPath:[RLMRealm defaultRealmPath] withMigrationBlock:block];
+}
+
++ (void)setSchemaVersion:(uint64_t)version forRealmAtPath:(NSString *)realmPath withMigrationBlock:(RLMMigrationBlock)block {
+=======
 + (void)setDefaultRealmSchemaVersion:(NSUInteger)version withMigrationBlock:(RLMMigrationBlock)block {
     [RLMRealm setSchemaVersion:version forRealmAtPath:[RLMRealm defaultRealmPath] withMigrationBlock:block];
 }
 
 + (void)setSchemaVersion:(NSUInteger)version forRealmAtPath:(NSString *)realmPath withMigrationBlock:(RLMMigrationBlock)block {
+>>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
     if (RLMGetAnyCachedRealmForPath(realmPath)) {
         @throw RLMException(@"Cannot set schema version for Realms that are already open.");
     }
 
+<<<<<<< HEAD
+    if (version == RLMNotVersioned) {
+        @throw RLMException(@"Cannot set schema version to RLMNotVersioned.");
+    }
+
+    @synchronized(s_migrationBlocks) {
+        if (block) {
+            s_migrationBlocks[realmPath] = block;
+        }
+        else {
+            [s_migrationBlocks removeObjectForKey:realmPath];
+        }
+        s_schemaVersions[realmPath] = @(version);
+    }
+}
+
++ (uint64_t)schemaVersionAtPath:(NSString *)realmPath error:(NSError **)error {
+    return [RLMRealm schemaVersionAtPath:realmPath encryptionKey:nil error:error];
+}
+
++ (uint64_t)schemaVersionAtPath:(NSString *)realmPath encryptionKey:(NSData *)key error:(NSError **)outError {
+    key = validatedKey(key) ?: keyForPath(realmPath);
+    RLMRealm *realm = RLMGetThreadLocalCachedRealmForPath(realmPath);
+    if (!realm) {
+        NSError *error;
+        realm = [[RLMRealm alloc] initWithPath:realmPath key:key readOnly:YES inMemory:NO dynamic:YES error:&error];
+        if (error) {
+            RLMSetErrorOrThrow(error, outError);
+            return RLMNotVersioned;
+        }
+    }
+
+    return RLMRealmSchemaVersion(realm);
+}
+
++ (NSError *)migrateRealmAtPath:(NSString *)realmPath {
+    return [self migrateRealmAtPath:realmPath key:keyForPath(realmPath)];
+}
+
++ (NSError *)migrateRealmAtPath:(NSString *)realmPath encryptionKey:(NSData *)key {
+    if (!key) {
+        @throw RLMException(@"Encryption key must not be nil");
+    }
+
+    return [self migrateRealmAtPath:realmPath key:validatedKey(key)];
+}
+
++ (NSError *)migrateRealmAtPath:(NSString *)realmPath key:(NSData *)key {
+    if (RLMGetAnyCachedRealmForPath(realmPath)) {
+        @throw RLMException(@"Cannot migrate Realms that are already open.");
+    }
+
+    key = validatedKey(key) ?: keyForPath(realmPath);
+
+    NSError *error;
+    RLMRealm *realm = [[RLMRealm alloc] initWithPath:realmPath key:key readOnly:NO inMemory:NO dynamic:YES error:&error];
+    if (error)
+        return error;
+
+    return RLMUpdateRealmToSchemaVersion(realm, schemaVersionForPath(realmPath), [RLMSchema.sharedSchema copy], [realm migrationBlock:key]);
+}
+
+- (RLMObject *)createObject:(NSString *)className withValue:(id)value {
+    return (RLMObject *)RLMCreateObjectInRealmWithValue(self, className, value, false);
+=======
     @synchronized(s_migrationBlocks) {
         if (block) {
             s_migrationBlocks[realmPath] = block;
@@ -796,10 +1042,17 @@ static void CheckReadWrite(RLMRealm *realm, NSString *msg=@"Cannot write to a re
 
 - (RLMObject *)createObject:(NSString *)className withObject:(id)object {
     return (RLMObject *)RLMCreateObjectInRealmWithValue(self, className, object, RLMCreationOptionsNone);
+>>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
 }
 
 - (BOOL)writeCopyToPath:(NSString *)path key:(NSData *)key error:(NSError **)error {
     key = validatedKey(key) ?: keyForPath(path);
+<<<<<<< HEAD
+    if (key) {
+        validateNotInDebugger();
+    }
+=======
+>>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
 
     try {
         self.group->write(path.UTF8String, static_cast<const char *>(key.bytes));

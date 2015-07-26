@@ -102,6 +102,20 @@
         // if we have a new primary key not equal to our old one, verify uniqueness
         RLMProperty *primaryProperty = objectSchema.primaryKeyProperty;
         RLMProperty *oldPrimaryProperty = [[_oldRealm.schema schemaForClassName:objectSchema.className] primaryKeyProperty];
+<<<<<<< HEAD
+        if (!primaryProperty || primaryProperty == oldPrimaryProperty) {
+            continue;
+        }
+
+        realm::Table *table = objectSchema.table;
+        NSUInteger count = table->size();
+        if (!table->has_search_index(primaryProperty.column)) {
+            table->add_search_index(primaryProperty.column);
+        }
+        if (table->get_distinct_view(primaryProperty.column).size() != count) {
+            NSString *reason = [NSString stringWithFormat:@"Primary key property '%@' has duplicate values after migration.", primaryProperty.name];
+            @throw RLMException(reason);
+=======
         if (primaryProperty && primaryProperty != oldPrimaryProperty) {
             // FIXME: replace with count of distinct once we support indexing
 
@@ -125,6 +139,7 @@
                     }
                 }
             }
+>>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
         }
     }
 }
@@ -140,7 +155,7 @@
         }
 
         // apply block and set new schema version
-        NSUInteger oldVersion = RLMRealmSchemaVersion(_realm);
+        uint64_t oldVersion = RLMRealmSchemaVersion(_realm);
         block(self, oldVersion);
 
         // verify uniqueness for any new unique columns before committing
@@ -151,12 +166,40 @@
     }
 }
 
--(RLMObject *)createObject:(NSString *)className withObject:(id)object {
-    return [_realm createObject:className withObject:object];
+-(RLMObject *)createObject:(NSString *)className withValue:(id)value {
+    return [_realm createObject:className withValue:value];
+}
+
+- (RLMObject *)createObject:(NSString *)className withObject:(id)object {
+    return [self createObject:className withValue:object];
 }
 
 - (void)deleteObject:(RLMObject *)object {
     [_realm deleteObject:object];
+}
+
+- (BOOL)deleteDataForClassName:(NSString *)name {
+    if (!name) {
+        return false;
+    }
+
+    size_t table = _realm.group->find_table(RLMStringDataWithNSString(RLMTableNameForClass(name)));
+    if (table == realm::not_found) {
+        return false;
+    }
+
+    if ([_realm.schema schemaForClassName:name]) {
+        _realm.group->get_table(table)->clear();
+    }
+    else {
+        _realm.group->remove_table(table);
+
+        if (RLMRealmPrimaryKeyForObjectClass(_realm, name)) {
+            RLMRealmSetPrimaryKeyForObjectClass(_realm, name, nil);
+        }
+    }
+
+    return true;
 }
 
 @end

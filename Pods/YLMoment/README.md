@@ -1,4 +1,4 @@
-## YLMoment [![Supported Plateforms](https://cocoapod-badges.herokuapp.com/p/YLMoment/badge.svg)](http://cocoadocs.org/docsets/YLMoment/) [![Version](https://cocoapod-badges.herokuapp.com/v/YLMoment/badge.svg)](http://cocoadocs.org/docsets/YLMoment/) [![Build Status](https://travis-ci.org/YannickL/YLMoment.png?branch=master)](https://travis-ci.org/YannickL/YLMoment) [![Coverage Status](https://coveralls.io/repos/YannickL/YLMoment/badge.png?branch=master)](https://coveralls.io/r/YannickL/YLMoment?branch=master)
+## YLMoment [![Supported Plateforms](https://cocoapod-badges.herokuapp.com/p/YLMoment/badge.svg)](http://cocoadocs.org/docsets/YLMoment/) [![Version](https://cocoapod-badges.herokuapp.com/v/YLMoment/badge.svg)](http://cocoadocs.org/docsets/YLMoment/) [![Build Status](https://travis-ci.org/yannickl/YLMoment.png?branch=master)](https://travis-ci.org/YannickL/YLMoment) [![Coverage Status](https://coveralls.io/repos/YannickL/YLMoment/badge.png?branch=master)](https://coveralls.io/r/YannickL/YLMoment?branch=master)
 
 YLMoment is a library which provides an high abstraction level for parsing, validating, manipulating, and formatting the dates in Objective-C.
 
@@ -28,6 +28,7 @@ Go to the directory of your Xcode project, and Create and Edit your Podfile and 
 $ cd /path/to/MyProject
 $ touch Podfile
 $ edit Podfile
+source 'https://github.com/CocoaPods/Specs.git'
 platform :ios, '5.0'
 # Or platform :osx, '10.8'
 pod 'YLMoment', '~> 0.2.0'

@@ -1,0 +1,6 @@
+framework module YLMoment {
+  umbrella header "YLMoment-umbrella.h"
+
+  export *
+  module * { export * }
+}

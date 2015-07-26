@@ -2,6 +2,10 @@
 //
 //  Public domain. https://github.com/nolanw/HTMLReader
 
+#import <HTMLReader/HTMLSupport.h>
+
+NS_ASSUME_NONNULL_BEGIN
+
 /**
     HTMLDocumentQuirksMode can change parts of the parsing algorithm.
  
@@ -18,3 +22,5 @@ typedef NS_ENUM(NSInteger, HTMLQuirksMode)
     /// A quirks mode for (XHTML 1.0 or HTML 4.01) (Frameset or Transitional).
     HTMLQuirksModeLimitedQuirks,
 };
+
+NS_ASSUME_NONNULL_END

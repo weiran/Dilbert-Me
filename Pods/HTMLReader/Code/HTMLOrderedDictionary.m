@@ -4,10 +4,17 @@
 
 #import "HTMLOrderedDictionary.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
+#if !__has_feature(objc_generic)
+    #define KeyType id
+    #define ObjectType id
+#endif
+
 @implementation HTMLOrderedDictionary
 {
     CFMutableDictionaryRef _map;
-    NSMutableArray *_keys;
+    HTMLGenericOf(NSMutableArray, KeyType) *_keys;
 }
 
 - (instancetype)initWithCapacity:(NSUInteger)numItems
@@ -22,7 +29,7 @@
 // Diagnostic needs ignoring on iOS 5.
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wmismatched-parameter-types"
-- (instancetype)initWithObjects:(const id [])objects forKeys:(const id <NSCopying> [])keys count:(NSUInteger)count
+- (instancetype)initWithObjects:(const ObjectType [])objects forKeys:(const KeyType <NSCopying> [])keys count:(NSUInteger)count
 #pragma clang diagnostic pop
 {
     if ((self = [self initWithCapacity:count])) {
@@ -44,7 +51,7 @@
     return [self initWithCapacity:0];
 }
 
-- (id)initWithCoder:(NSCoder *)coder
+- (id __nullable)initWithCoder:(NSCoder *)coder
 {
     NSDictionary *map = [coder decodeObjectForKey:@"map"];
     NSArray *keys = [coder decodeObjectForKey:@"keys"];
@@ -60,7 +67,7 @@
     CFRelease(_map);
 }
 
-- (Class)classForKeyedArchiver
+- (Class __nullable)classForKeyedArchiver
 {
     return [self class];
 }
@@ -71,14 +78,14 @@
     [coder encodeObject:_keys forKey:@"keys"];
 }
 
-- (id)copyWithZone:(NSZone *)zone
+- (id)copyWithZone:(NSZone * __nullable)zone
 {
     HTMLOrderedDictionary *copy = [[[self class] allocWithZone:zone] initWithCapacity:self.count];
     [copy addEntriesFromDictionary:self];
     return copy;
 }
 
-- (id)mutableCopyWithZone:(NSZone *)zone
+- (id)mutableCopyWithZone:(NSZone * __nullable)zone
 {
     return [self copyWithZone:zone];
 }
@@ -88,12 +95,14 @@
     return _keys.count;
 }
 
-- (id)objectForKey:(id)key
+- (ObjectType __nullable)objectForKey:(KeyType)key
 {
+    NSParameterAssert(key);
+    
     return (__bridge id)CFDictionaryGetValue(_map, (__bridge const void *)key);
 }
 
-- (NSUInteger)indexOfKey:(id)key
+- (NSUInteger)indexOfKey:(KeyType)key
 {
     if ([self objectForKey:key]) {
         return [_keys indexOfObject:key];
@@ -102,17 +111,17 @@
     }
 }
 
-- (id)firstKey
+- (KeyType)firstKey
 {
     return _keys.firstObject;
 }
 
-- (id)lastKey
+- (KeyType)lastKey
 {
     return _keys.lastObject;
 }
 
-- (void)setObject:(id)object forKey:(id)key
+- (void)setObject:(ObjectType)object forKey:(KeyType)key
 {
     if (!object) [NSException raise:NSInvalidArgumentException format:@"%@ object cannot be nil", NSStringFromSelector(_cmd)];
     if (!key) [NSException raise:NSInvalidArgumentException format:@"%@ key cannot be nil", NSStringFromSelector(_cmd)];
@@ -120,7 +129,7 @@
     [self insertObject:object forKey:key atIndex:self.count];
 }
 
-- (void)removeObjectForKey:(id)key
+- (void)removeObjectForKey:(KeyType)key
 {
     if (!key) [NSException raise:NSInvalidArgumentException format:@"%@ key cannot be nil", NSStringFromSelector(_cmd)];
     
@@ -130,7 +139,7 @@
     }
 }
 
-- (void)insertObject:(id)object forKey:(id)key atIndex:(NSUInteger)index
+- (void)insertObject:(ObjectType)object forKey:(KeyType)key atIndex:(NSUInteger)index
 {
     if (!object) [NSException raise:NSInvalidArgumentException format:@"%@ object cannot be nil", NSStringFromSelector(_cmd)];
     if (!key) [NSException raise:NSInvalidArgumentException format:@"%@ key cannot be nil", NSStringFromSelector(_cmd)];
@@ -143,12 +152,12 @@
     CFDictionarySetValue(_map, (__bridge const void *)key, (__bridge const void *)object);
 }
 
-- (NSEnumerator *)keyEnumerator
+- (HTMLEnumeratorOf(KeyType) *)keyEnumerator
 {
     return _keys.objectEnumerator;
 }
 
-- (id)objectAtIndexedSubscript:(NSUInteger)index
+- (ObjectType)objectAtIndexedSubscript:(NSUInteger)index
 {
     return _keys[index];
 }
@@ -159,3 +168,5 @@
 }
 
 @end
+
+NS_ASSUME_NONNULL_END

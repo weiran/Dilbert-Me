@@ -4,6 +4,30 @@
 
 #import <Foundation/Foundation.h>
 
+// Objective-C generics arrived in Xcode 7.
+#if __has_feature(objc_generic)
+    #define HTMLGenericElse(T, Else) T
+    #define HTMLGenericOf(T, args...) T<args>
+#else
+    #define HTMLGenericElse(T, Else) Else
+    #define HTMLGenericOf(T, ...) T
+#endif
+
+#define HTMLArrayOf(T) HTMLGenericOf(NSArray, T)
+#define HTMLDictOf(K, V) HTMLGenericOf(NSDictionary, K, V)
+#define HTMLEnumeratorOf(T) HTMLGenericOf(NSEnumerator, T)
+#define HTMLMutableOrderedSetOf(T) HTMLGenericOf(NSMutableOrderedSet, T)
+#define HTMLOrderedSetOf(T) HTMLGenericOf(NSOrderedSet, T)
+
+// Nullability arrived in Xcode 6.3, let's degrade gracefully. I've left out the non-underscore-prefixed bits out of fear of unfortunate name collisions.
+#if !__has_feature(nullability)
+    #define NS_ASSUME_NONNULL_BEGIN
+    #define NS_ASSUME_NONNULL_END
+    #define __nullable
+    #define __nonnull
+    #define __null_unspecified
+#endif
+
 // NS_DESIGNATED_INITIALIZER arrived in Xcode 6, but we can use it earlier, and it's handy documentation even when it's unavailable as a compiler attribute.
 #ifndef NS_DESIGNATED_INITIALIZER
     #if __has_attribute(objc_designated_initializer)
