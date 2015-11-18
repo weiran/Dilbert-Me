@@ -6,14 +6,14 @@
  *
  *************************************************************************/
 
-#define REALM_VERSION "0.89.0"
+#define REALM_VERSION "unknown"
 
-#define REALM_INSTALL_PREFIX      "/usr/local"
-#define REALM_INSTALL_EXEC_PREFIX "/usr/local"
-#define REALM_INSTALL_INCLUDEDIR  "/usr/local/include"
-#define REALM_INSTALL_BINDIR      "/usr/local/bin"
-#define REALM_INSTALL_LIBDIR      "/usr/local/lib"
-#define REALM_INSTALL_LIBEXECDIR  "/usr/local/libexec"
+#define REALM_INSTALL_PREFIX      "/Users/tightdb/workspace/core_osx/install"
+#define REALM_INSTALL_EXEC_PREFIX "/Users/tightdb/workspace/core_osx/install"
+#define REALM_INSTALL_INCLUDEDIR  "/Users/tightdb/workspace/core_osx/install/include"
+#define REALM_INSTALL_BINDIR      "/Users/tightdb/workspace/core_osx/install/bin"
+#define REALM_INSTALL_LIBDIR      "/Users/tightdb/workspace/core_osx/install/lib"
+#define REALM_INSTALL_LIBEXECDIR  "/Users/tightdb/workspace/core_osx/install/libexec"
 
 #ifdef REALM_DEBUG
 #  define REALM_MAX_BPNODE_SIZE 1000

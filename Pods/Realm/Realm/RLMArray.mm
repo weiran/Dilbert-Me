@@ -18,10 +18,6 @@
 
 #import "RLMArray_Private.hpp"
 
-<<<<<<< HEAD
-=======
-#import "RLMObject.h"
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
 #import "RLMObject_Private.h"
 #import "RLMObjectStore.h"
 #import "RLMObjectSchema.h"
@@ -179,15 +175,12 @@ static void RLMValidateMatchingObjectType(RLMArray *array, RLMObject *object) {
     [_backingArray setValue:value forKey:key];
 }
 
-<<<<<<< HEAD
 - (NSUInteger)indexOfObjectWithPredicate:(NSPredicate *)predicate {
     return [_backingArray indexOfObjectPassingTest:^BOOL(id obj, NSUInteger, BOOL *) {
         return [predicate evaluateWithObject:obj];
     }];
 }
 
-=======
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
 //
 // Methods unsupported on standalone RLMArray instances
 //

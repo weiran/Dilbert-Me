@@ -14,11 +14,7 @@
 		</dict>
 		<dict>
 			<key>FooterText</key>
-<<<<<<< HEAD
 			<string>Copyright (c) 2011&#8211;2015 Alamofire Software Foundation (http://alamofire.org/)
-=======
-			<string>Copyright (c) 2013-2015 AFNetworking (http://afnetworking.com/)
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -54,17 +50,6 @@ THE SOFTWARE.
 		</dict>
 		<dict>
 			<key>FooterText</key>
-<<<<<<< HEAD
-			<string>See README.markdown for full license text.</string>
-			<key>Title</key>
-			<string>OMGHTTPURLRQ</string>
-			<key>Type</key>
-			<string>PSGroupSpecifier</string>
-		</dict>
-		<dict>
-			<key>FooterText</key>
-			<string>@see README</string>
-=======
 			<string>The MIT License (MIT)
 
 Copyright (c) 2014 Christos Sotiriou
@@ -86,7 +71,6 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.</string>
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
 			<key>Title</key>
 			<string>PromiseKit-AFNetworking</string>
 			<key>Type</key>

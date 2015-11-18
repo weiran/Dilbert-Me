@@ -37,11 +37,7 @@ void RLMCheckForUpdates() {
 
         NSString *latestVersion = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
         if (![REALM_COCOA_VERSION isEqualToString:latestVersion]) {
-<<<<<<< HEAD
             NSLog(@"Version %@ of Realm is now available: https://github.com/realm/realm-cocoa/blob/v%@/CHANGELOG.md", latestVersion, latestVersion);
-=======
-            NSLog(@"Version %@ of Realm is now available: http://static.realm.io/downloads/cocoa/latest", latestVersion);
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
         }
     };
 

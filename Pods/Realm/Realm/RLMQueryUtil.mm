@@ -127,11 +127,7 @@ NSString *operatorName(NSPredicateOperatorType operatorType)
 }
 
 // add a clause for numeric constraints based on operator type
-<<<<<<< HEAD
 template <typename A, typename B>
-=======
-template <typename T>
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
 void add_numeric_constraint_to_query(realm::Query& query,
                                      RLMPropertyType datatype,
                                      NSPredicateOperatorType operatorType,
@@ -163,16 +159,8 @@ void add_numeric_constraint_to_query(realm::Query& query,
     }
 }
 
-<<<<<<< HEAD
 template <typename A, typename B>
 void add_bool_constraint_to_query(realm::Query &query, NSPredicateOperatorType operatorType, A lhs, B rhs) {
-=======
-void add_bool_constraint_to_query(realm::Query &query,
-                                       NSPredicateOperatorType operatorType,
-                                       Columns<Bool> &&column,
-                                       bool value) {
-
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
     switch (operatorType) {
         case NSEqualToPredicateOperatorType:
             query.and_query(lhs == rhs);
@@ -258,10 +246,7 @@ void validate_and_extract_between_range(id value, RLMProperty *prop, id *from, i
                     @"NSArray objects must be of type %@ for BETWEEN operations", RLMTypeToString(prop.type));
 }
 
-<<<<<<< HEAD
 template <typename... T>
-=======
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
 void add_constraint_to_query(realm::Query &query, RLMPropertyType type,
                              NSPredicateOperatorType operatorType,
                              NSComparisonPredicateOptions predicateOptions,
@@ -330,7 +315,6 @@ void add_binary_constraint_to_query(realm::Query & query,
     }
 }
 
-<<<<<<< HEAD
 void add_binary_constraint_to_query(realm::Query& query, NSPredicateOperatorType operatorType, NSData *value, NSUInteger index) {
     switch (operatorType) {
         case NSEqualToPredicateOperatorType:
@@ -344,8 +328,6 @@ void add_binary_constraint_to_query(realm::Query& query, NSPredicateOperatorType
     }
 }
 
-=======
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
 void add_link_constraint_to_query(realm::Query & query,
                                  NSPredicateOperatorType operatorType,
                                  NSUInteger column,
@@ -393,22 +375,12 @@ void process_or_group(Query &query, id array, Func&& func) {
         // Queries can't be empty, so if there's zero things in the OR group
         // validation will fail. Work around this by adding an expression which
         // will never find any rows in a table.
-<<<<<<< HEAD
-=======
-        // FIXME: this should be supported by core in some way
-        struct FalseExpression : realm::Expression {
-            size_t find_first(size_t, size_t) const override { return realm::not_found; }
-            void set_table() override {}
-            const Table* get_table() override { return nullptr; }
-        };
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
         query.expression(new FalseExpression);
     }
 
     query.end_group();
 }
 
-<<<<<<< HEAD
 template <typename RequestedType, typename TableGetter>
 struct ColumnOfTypeHelper {
     static realm::Columns<RequestedType> convert(TableGetter&& table, NSUInteger idx)
@@ -487,20 +459,14 @@ auto value_of_type_for_query(TableGetter&& tables, Value&& value)
 }
 
 template <typename... T>
-=======
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
 void add_constraint_to_query(realm::Query &query, RLMPropertyType type,
                              NSPredicateOperatorType operatorType,
                              NSComparisonPredicateOptions predicateOptions,
                              std::vector<NSUInteger> linkColumns, T... values)
 {
-<<<<<<< HEAD
     static_assert(sizeof...(T) == 2, "add_constraint_to_query accepts only two values as arguments");
 
     auto table = [&] {
-=======
-    realm::Table *(^table)() = ^{
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
         realm::TableRef& tbl = query.get_table();
         for (NSUInteger col : linkColumns) {
             tbl->link(col); // mutates m_link_chain on table
@@ -736,11 +702,7 @@ void update_query_with_column_expression(RLMObjectSchema *scheme, Query &query,
                     break;
                 default:
                     @throw RLMPredicateException(@"Invalid operator type",
-<<<<<<< HEAD
                                                  @"Operator '%@' not supported for string type", operatorName(type));
-=======
-                                                 @"Operator type %lu not supported for string type", (unsigned long)type);
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
             }
             break;
         }
@@ -753,11 +715,7 @@ void update_query_with_column_expression(RLMObjectSchema *scheme, Query &query,
 }
 
 void update_query_with_predicate(NSPredicate *predicate, RLMSchema *schema,
-<<<<<<< HEAD
                                  RLMObjectSchema *objectSchema, realm::Query &query)
-=======
-                                 RLMObjectSchema *objectSchema, realm::Query & query)
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
 {
     // Compound predicates.
     if ([predicate isMemberOfClass:[NSCompoundPredicate class]]) {

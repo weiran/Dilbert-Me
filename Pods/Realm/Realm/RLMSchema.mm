@@ -19,11 +19,7 @@
 #import "RLMSchema_Private.h"
 
 #import "RLMAccessor.h"
-<<<<<<< HEAD
 #import "RLMObject_Private.hpp"
-=======
-#import "RLMObject.h"
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
 #import "RLMObjectSchema_Private.hpp"
 #import "RLMRealm_Private.hpp"
 #import "RLMSwiftSupport.h"
@@ -94,12 +90,8 @@ static NSMutableDictionary *s_localNameToClass;
     s_localNameToClass = [NSMutableDictionary dictionary];
     for (unsigned int i = 0; i < numClasses; i++) {
         Class cls = classes[i];
-<<<<<<< HEAD
         static Class objectBaseClass = [RLMObjectBase class];
         if (!RLMIsKindOfClass(cls, objectBaseClass) || ![cls shouldPersistToRealm]) {
-=======
-        if (!RLMIsObjectSubclass(cls)) {
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
             continue;
         }
 
@@ -172,11 +164,7 @@ static NSMutableDictionary *s_localNameToClass;
     return schema;
 }
 
-<<<<<<< HEAD
 uint64_t RLMRealmSchemaVersion(RLMRealm *realm) {
-=======
-NSUInteger RLMRealmSchemaVersion(RLMRealm *realm) {
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
     realm::TableRef table = realm.group->get_table(c_metadataTableName);
     if (!table || table->get_column_count() == 0) {
         return RLMNotVersioned;
@@ -184,11 +172,7 @@ NSUInteger RLMRealmSchemaVersion(RLMRealm *realm) {
     return table->get_int(c_versionColumnIndex, 0);
 }
 
-<<<<<<< HEAD
 void RLMRealmSetSchemaVersion(RLMRealm *realm, uint64_t version) {
-=======
-void RLMRealmSetSchemaVersion(RLMRealm *realm, NSUInteger version) {
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
     realm::TableRef table = realm.group->get_or_add_table(c_metadataTableName);
     table->set_int(c_versionColumnIndex, 0, version);
 }

@@ -46,7 +46,8 @@
         for (HTMLElement *element in comicItems) {
             [promises addObject:[DilbertManager parseComic:element]];
         }
-        return PMKWhen(promises);
+        
+        return [PMKPromise when:promises];
     })
     .then(^(NSArray* comics) {
         Comic *latestComic = [self.comics firstObject];
@@ -70,7 +71,7 @@
 
 
 + (PMKPromise *)parseComic:(HTMLElement *)element {
-    return [PMKPromise promiseWithResolverBlock:^(PMKResolver resolve) {
+    return [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
         // get date
         NSString *comicDateString = [[element firstNodeMatchingSelector:@"date span:first-of-type"] textContent];
         NSDate *comicDate = [[YLMoment momentWithDateAsString:comicDateString] date];

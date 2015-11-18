@@ -1,9 +1,0 @@
-#include "Pods-Dilbert Me-Realm.xcconfig"
-CLANG_CXX_LANGUAGE_STANDARD = ${PODS_DILBERT_ME_REALM_CLANG_CXX_LANGUAGE_STANDARD}
-GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
-HEADER_SEARCH_PATHS = "${PODS_ROOT}/Headers/Private" "${PODS_ROOT}/Headers/Private/Realm" "${PODS_ROOT}/Headers/Private/Realm/realm" "${PODS_ROOT}/Headers/Private/Realm/realm/impl" "${PODS_ROOT}/Headers/Private/Realm/realm/util" "${PODS_ROOT}/Headers/Public" "${PODS_ROOT}/Headers/Public/AFNetworking" "${PODS_ROOT}/Headers/Public/HTMLReader" "${PODS_ROOT}/Headers/Public/PromiseKit" "${PODS_ROOT}/Headers/Public/PromiseKit-AFNetworking" "${PODS_ROOT}/Headers/Public/Realm" "${PODS_ROOT}/Headers/Public/Realm/realm" "${PODS_ROOT}/Headers/Public/YLMoment"
-LIBRARY_SEARCH_PATHS = ${PODS_DILBERT_ME_REALM_LIBRARY_SEARCH_PATHS}
-OTHER_CPLUSPLUSFLAGS = ${PODS_DILBERT_ME_REALM_OTHER_CPLUSPLUSFLAGS}
-OTHER_LDFLAGS = ${PODS_DILBERT_ME_REALM_OTHER_LDFLAGS} -ObjC
-PODS_ROOT = ${SRCROOT}
-SKIP_INSTALL = YES

@@ -102,7 +102,6 @@
         // if we have a new primary key not equal to our old one, verify uniqueness
         RLMProperty *primaryProperty = objectSchema.primaryKeyProperty;
         RLMProperty *oldPrimaryProperty = [[_oldRealm.schema schemaForClassName:objectSchema.className] primaryKeyProperty];
-<<<<<<< HEAD
         if (!primaryProperty || primaryProperty == oldPrimaryProperty) {
             continue;
         }
@@ -115,31 +114,6 @@
         if (table->get_distinct_view(primaryProperty.column).size() != count) {
             NSString *reason = [NSString stringWithFormat:@"Primary key property '%@' has duplicate values after migration.", primaryProperty.name];
             @throw RLMException(reason);
-=======
-        if (primaryProperty && primaryProperty != oldPrimaryProperty) {
-            // FIXME: replace with count of distinct once we support indexing
-
-            // FIXME: support other types
-            realm::Table *table = objectSchema.table;
-            NSUInteger count = table->size();
-            if (primaryProperty.type == RLMPropertyTypeString) {
-                if (!table->has_search_index(primaryProperty.column)) {
-                    table->add_search_index(primaryProperty.column);
-                }
-                if (table->get_distinct_view(primaryProperty.column).size() != count) {
-                    NSString *reason = [NSString stringWithFormat:@"Primary key property '%@' has duplicate values after migration.", primaryProperty.name];
-                    @throw RLMException(reason);
-                }
-            }
-            else {
-                for (NSUInteger i = 0; i < count; i++) {
-                    if (table->count_int(primaryProperty.column, table->get_int(primaryProperty.column, i)) > 1) {
-                        NSString *reason = [NSString stringWithFormat:@"Primary key property '%@' has duplicate values after migration.", primaryProperty.name];
-                        @throw RLMException(reason);
-                    }
-                }
-            }
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
         }
     }
 }

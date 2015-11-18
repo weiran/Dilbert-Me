@@ -1,2 +1,6 @@
-PROMISEKIT_OTHER_LDFLAGS = -framework "Foundation" -framework "QuartzCore"
-PROMISEKIT_SWIFT_INSTALL_OBJC_HEADER = NO
+CODE_SIGN_IDENTITY =
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1 $(inherited) PMK_WHEN=1
+HEADER_SEARCH_PATHS = "${PODS_ROOT}/Headers/Private" "${PODS_ROOT}/Headers/Private/PromiseKit" "${PODS_ROOT}/Headers/Public"
+OTHER_LDFLAGS = -framework "Foundation"
+PODS_ROOT = ${SRCROOT}
+SKIP_INSTALL = YES

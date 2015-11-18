@@ -18,7 +18,7 @@
 		246D12BC1A6A807B00D77FD0 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 246D12BB1A6A807B00D77FD0 /* Cocoa.framework */; };
 		246D12BF1A6ABF8400D77FD0 /* DilbertMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 246D12BE1A6ABF8400D77FD0 /* DilbertMenu.xib */; };
 		246D12C21A6AC06F00D77FD0 /* DilbertMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 246D12C11A6AC06F00D77FD0 /* DilbertMenu.m */; };
-		E3F55030FA1E07DB33E34251 /* Pods_Dilbert_Me.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D73F6CE14AA0C5931ABA9FD /* Pods_Dilbert_Me.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		E3F55030FA1E07DB33E34251 /* Pods_Dilbert_Me.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D73F6CE14AA0C5931ABA9FD /* Pods_Dilbert_Me.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -156,12 +156,12 @@
 		246D12831A6A6EAA00D77FD0 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0610;
+				LastUpgradeCheck = 0710;
 				ORGANIZATIONNAME = "Weiran Zhang";
 				TargetAttributes = {
 					246D128A1A6A6EAA00D77FD0 = {
 						CreatedOnToolsVersion = 6.1.1;
-						DevelopmentTeam = 2KB59GPA9B;
+						DevelopmentTeam = PZS9CJ467T;
 					};
 				};
 			};
@@ -291,6 +291,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -352,11 +353,11 @@
 			baseConfigurationReference = CDB7089C1B13C7D92D267C50 /* Pods-Dilbert Me.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREFIX_HEADER = "Dilbert Me/DilbertMe-Prefix.pch";
 				INFOPLIST_FILE = "Dilbert Me/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "co.weiran.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -366,11 +367,11 @@
 			baseConfigurationReference = 1BBE9967E9CDF0CCBEB644A2 /* Pods-Dilbert Me.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREFIX_HEADER = "Dilbert Me/DilbertMe-Prefix.pch";
 				INFOPLIST_FILE = "Dilbert Me/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "co.weiran.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

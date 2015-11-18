@@ -137,7 +137,6 @@ static inline void RLMValidateObjectClass(__unsafe_unretained RLMObjectBase *con
     return RLMCreateObjectAccessor(_realm, _objectSchema, _backingLinkView->get(index).get_index());
 }
 
-<<<<<<< HEAD
 static void RLMInsertObject(RLMArrayLinkView *ar, RLMObject *object, NSUInteger index) {
     RLMLinkViewArrayValidateInWriteTransaction(ar);
     RLMValidateObjectClass(object, ar.objectClassName);
@@ -147,14 +146,6 @@ static void RLMInsertObject(RLMArrayLinkView *ar, RLMObject *object, NSUInteger 
     }
     else if (index > ar->_backingLinkView->size()) {
         @throw RLMException(@"Trying to insert object at invalid index");
-=======
-- (void)addObject:(RLMObject *)object {
-    RLMLinkViewArrayValidateInWriteTransaction(self);
-    RLMValidateObjectClass(object, self.objectClassName);
-
-    if (object->_realm != self.realm) {
-        [self.realm addObject:object];
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
     }
 
     if (object->_realm != ar.realm) {
@@ -167,26 +158,12 @@ static void RLMInsertObject(RLMArrayLinkView *ar, RLMObject *object, NSUInteger 
     ar->_backingLinkView->insert(index, object->_row.get_index());
 }
 
-<<<<<<< HEAD
 - (void)addObject:(RLMObject *)object {
     RLMInsertObject(self, object, NSUIntegerMax);
 }
 
 - (void)insertObject:(RLMObject *)object atIndex:(NSUInteger)index {
     RLMInsertObject(self, object, index);
-=======
-- (void)insertObject:(RLMObject *)object atIndex:(NSUInteger)index {
-    RLMLinkViewArrayValidateInWriteTransaction(self);
-    RLMValidateObjectClass(object, self.objectClassName);
-
-    if (index > _backingLinkView->size()) {
-        @throw RLMException(@"Trying to insert object at invalid index");
-    }
-    if (object->_realm != self.realm) {
-        [self.realm addObject:object];
-    }
-    _backingLinkView->insert(index, object->_row.get_index());
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
 }
 
 - (void)removeObjectAtIndex:(NSUInteger)index {
@@ -247,30 +224,7 @@ static void RLMInsertObject(RLMArrayLinkView *ar, RLMObject *object, NSUInteger 
 
     // call find on backing array
     size_t object_ndx = object->_row.get_index();
-<<<<<<< HEAD
     return RLMConvertNotFound(_backingLinkView->find(object_ndx));
-}
-=======
-    size_t result = _backingLinkView->find(object_ndx);
-    if (result == realm::not_found) {
-        return NSNotFound;
-    }
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
-
-- (id)valueForKey:(NSString *)key {
-    RLMLinkViewArrayValidateAttached(self);
-    const size_t size = _backingLinkView->size();
-    return RLMCollectionValueForKey(key, _realm, _objectSchema, size, ^size_t(size_t index) {
-        return _backingLinkView->get(index).get_index();
-    });
-}
-
-- (void)setValue:(id)value forKey:(NSString *)key {
-    RLMLinkViewArrayValidateInWriteTransaction(self);
-    const size_t size = _backingLinkView->size();
-    RLMCollectionSetValueForKey(value, key, _realm, _objectSchema, size, ^size_t(size_t index) {
-        return _backingLinkView->get(index).get_index();
-    });
 }
 
 - (id)valueForKey:(NSString *)key {
@@ -304,10 +258,6 @@ static void RLMInsertObject(RLMArrayLinkView *ar, RLMObject *object, NSUInteger 
     std::vector<bool> order;
     RLMGetColumnIndices(_realm.schema[_objectClassName], properties, columns, order);
 
-<<<<<<< HEAD
-=======
-    realm::TableView const &tv = _backingLinkView->get_sorted_view(move(columns), move(order));
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
     auto query = std::make_unique<realm::Query>(_backingLinkView->get_target_table().where(_backingLinkView));
     return [RLMResults resultsWithObjectClassName:self.objectClassName
                                                  query:move(query)

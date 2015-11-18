@@ -34,7 +34,6 @@
 
 // synthesized in RLMObjectBase
 @dynamic invalidated;
-<<<<<<< HEAD
 
 - (instancetype)init {
     return [super init];
@@ -73,37 +72,12 @@
 }
 
 + (instancetype)createOrUpdateInRealm:(RLMRealm *)realm withValue:(id)value {
-=======
-
-- (instancetype)init {
-    return [super init];
-}
-
-- (instancetype)initWithObject:(id)object {
-    return [super initWithObject:object schema:RLMSchema.sharedSchema];
-}
-
-+ (instancetype)createInDefaultRealmWithObject:(id)object {
-    return (RLMObject *)RLMCreateObjectInRealmWithValue([RLMRealm defaultRealm], [self className], object, RLMCreationOptionsAllowCopy);
-}
-
-+ (instancetype)createInRealm:(RLMRealm *)realm withObject:(id)value {
-    return (RLMObject *)RLMCreateObjectInRealmWithValue(realm, [self className], value, RLMCreationOptionsAllowCopy);
-}
-
-+ (instancetype)createOrUpdateInDefaultRealmWithObject:(id)object {
-    return [self createOrUpdateInRealm:[RLMRealm defaultRealm] withObject:object];
-}
-
-+ (instancetype)createOrUpdateInRealm:(RLMRealm *)realm withObject:(id)value {
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
     // verify primary key
     RLMObjectSchema *schema = [self sharedSchema];
     if (!schema.primaryKeyProperty) {
         NSString *reason = [NSString stringWithFormat:@"'%@' does not have a primary key and can not be updated", schema.className];
         @throw [NSException exceptionWithName:@"RLMExecption" reason:reason userInfo:nil];
     }
-<<<<<<< HEAD
     return (RLMObject *)RLMCreateObjectInRealmWithValue(realm, [self className], value, true);
 }
 
@@ -123,23 +97,6 @@
     return _realm;
 }
 
-=======
-    return (RLMObject *)RLMCreateObjectInRealmWithValue(realm, [self className], value, RLMCreationOptionsUpdateOrCreate | RLMCreationOptionsAllowCopy);
-}
-
-- (id)objectForKeyedSubscript:(NSString *)key {
-    return RLMObjectBaseObjectForKeyedSubscript(self, key);
-}
-
-- (void)setObject:(id)obj forKeyedSubscript:(NSString *)key {
-    RLMObjectBaseSetObjectForKeyedSubscript(self, key, obj);
-}
-
-- (RLMRealm *)realm {
-    return _realm;
-}
-
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
 - (RLMObjectSchema *)objectSchema {
     return _objectSchema;
 }
@@ -190,7 +147,6 @@
 
 - (NSArray *)linkingObjectsOfClass:(NSString *)className forProperty:(NSString *)property {
     return RLMObjectBaseLinkingObjectsOfClass(self, className, property);
-<<<<<<< HEAD
 }
 
 - (BOOL)isEqualToObject:(RLMObject *)object {
@@ -231,32 +187,6 @@
 
 - (void)setValue:(id)value forUndefinedKey:(NSString *)key {
     RLMDynamicValidatedSet(self, key, value);
-=======
-}
-
-- (BOOL)isEqualToObject:(RLMObject *)object {
-    return [object isKindOfClass:RLMObject.class] && RLMObjectBaseAreEqual(self, object);
-}
-
-+ (NSString *)className {
-    return [super className];
-}
-
-+ (NSArray *)indexedProperties {
-    return @[];
-}
-
-+ (NSDictionary *)defaultPropertyValues {
-    return nil;
-}
-
-+ (NSString *)primaryKey {
-    return nil;
-}
-
-+ (NSArray *)ignoredProperties {
-    return nil;
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
 }
 
 @end

@@ -5,8 +5,8 @@ PromiseKit+AFNetworking is a small category addition to the delightful [PromiseK
 
 For the time being, it's a small category addition to the core AFNetworking, facilitating development with the plain AFHTTPRequestOperation and with the AFHTTPRequestOperationManager.
 
-#Note regarding PromiseKit 2.0:
-`PromiseKit+AFNetworking` now supports `PromiseKit 2.0`. Therefore, support for iOS 7 is dropped. If you wish to have PromiseKit + AFNetworking + iOS 7 support, please use a version of ‘AFNetworking-PromiseKit’ earlier than 0.5.0
+#Requirements:
+`PromiseKit+AFNetworking` uses `PromiseKit 1.5.x` and `AFNetworking 2.x.` Support for `PromiseKit 2.0` is currently underway.
 
 #Installation
 You have two options: Either use cocoapods (look into the appropriate section below), or 
@@ -109,18 +109,13 @@ pod 'PromiseKit-AFNetworking'
 ```
 
 #To Do
-- Add more unit tests
+- Update documentation
+- Add unit tests (DONE!)
+- Implement it for AFURLSessionManager (DONE!)
 - Add some goodies, in cases where they make sense.
 
 #Special Thanks
 Special thanks to Jeff Miller ( https://github.com/jeffmax ) for his fixes and ```pod```ification of this repo
-
-* Michael Lo ( https://github.com/mmmilo )
-* Roberto ( https://github.com/robertomg )
-* Jeff Miller ( https://github.com/jeffmax )
-  
-And, of course Max Howel, for PromiseKit (https://github.com/mxcl)
-
 
 #Disclaimer
 I have created this small addition in order to use it in a project I am making. I have had the opportunity to test it in real-life situations, but AFHTTPRequestOperationManager is not tested for DELETE, and PUT operations. If you find a bug, please submit a bug report.

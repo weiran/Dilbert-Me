@@ -3,11 +3,7 @@ This application makes use of the following third party libraries:
 
 ## AFNetworking
 
-<<<<<<< HEAD
 Copyright (c) 2011–2015 Alamofire Software Foundation (http://alamofire.org/)
-=======
-Copyright (c) 2013-2015 AFNetworking (http://afnetworking.com/)
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -37,11 +33,6 @@ HTMLReader is in the public domain.
 
 The MIT License (MIT)
 
-<<<<<<< HEAD
-@see README
-
-## PromiseKit-AFNetworking
-=======
 Copyright (c) 2014 Christos Sotiriou
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -61,7 +52,6 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
 
 ## PromiseKit
 

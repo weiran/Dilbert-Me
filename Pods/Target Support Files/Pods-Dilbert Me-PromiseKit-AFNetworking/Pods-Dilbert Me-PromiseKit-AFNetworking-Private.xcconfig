@@ -1,6 +1,0 @@
-#include "Pods-Dilbert Me-PromiseKit-AFNetworking.xcconfig"
-GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
-HEADER_SEARCH_PATHS = "${PODS_ROOT}/Headers/Private" "${PODS_ROOT}/Headers/Private/PromiseKit-AFNetworking" "${PODS_ROOT}/Headers/Public" "${PODS_ROOT}/Headers/Public/AFNetworking" "${PODS_ROOT}/Headers/Public/HTMLReader" "${PODS_ROOT}/Headers/Public/PromiseKit" "${PODS_ROOT}/Headers/Public/PromiseKit-AFNetworking" "${PODS_ROOT}/Headers/Public/Realm" "${PODS_ROOT}/Headers/Public/Realm/realm" "${PODS_ROOT}/Headers/Public/YLMoment"
-OTHER_LDFLAGS = -ObjC
-PODS_ROOT = ${SRCROOT}
-SKIP_INSTALL = YES

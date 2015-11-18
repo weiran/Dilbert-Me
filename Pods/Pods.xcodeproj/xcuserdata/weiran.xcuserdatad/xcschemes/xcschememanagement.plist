@@ -14,16 +14,7 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-<<<<<<< HEAD
-		<key>OMGHTTPURLRQ.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
 		<key>Pods-Dilbert Me.xcscheme</key>
-=======
-		<key>Pods-Dilbert Me-PromiseKit-AFNetworking.xcscheme</key>
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -38,29 +29,17 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-<<<<<<< HEAD
 		<key>Realm.xcscheme</key>
-=======
-		<key>Pods-Dilbert Me-YLMoment-YLMoment-OSX.xcscheme</key>
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
 		<dict>
 			<key>isShown</key>
 			<false/>
 		</dict>
-<<<<<<< HEAD
 		<key>YLMoment-YLMoment-OSX.xcscheme</key>
-=======
-		<key>Pods-Dilbert Me-YLMoment.xcscheme</key>
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
 		<dict>
 			<key>isShown</key>
 			<false/>
 		</dict>
-<<<<<<< HEAD
 		<key>YLMoment.xcscheme</key>
-=======
-		<key>Pods-Dilbert Me.xcscheme</key>
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -68,79 +47,42 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-<<<<<<< HEAD
-		<key>0C18D80A9C6A4EB0656820756B3B71E4</key>
+		<key>0DBF43F87D9CF607C61938E760B7C651</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>25AFF4EBF35CF95F1D4E5A1DFC51A23A</key>
-=======
-		<key>055AF154F9E8AD179DF6AE37</key>
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
+		<key>18399017D252E0C57974EB25C9628D33</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-<<<<<<< HEAD
-		<key>3D928AE622C50CBA801B29F6E4027709</key>
-=======
-		<key>1341736F8D2E5F7D29542CCF</key>
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
+		<key>26F64E356CD7C0D6FA8F96FF84EEB836</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-<<<<<<< HEAD
-		<key>439D55A1A79316B0A82AF5DDE327BF11</key>
-=======
-		<key>365EFC7F77AB239DC714EAFF</key>
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
+		<key>35AB4E645558A256E1C06F38C71F4836</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-<<<<<<< HEAD
-		<key>68964BA07904D401294674CBE8F49834</key>
-=======
-		<key>40A08A072414FE9D482DDCCE</key>
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
+		<key>472CA4A021A449139F01AE540C43DD42</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-<<<<<<< HEAD
-		<key>7BFB8AF2144FEDAB3AB91C1D6CD84A08</key>
-=======
-		<key>7A994818B980D185B5829B18</key>
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
+		<key>B70B0F5D5DB0EBF836883D8822B56A91</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-<<<<<<< HEAD
-		<key>8DF1C2F278D2355D2D6333D68EE8F9C8</key>
-=======
-		<key>9AF37735E2B06E4D7E2DAF28</key>
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
+		<key>DE754A58944313CF889FCAAA51EAD853</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-<<<<<<< HEAD
-		<key>DB6455CEB1699300739D8245459D3A78</key>
-=======
-		<key>AB20B752EBEF280552D6943B</key>
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-<<<<<<< HEAD
-		<key>FD28CE4AAF37D9D166F1A586918DB58F</key>
-=======
-		<key>C3EA3300C42A96470D4F745F</key>
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
+		<key>E7E75B845F19044FDECDF55469A6CC8D</key>
 		<dict>
 			<key>primary</key>
 			<true/>

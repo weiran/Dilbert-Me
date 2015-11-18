@@ -23,17 +23,9 @@
  */
 #import <AFNetworking/AFNetworking.h>
 #import <PromiseKit/PromiseKit.h>
-#import <PromiseKit/AnyPromise.h>
+#import "Promise.h"
 
-
-#define AFPromise AnyPromise
-FOUNDATION_EXPORT const NSString *AFHTTPRequestOperationErrorKey;
-
-
-#define kPMKAFResponseObjectKey @"responseObject"
-#define kPMKAFResponseTaskKey @"task"
-#define kPMKAFResponseOperationKey @"operation"
-
+static NSString *AFHTTPRequestOperationErrorKey =  @"afHTTPRequestOperationError";
 
 #define kPMKAFResponseObjectKey @"responseObject"
 #define kPMKAFResponseTaskKey @"task"
@@ -47,12 +39,12 @@ FOUNDATION_EXPORT const NSString *AFHTTPRequestOperationErrorKey;
  Returned objects in the Promise Completion:
  AFHTTPRequestOperation *operation, id responseObject
  */
-- (AFPromise *)promise;
+- (PMKPromise *)promise;
 
 /**
  @brief Returns a new Promise with a ready to use AFHTTPRequestOperation inside. The operation will immediately start
  */
-- (AFPromise *)promiseAndStartImmediately;
+- (PMKPromise *)promiseAndStartImmediately;
 
 
 /**
@@ -60,32 +52,24 @@ FOUNDATION_EXPORT const NSString *AFHTTPRequestOperationErrorKey;
  
  If 'startImmediately is 'YES' then the operation will start immediately
  */
-- (AFPromise *)promiseByStartingImmediately:(BOOL)startImmediately;
+- (PMKPromise *)promiseByStartingImmediately:(BOOL)startImmediately;
 
 /**
  @brief Executes immediately an AFHTTPRequestOperation by adding an operation set up with a NSURLRequest
  to the current queue (or to the main queue if there is no current queue
  */
-+ (AFPromise *)request:(NSURLRequest *)request;
++ (PMKPromise *)request:(NSURLRequest *)request;
 
 /**
  @brief Executes immediately an AFHTTPRequestOperation by adding an operation set up with a NSURLRequest
  to the queue passed as the argument
  */
-+ (AFPromise *)request:(NSURLRequest *)request queue:(NSOperationQueue *)queue;
++ (PMKPromise *)request:(NSURLRequest *)request queue:(NSOperationQueue *)queue;
 @end
 
 
 @interface AFHTTPRequestOperationManager (Promises)
 
-<<<<<<< HEAD
-- (AFPromise *)GET:(NSString *)URLString parameters:(id)parameters;
-- (AFPromise *)POST:(NSString *)URLString parameters:(id)parameters;
-- (AFPromise *)POST:(NSString *)URLString parameters:(id)parameters constructingBodyWithBlock:(void (^)(id<AFMultipartFormData>))block;
-- (AFPromise *)PUT:(NSString *)URLString parameters:(id)parameters;
-- (AFPromise *)DELETE:(NSString *)URLString parameters:(id)parameters;
-- (AFPromise *)HEAD:(NSString *)URLString parameters:(id)parameters;
-=======
 - (PMKPromise *)GET:(NSString *)URLString parameters:(id)parameters;
 - (PMKPromise *)POST:(NSString *)URLString parameters:(id)parameters;
 - (PMKPromise *)POST:(NSString *)URLString parameters:(id)parameters constructingBodyWithBlock:(void (^)(id<AFMultipartFormData>))block;
@@ -93,7 +77,6 @@ FOUNDATION_EXPORT const NSString *AFHTTPRequestOperationErrorKey;
 - (PMKPromise *)DELETE:(NSString *)URLString parameters:(id)parameters;
 - (PMKPromise *)PATCH:(NSString *)URLString parameters:(id)parameters;
 - (PMKPromise *)HEAD:(NSString *)URLString parameters:(id)parameters;
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
 
 
 
@@ -111,11 +94,7 @@ FOUNDATION_EXPORT const NSString *AFHTTPRequestOperationErrorKey;
 * @param parametersArray an associative array of parameters to be passed to their corresponding
 *   URL strings (will be associated by their position in the array, so make sure they match)
 */
-<<<<<<< HEAD
-- (AFPromise *)GETMultiple:(NSArray *)urlStringsArray parameters:(NSArray *)parametersArray;
-=======
 - (PMKPromise *)GETMultiple:(NSArray *)urlStringsArray parameters:(NSArray *)parametersArray;
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
 
 
 /**
@@ -132,11 +111,7 @@ FOUNDATION_EXPORT const NSString *AFHTTPRequestOperationErrorKey;
 * @param parametersArray an associative array of parameters to be passed to their corresponding
 *   URL strings (will be associated by their position in the array, so make sure they match)
 */
-<<<<<<< HEAD
-- (AFPromise *)PUTMultiple:(NSArray *)urlStringsArray parameters:(NSArray *)parametersArray;
-=======
 - (PMKPromise *)PUTMultiple:(NSArray *)urlStringsArray parameters:(NSArray *)parametersArray;
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
 
 /**
 * @brief Performs a HEAD request on multiple URLs. It uses 'when' under the hood
@@ -152,11 +127,7 @@ FOUNDATION_EXPORT const NSString *AFHTTPRequestOperationErrorKey;
 * @param parametersArray an associative array of parameters to be passed to their corresponding
 *   URL strings (will be associated by their position in the array, so make sure they match)
 */
-<<<<<<< HEAD
-- (AFPromise *)HEADMultiple:(NSArray *)urlStringsArray parameters:(NSArray *)parametersArray;
-=======
 - (PMKPromise *)HEADMultiple:(NSArray *)urlStringsArray parameters:(NSArray *)parametersArray;
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
 
 /**
 * @brief Performs a PATCH request on multiple URLs. It uses 'when' under the hood
@@ -172,11 +143,7 @@ FOUNDATION_EXPORT const NSString *AFHTTPRequestOperationErrorKey;
 * @param parametersArray an associative array of parameters to be passed to their corresponding
 *   URL strings (will be associated by their position in the array, so make sure they match)
 */
-<<<<<<< HEAD
-- (AFPromise *)PATCHMultiple:(NSArray *)urlStringsArray parameters:(NSArray *)parametersArray;
-=======
 - (PMKPromise *)PATCHMultiple:(NSArray *)urlStringsArray parameters:(NSArray *)parametersArray;
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
 
 
 /**
@@ -193,52 +160,12 @@ FOUNDATION_EXPORT const NSString *AFHTTPRequestOperationErrorKey;
 * @param parametersArray an associative array of parameters to be passed to their corresponding
 *   URL strings (will be associated by their position in the array, so make sure they match)
 */
-<<<<<<< HEAD
-- (AFPromise *)DELETEMultiple:(NSArray *)urlStringsArray parameters:(NSArray *)parametersArray;
-=======
 - (PMKPromise *)DELETEMultiple:(NSArray *)urlStringsArray parameters:(NSArray *)parametersArray;
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
 @end
 
 
 @interface AFHTTPSessionManager (Promises)
 
-<<<<<<< HEAD
-
-- (AFPromise *)POST:(NSString *)urlString parameters:(id)parameters;
-- (AFPromise *)POST:(NSString *)urlString parameters:(id)parameters constructingBodyWithBlock:(void (^)(id<AFMultipartFormData>))block;
-- (AFPromise *)GET:(NSString *)urlString parameters:(id)parameters;
-- (AFPromise *)PUT:(NSString *)urlString parameters:(id)parameters;
-- (AFPromise *)HEAD:(NSString *)urlString parameters:(id)parameters;
-- (AFPromise *)PATCH:(NSString *)urlString parameters:(id)parameters;
-- (AFPromise *)DELETE:(NSString *)urlString parameters:(id)parameters;
-
-
-- (AFPromise *)dataTaskWithRequest:(NSURLRequest *)request
-                               task:(NSURLSessionTask * __autoreleasing *)task;
-
-- (AFPromise *)uploadTaskWithRequest:(NSURLRequest *)request
-                             fromFile:(NSURL *)fileURL
-                             progress:(NSProgress * __autoreleasing *)progress
-                           uploadTask:(NSURLSessionTask * __autoreleasing *)uploadTask;
-- (AFPromise *)uploadTaskWithRequest:(NSURLRequest *)request
-                             fromData:(NSData *)bodyData
-                             progress:(NSProgress * __autoreleasing *)progress
-                           uploadTask:(NSURLSessionTask * __autoreleasing *)uploadTask;
-- (AFPromise *)uploadTaskWithStreamedRequest:(NSURLRequest *)request
-                                     progress:(NSProgress * __autoreleasing *)progress
-                                   uploadTask:(NSURLSessionTask * __autoreleasing *)uploadTask;
-
-- (AFPromise *)downloadTaskWithRequest:(NSURLRequest *)request
-                               progress:(NSProgress * __autoreleasing *)progress
-                            destination:(NSURL * (^)(NSURL *targetPath, NSURLResponse *response))destination
-                           downloadTask:(NSURLSessionTask * __autoreleasing *)downloadTask;
-- (AFPromise *)downloadTaskWithResumeData:(NSData *)resumeData
-                                  progress:(NSProgress * __autoreleasing *)progress
-                               destination:(NSURL * (^)(NSURL *targetPath, NSURLResponse *response))destination
-                              downloadTask:(NSURLSessionTask * __autoreleasing *)downloadTask;
-
-=======
 - (PMKPromise *)POST:(NSString *)urlString parameters:(id)parameters;
 - (PMKPromise *)POST:(NSString *)urlString parameters:(id)parameters constructingBodyWithBlock:(void (^)(id<AFMultipartFormData>))block;
 - (PMKPromise *)GET:(NSString *)urlString parameters:(id)parameters;
@@ -246,7 +173,6 @@ FOUNDATION_EXPORT const NSString *AFHTTPRequestOperationErrorKey;
 - (PMKPromise *)HEAD:(NSString *)urlString parameters:(id)parameters;
 - (PMKPromise *)PATCH:(NSString *)urlString parameters:(id)parameters;
 - (PMKPromise *)DELETE:(NSString *)urlString parameters:(id)parameters;
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
 
 
 /**
@@ -263,11 +189,7 @@ FOUNDATION_EXPORT const NSString *AFHTTPRequestOperationErrorKey;
 * @param parametersArray an associative array of parameters to be passed to their corresponding
 *   URL strings (will be associated by their position in the array, so make sure they match)
 */
-<<<<<<< HEAD
-- (AFPromise *)GETMultiple:(NSArray *)urlStringsArray parameters:(NSArray *)parametersArray;
-=======
 - (PMKPromise *)GETMultiple:(NSArray *)urlStringsArray parameters:(NSArray *)parametersArray;
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
 
 
 /**
@@ -284,11 +206,7 @@ FOUNDATION_EXPORT const NSString *AFHTTPRequestOperationErrorKey;
 * @param parametersArray an associative array of parameters to be passed to their corresponding
 *   URL strings (will be associated by their position in the array, so make sure they match)
 */
-<<<<<<< HEAD
-- (AFPromise *)PUTMultiple:(NSArray *)urlStringsArray parameters:(NSArray *)parametersArray;
-=======
 - (PMKPromise *)PUTMultiple:(NSArray *)urlStringsArray parameters:(NSArray *)parametersArray;
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
 
 /**
 * @brief Performs a HEAD request on multiple URLs. It uses 'when' under the hood
@@ -304,11 +222,7 @@ FOUNDATION_EXPORT const NSString *AFHTTPRequestOperationErrorKey;
 * @param parametersArray an associative array of parameters to be passed to their corresponding
 *   URL strings (will be associated by their position in the array, so make sure they match)
 */
-<<<<<<< HEAD
-- (AFPromise *)HEADMultiple:(NSArray *)urlStringsArray parameters:(NSArray *)parametersArray;
-=======
 - (PMKPromise *)HEADMultiple:(NSArray *)urlStringsArray parameters:(NSArray *)parametersArray;
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
 
 /**
 * @brief Performs a PATCH request on multiple URLs. It uses 'when' under the hood
@@ -324,11 +238,7 @@ FOUNDATION_EXPORT const NSString *AFHTTPRequestOperationErrorKey;
 * @param parametersArray an associative array of parameters to be passed to their corresponding
 *   URL strings (will be associated by their position in the array, so make sure they match)
 */
-<<<<<<< HEAD
-- (AFPromise *)PATCHMultiple:(NSArray *)urlStringsArray parameters:(NSArray *)parametersArray;
-=======
 - (PMKPromise *)PATCHMultiple:(NSArray *)urlStringsArray parameters:(NSArray *)parametersArray;
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
 
 
 /**
@@ -345,9 +255,5 @@ FOUNDATION_EXPORT const NSString *AFHTTPRequestOperationErrorKey;
 * @param parametersArray an associative array of parameters to be passed to their corresponding
 *   URL strings (will be associated by their position in the array, so make sure they match)
 */
-<<<<<<< HEAD
-- (AFPromise *)DELETEMultiple:(NSArray *)urlStringsArray parameters:(NSArray *)parametersArray;
-=======
 - (PMKPromise *)DELETEMultiple:(NSArray *)urlStringsArray parameters:(NSArray *)parametersArray;
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
 @end

@@ -72,11 +72,7 @@
 
 + (instancetype)resultsWithObjectClassName:(NSString *)objectClassName
                                      query:(std::unique_ptr<realm::Query>)query
-<<<<<<< HEAD
                                       view:(realm::TableView &&)view
-=======
-                                      view:(realm::TableView)view
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
                                      realm:(RLMRealm *)realm {
     RLMResults *ar = [[RLMResults alloc] initPrivate];
     ar->_objectClassName = objectClassName;
@@ -526,7 +522,6 @@ static NSNumber *averageOfProperty(TableType const& table, RLMRealm *realm, NSSt
         @throw RLMException(@"Object type does not match RLMResults");
     }
 
-<<<<<<< HEAD
     return RLMConvertNotFound(object->_row.get_index());
 }
 
@@ -536,10 +531,6 @@ static NSNumber *averageOfProperty(TableType const& table, RLMRealm *realm, NSSt
     Query query = _table->where();
     RLMUpdateQueryWithPredicate(&query, predicate, _realm.schema, _realm.schema[self.objectClassName]);
     return RLMConvertNotFound(query.find());
-=======
-    size_t ndx = object->_row.get_index();
-    return ndx == realm::not_found ? NSNotFound : ndx;
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
 }
 
 - (id)minOfProperty:(NSString *)property {

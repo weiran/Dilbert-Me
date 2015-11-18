@@ -9,11 +9,7 @@ RESOURCES_TO_COPY=${PODS_ROOT}/resources-to-copy-${TARGETNAME}.txt
 XCASSET_FILES=()
 
 realpath() {
-<<<<<<< HEAD
   DIRECTORY="$(cd "${1%/*}" && pwd)"
-=======
-  DIRECTORY=$(cd "${1%/*}" && pwd)
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
   FILENAME="${1##*/}"
   echo "$DIRECTORY/$FILENAME"
 }
@@ -61,20 +57,10 @@ install_resource()
       ;;
   esac
 }
-<<<<<<< HEAD
 
 mkdir -p "${CONFIGURATION_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}"
-=======
-if [[ "$CONFIGURATION" == "Debug" ]]; then
-  install_resource "${BUILT_PRODUCTS_DIR}/YLMoment-OSX.bundle"
-fi
-if [[ "$CONFIGURATION" == "Release" ]]; then
-  install_resource "${BUILT_PRODUCTS_DIR}/YLMoment-OSX.bundle"
-fi
-
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
 rsync -avr --copy-links --no-relative --exclude '*/.svn/*' --files-from="$RESOURCES_TO_COPY" / "${CONFIGURATION_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}"
-if [[ "${ACTION}" == "install" ]]; then
+if [[ "${ACTION}" == "install" ]] && [[ "${SKIP_INSTALL}" == "NO" ]]; then
   mkdir -p "${INSTALL_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}"
   rsync -avr --copy-links --no-relative --exclude '*/.svn/*' --files-from="$RESOURCES_TO_COPY" / "${INSTALL_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}"
 fi

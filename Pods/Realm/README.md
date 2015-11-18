@@ -12,7 +12,6 @@ This repository holds the source code for the iOS & OSX versions of Realm, for b
 
 ## Getting Started
 
-<<<<<<< HEAD
 Please see the detailed instructions in our docs to add [Realm Objective-C](https://realm.io/docs/objc/latest/#installation) _or_ [Realm Swift](https://realm.io/docs/swift/latest/#installation) to your Xcode project.
 
 ## Documentation
@@ -34,22 +33,6 @@ The API reference is located at [realm.io/docs/swift/latest/api](https://realm.i
 - **Have a feature request?** [Open an issue](https://github.com/realm/realm-cocoa/issues/new). Tell us what the feature should do, and why you want the feature.
 - **Want to ask in-depth questions?** [Join our online office hours](https://attendee.gotowebinar.com/rt/1182038037080364033). We host these once a month, and you can join via chat, audio call, or video call.
 - Sign up for our [**Community Newsletter**](http://eepurl.com/VEKCn) to get regular tips, learn about other use-cases and get alerted of blogposts and tutorials about Realm.
-=======
-Please see the [detailed instructions in our docs](http://realm.io/docs/cocoa/#installation) to add Realm to your Xcode project.
-
-## Documentation
-
-Documentation for Realm can be found at [realm.io/docs/cocoa](http://realm.io/docs/cocoa).  
-The API reference is located at [realm.io/docs/cocoa/api](http://realm.io/docs/cocoa/api).
-
-## Getting Help
-
-- **Reproducible Bugs & Feature Requests** should be filed directly against our [Github Issues](https://github.com/realm/realm-cocoa/issues).
-- **Discussions & Support**: [realm-cocoa@googlegroups.com](https://groups.google.com/d/forum/realm-cocoa).
-- **StackOverflow**: look for previous questions under the tag [#realm](https://stackoverflow.com/questions/tagged/realm?sort=newest) — or [open a new one](http://stackoverflow.com/questions/ask?tags=realm).
-- Sign up for our [**Community Newsletter**](http://eepurl.com/VEKCn) to get regular tips, learn about other use-cases and get alerted of blogposts and tutorials about Realm.
-- Attend our monthly [**Online Office Hours**](https://attendee.gotowebinar.com/rt/1182038037080364033) to ask questions directly to the team.
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
 
 ## Building Realm
 

@@ -84,11 +84,7 @@
     }
     schema.className = className;
     schema.objectClass = objectClass;
-<<<<<<< HEAD
     schema.accessorClass = RLMDynamicObject.class;
-=======
-    schema.accessorClass = RLMObject.class;
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
     schema.isSwiftClass = isSwift;
 
     // create array of RLMProperties, inserting properties of superclasses first
@@ -103,7 +99,6 @@
     schema.properties = props;
 
     // verify that we didn't add any properties twice due to inheritance
-<<<<<<< HEAD
     if (props.count != [NSSet setWithArray:[props valueForKey:@"name"]].count) {
         NSCountedSet *countedPropertyNames = [NSCountedSet setWithArray:[props valueForKey:@"name"]];
         NSSet *duplicatePropertyNames = [countedPropertyNames filteredSetUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id object, NSDictionary *) {
@@ -116,21 +111,11 @@
             @throw RLMException([NSString stringWithFormat:@"Object '%@' has properties that are declared multiple times in its class hierarchy: '%@'", className, [duplicatePropertyNames.allObjects componentsJoinedByString:@"', '"]]);
         }
     }
-=======
-    assert(props.count == [NSSet setWithArray:[props valueForKey:@"name"]].count);
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
 
     if (NSString *primaryKey = [objectClass primaryKey]) {
         for (RLMProperty *prop in schema.properties) {
             if ([primaryKey isEqualToString:prop.name]) {
-<<<<<<< HEAD
                 prop.indexed = YES;
-=======
-                 // FIXME - enable for ints when we have core suppport
-                if (prop.type == RLMPropertyTypeString) {
-                    prop.indexed = YES;
-                }
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
                 schema.primaryKeyProperty = prop;
                 break;
             }
@@ -191,15 +176,12 @@
             Ivar ivar = class_getInstanceVariable(objectClass, propName.UTF8String);
             id value = object_getIvar(swiftObjectInstance, ivar);
             NSString *className = [value _rlmArray].objectClassName;
-<<<<<<< HEAD
             NSUInteger existing = [propArray indexOfObjectPassingTest:^BOOL(RLMProperty *obj, __unused NSUInteger idx, __unused BOOL *stop) {
                 return [obj.name isEqualToString:propName];
             }];
             if (existing != NSNotFound) {
                 [propArray removeObjectAtIndex:existing];
             }
-=======
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
             [propArray addObject:[[RLMProperty alloc] initSwiftListPropertyWithName:propName
                                                                                ivar:ivar
                                                                     objectClassName:className]];

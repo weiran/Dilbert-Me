@@ -29,7 +29,7 @@
 }
 
 // standalone initializer
-- (instancetype)initWithObject:(id)value schema:(RLMSchema *)schema;
+- (instancetype)initWithValue:(id)value schema:(RLMSchema *)schema;
 
 // live accessor initializer
 - (instancetype)initWithRealm:(__unsafe_unretained RLMRealm *const)realm
@@ -37,6 +37,10 @@
 
 // shared schema for this class
 + (RLMObjectSchema *)sharedSchema;
+
+@end
+
+@interface RLMDynamicObject : RLMObject
 
 @end
 
@@ -66,7 +70,6 @@ FOUNDATION_EXTERN const NSUInteger RLMDescriptionMaxDepth;
 @class RLMProperty, RLMArray;
 @interface RLMObjectUtil : NSObject
 
-+ (NSString *)primaryKeyForClass:(Class)cls;
 + (NSArray *)ignoredPropertiesForClass:(Class)cls;
 + (NSArray *)indexedPropertiesForClass:(Class)cls;
 

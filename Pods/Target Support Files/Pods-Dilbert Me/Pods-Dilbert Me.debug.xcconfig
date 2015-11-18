@@ -1,22 +1,9 @@
 CLANG_CXX_LANGUAGE_STANDARD = compiler-default
-<<<<<<< HEAD
-CODE_SIGN_IDENTITY = 
-GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
+CODE_SIGN_IDENTITY =
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1 $(inherited) PMK_WHEN=1
 LD_RUNPATH_SEARCH_PATHS = $(inherited) '@executable_path/../Frameworks' '@loader_path/Frameworks'
-OTHER_CFLAGS = $(inherited) -iquote "$CONFIGURATION_BUILD_DIR/AFNetworking.framework/Headers" -iquote "$CONFIGURATION_BUILD_DIR/HTMLReader.framework/Headers" -iquote "$CONFIGURATION_BUILD_DIR/OMGHTTPURLRQ.framework/Headers" -iquote "$CONFIGURATION_BUILD_DIR/PromiseKit.framework/Headers" -iquote "$CONFIGURATION_BUILD_DIR/PromiseKit_AFNetworking.framework/Headers" -iquote "$CONFIGURATION_BUILD_DIR/Realm.framework/Headers" -iquote "$CONFIGURATION_BUILD_DIR/YLMoment.framework/Headers"
+OTHER_CFLAGS = $(inherited) -iquote "$CONFIGURATION_BUILD_DIR/AFNetworking.framework/Headers" -iquote "$CONFIGURATION_BUILD_DIR/HTMLReader.framework/Headers" -iquote "$CONFIGURATION_BUILD_DIR/PromiseKit.framework/Headers" -iquote "$CONFIGURATION_BUILD_DIR/PromiseKit_AFNetworking.framework/Headers" -iquote "$CONFIGURATION_BUILD_DIR/Realm.framework/Headers" -iquote "$CONFIGURATION_BUILD_DIR/YLMoment.framework/Headers"
 OTHER_CPLUSPLUSFLAGS = -std=c++1y $(inherited)
-OTHER_LDFLAGS = $(inherited) -ObjC -framework "AFNetworking" -framework "HTMLReader" -framework "OMGHTTPURLRQ" -framework "PromiseKit" -framework "PromiseKit_AFNetworking" -framework "Realm" -framework "YLMoment"
-OTHER_SWIFT_FLAGS = $(inherited) "-D" "COCOAPODS"
+OTHER_LDFLAGS = $(inherited) -ObjC -framework "AFNetworking" -framework "HTMLReader" -framework "PromiseKit" -framework "PromiseKit_AFNetworking" -framework "Realm" -framework "YLMoment"
 PODS_FRAMEWORK_BUILD_PATH = $(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)/Pods-Dilbert Me
 PODS_ROOT = ${SRCROOT}/Pods
-SWIFT_INSTALL_OBJC_HEADER = NO
-=======
-GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1 $(inherited) PMK_WHEN=1
-HEADER_SEARCH_PATHS = $(inherited) "${PODS_ROOT}/Headers/Public" "${PODS_ROOT}/Headers/Public/AFNetworking" "${PODS_ROOT}/Headers/Public/HTMLReader" "${PODS_ROOT}/Headers/Public/PromiseKit" "${PODS_ROOT}/Headers/Public/PromiseKit-AFNetworking" "${PODS_ROOT}/Headers/Public/Realm" "${PODS_ROOT}/Headers/Public/Realm/realm" "${PODS_ROOT}/Headers/Public/YLMoment"
-LIBRARY_SEARCH_PATHS = "$(PODS_ROOT)/Realm/core"
-OTHER_CFLAGS = $(inherited) -isystem "${PODS_ROOT}/Headers/Public" -isystem "${PODS_ROOT}/Headers/Public/AFNetworking" -isystem "${PODS_ROOT}/Headers/Public/HTMLReader" -isystem "${PODS_ROOT}/Headers/Public/PromiseKit" -isystem "${PODS_ROOT}/Headers/Public/PromiseKit-AFNetworking" -isystem "${PODS_ROOT}/Headers/Public/Realm" -isystem "${PODS_ROOT}/Headers/Public/Realm/realm" -isystem "${PODS_ROOT}/Headers/Public/YLMoment"
-OTHER_CPLUSPLUSFLAGS = -std=c++1y $(inherited) -std=c++1y $(inherited)
-OTHER_LDFLAGS = $(inherited) -ObjC -l"Pods-Dilbert Me-AFNetworking" -l"Pods-Dilbert Me-HTMLReader" -l"Pods-Dilbert Me-PromiseKit" -l"Pods-Dilbert Me-PromiseKit-AFNetworking" -l"Pods-Dilbert Me-Realm" -l"Pods-Dilbert Me-YLMoment" -l"c++" -l"realm" -framework "CoreServices" -framework "Foundation" -framework "Security" -framework "SystemConfiguration"
-OTHER_LIBTOOLFLAGS = $(OTHER_LDFLAGS)
-PODS_ROOT = ${SRCROOT}/Pods
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3

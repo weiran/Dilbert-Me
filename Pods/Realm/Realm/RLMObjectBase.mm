@@ -23,10 +23,7 @@
 #import "RLMProperty_Private.h"
 #import "RLMRealm_Private.hpp"
 #import "RLMSchema_Private.h"
-<<<<<<< HEAD
 #import "RLMArray_Private.hpp"
-=======
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
 
 #import "RLMObjectStore.h"
 #import "RLMSwiftSupport.h"
@@ -38,7 +35,6 @@ const NSUInteger RLMDescriptionMaxDepth = 5;
 
 // standalone init
 - (instancetype)init {
-<<<<<<< HEAD
     self = [super init];
     if (self && RLMSchema.sharedSchema) {
         _objectSchema = [self.class sharedSchema];
@@ -46,22 +42,12 @@ const NSUInteger RLMDescriptionMaxDepth = 5;
         // set default values
         if (!_objectSchema.isSwiftClass) {
             NSDictionary *dict = RLMDefaultValuesForObjectSchema(_objectSchema);
-=======
-    if (RLMSchema.sharedSchema) {
-        RLMObjectSchema *objectSchema = [self.class sharedSchema];
-        self = [self initWithRealm:nil schema:objectSchema];
-
-        // set default values
-        if (!objectSchema.isSwiftClass) {
-            NSDictionary *dict = RLMDefaultValuesForObjectSchema(objectSchema);
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
             for (NSString *key in dict) {
                 [self setValue:dict[key] forKey:key];
             }
         }
 
         // set standalone accessor class
-<<<<<<< HEAD
         object_setClass(self, _objectSchema.standaloneClass);
     }
 
@@ -119,39 +105,6 @@ static id RLMValidatedObjectForProperty(id obj, RLMProperty *prop, RLMSchema *sc
             }
 
             [self setValue:RLMValidatedObjectForProperty(obj, prop, schema) forKeyPath:prop.name];
-=======
-        object_setClass(self, objectSchema.standaloneClass);
-    }
-    else {
-        // if schema not initialized
-        // this is only used for introspection
-        self = [super init];
-    }
-
-    return self;
-}
-
-- (instancetype)initWithObject:(id)value schema:(RLMSchema *)schema {
-    self = [self init];
-    if (NSArray *array = RLMDynamicCast<NSArray>(value)) {
-        // validate and populate
-        array = RLMValidatedArrayForObjectSchema(array, _objectSchema, schema);
-        NSArray *properties = _objectSchema.properties;
-        for (NSUInteger i = 0; i < array.count; i++) {
-            [self setValue:array[i] forKeyPath:[properties[i] name]];
-        }
-    }
-    else {
-        // assume our object is an NSDictionary or a an object with kvc properties
-        NSDictionary *dict = RLMValidatedDictionaryForObjectSchema(value, _objectSchema, schema);
-        for (NSString *name in dict) {
-            id val = dict[name];
-            // strip out NSNull before passing values to standalone setters
-            if (val == NSNull.null) {
-                val = nil;
-            }
-            [self setValue:val forKeyPath:name];
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
         }
     }
 
@@ -255,13 +208,10 @@ static id RLMValidatedObjectForProperty(id obj, RLMProperty *prop, RLMSchema *sc
     }
 }
 
-<<<<<<< HEAD
 + (BOOL)shouldPersistToRealm {
     return RLMIsObjectSubclass(self);
 }
 
-=======
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
 @end
 
 
@@ -386,13 +336,6 @@ Class RLMObjectUtilClass(BOOL isSwift) {
 
 @implementation RLMObjectUtil
 
-<<<<<<< HEAD
-=======
-+ (NSString *)primaryKeyForClass:(Class)cls {
-    return [cls primaryKey];
-}
-
->>>>>>> f30d58a1cd87059c46b2552067896738766b04a3
 + (NSArray *)ignoredPropertiesForClass:(Class)cls {
     return [cls ignoredProperties];
 }
