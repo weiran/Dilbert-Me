@@ -16,7 +16,7 @@ install_framework()
     local source="$1"
   fi
 
-  local destination="${CONFIGURATION_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}"
+  local destination="${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}"
 
   if [ -L "${source}" ]; then
       echo "Symlinked..."
@@ -59,8 +59,13 @@ code_sign_if_enabled() {
   if [ -n "${EXPANDED_CODE_SIGN_IDENTITY}" -a "${CODE_SIGNING_REQUIRED}" != "NO" -a "${CODE_SIGNING_ALLOWED}" != "NO" ]; then
     # Use the current code_sign_identitiy
     echo "Code Signing $1 with Identity ${EXPANDED_CODE_SIGN_IDENTITY_NAME}"
-    echo "/usr/bin/codesign --force --sign ${EXPANDED_CODE_SIGN_IDENTITY} --preserve-metadata=identifier,entitlements \"$1\""
-    /usr/bin/codesign --force --sign ${EXPANDED_CODE_SIGN_IDENTITY} --preserve-metadata=identifier,entitlements "$1"
+    local code_sign_cmd="/usr/bin/codesign --force --sign ${EXPANDED_CODE_SIGN_IDENTITY} ${OTHER_CODE_SIGN_FLAGS} --preserve-metadata=identifier,entitlements '$1'"
+
+    if [ "${COCOAPODS_PARALLEL_CODE_SIGN}" == "true" ]; then
+      code_sign_cmd="$code_sign_cmd &"
+    fi
+    echo "$code_sign_cmd"
+    eval "$code_sign_cmd"
   fi
 }
 
@@ -84,18 +89,21 @@ strip_invalid_archs() {
 
 
 if [[ "$CONFIGURATION" == "Debug" ]]; then
-  install_framework "Pods-Dilbert Me/AFNetworking.framework"
-  install_framework "Pods-Dilbert Me/HTMLReader.framework"
-  install_framework "Pods-Dilbert Me/PromiseKit_AFNetworking.framework"
-  install_framework "Pods-Dilbert Me/PromiseKit.framework"
-  install_framework "Pods-Dilbert Me/Realm.framework"
-  install_framework "Pods-Dilbert Me/YLMoment.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/AFNetworking/AFNetworking.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/HTMLReader/HTMLReader.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/PromiseKit-AFNetworking/PromiseKit_AFNetworking.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/PromiseKit/PromiseKit.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/Realm/Realm.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/YLMoment/YLMoment.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
-  install_framework "Pods-Dilbert Me/AFNetworking.framework"
-  install_framework "Pods-Dilbert Me/HTMLReader.framework"
-  install_framework "Pods-Dilbert Me/PromiseKit_AFNetworking.framework"
-  install_framework "Pods-Dilbert Me/PromiseKit.framework"
-  install_framework "Pods-Dilbert Me/Realm.framework"
-  install_framework "Pods-Dilbert Me/YLMoment.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/AFNetworking/AFNetworking.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/HTMLReader/HTMLReader.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/PromiseKit-AFNetworking/PromiseKit_AFNetworking.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/PromiseKit/PromiseKit.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/Realm/Realm.framework"
+  install_framework "$BUILT_PRODUCTS_DIR/YLMoment/YLMoment.framework"
+fi
+if [ "${COCOAPODS_PARALLEL_CODE_SIGN}" == "true" ]; then
+  wait
 fi

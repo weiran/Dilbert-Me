@@ -13,7 +13,7 @@
 
 @interface DilbertManager : NSObject <QLPreviewPanelDataSource, QLPreviewPanelDelegate>
 
-- (PMKPromise *)update;
+- (AnyPromise *)update;
 
 - (Comic *)latestComic;
 

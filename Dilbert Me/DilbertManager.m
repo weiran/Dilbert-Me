@@ -19,6 +19,7 @@
 @interface DilbertManager ()
 @property (strong) QLPreviewPanel *previewPanel;
 @property (strong) RLMResults *comics;
+@property (strong) AFHTTPSessionManager *sessionManager;
 @end
 
 @implementation DilbertManager
@@ -27,6 +28,8 @@
     self = [super init];
     if (self) {
         self.comics = [[Comic allObjects] sortedResultsUsingProperty:@"identifier" ascending:NO];
+        self.sessionManager = [AFHTTPSessionManager manager];
+        self.sessionManager.responseSerializer = [AFHTTPResponseSerializer serializer];
     }
     return self;
 }
@@ -35,19 +38,19 @@
     return [self.comics firstObject];
 }
 
-- (PMKPromise *)update {
-    return [AFHTTPRequestOperation request:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://dilbert.com/"]]]
-    .then(^(id responseObject) {
+- (AnyPromise *)update {
+    return [self.sessionManager GET:@"http://dilbert.com" parameters:nil]
+    .then(^(id responseObject, NSURLSessionTask *task) {
         NSString *html = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
         HTMLDocument *document = [HTMLDocument documentWithString:html];
         NSArray *comicItems = [document nodesMatchingSelector:@".comic-item"];
         
         NSMutableArray *promises = [NSMutableArray array];
         for (HTMLElement *element in comicItems) {
-            [promises addObject:[DilbertManager parseComic:element]];
+            [promises addObject:[self parseComic:element]];
         }
         
-        return [PMKPromise when:promises];
+        return PMKWhen(promises);
     })
     .then(^(NSArray* comics) {
         Comic *latestComic = [self.comics firstObject];
@@ -70,8 +73,8 @@
 }
 
 
-+ (PMKPromise *)parseComic:(HTMLElement *)element {
-    return [PMKPromise promiseWithResolver:^(PMKResolver resolve) {
+- (AnyPromise *)parseComic:(HTMLElement *)element {
+    return [AnyPromise promiseWithResolverBlock:^(PMKResolver resolve) {
         // get date
         NSString *comicDateString = [[element firstNodeMatchingSelector:@"date span:first-of-type"] textContent];
         NSDate *comicDate = [[YLMoment momentWithDateAsString:comicDateString] date];
@@ -80,7 +83,7 @@
         HTMLElement *todaysComicImgElement = [element firstNodeMatchingSelector:@"img.img-comic"];
         NSString *todaysComicImageURL = [todaysComicImgElement attributes][@"src"];
         
-        [AFHTTPRequestOperation request:[NSURLRequest requestWithURL:[NSURL URLWithString:todaysComicImageURL]]]
+        [self.sessionManager GET:todaysComicImageURL parameters:nil]
         .then(^(id responseObject) {
             NSImage *image = [[NSImage alloc] initWithData:responseObject];
             Comic *comic = [[Comic alloc] initWithDate:comicDate image:image];

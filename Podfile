@@ -6,9 +6,8 @@ target 'Dilbert Me' do
 pod 'AFNetworking'
 pod 'Realm'
 pod 'HTMLReader'
-pod 'PromiseKit/Promise', "~> 1.x" 
-pod 'PromiseKit/When', "~> 1.x"
-pod 'PromiseKit-AFNetworking'
+pod 'PromiseKit/CorePromise', "~> 4.x"
+pod 'PromiseKit-AFNetworking', :git => 'https://github.com/csotiriou/AFNetworking-PromiseKit'
 pod 'YLMoment'
 end
 

@@ -18,11 +18,11 @@
 		246D12BC1A6A807B00D77FD0 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 246D12BB1A6A807B00D77FD0 /* Cocoa.framework */; };
 		246D12BF1A6ABF8400D77FD0 /* DilbertMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 246D12BE1A6ABF8400D77FD0 /* DilbertMenu.xib */; };
 		246D12C21A6AC06F00D77FD0 /* DilbertMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 246D12C11A6AC06F00D77FD0 /* DilbertMenu.m */; };
-		E3F55030FA1E07DB33E34251 /* Pods_Dilbert_Me.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D73F6CE14AA0C5931ABA9FD /* Pods_Dilbert_Me.framework */; };
+		5713859A32756E4EF5C888D7 /* Pods_Dilbert_Me.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 378AE97F0A571A0556836FE9 /* Pods_Dilbert_Me.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		1BBE9967E9CDF0CCBEB644A2 /* Pods-Dilbert Me.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Dilbert Me.release.xcconfig"; path = "Pods/Target Support Files/Pods-Dilbert Me/Pods-Dilbert Me.release.xcconfig"; sourceTree = "<group>"; };
+		0CFB944A3DD5B6CD1EF340FE /* Pods-Dilbert Me.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Dilbert Me.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Dilbert Me/Pods-Dilbert Me.debug.xcconfig"; sourceTree = "<group>"; };
 		246D128B1A6A6EAA00D77FD0 /* Dilbert Me.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Dilbert Me.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		246D128F1A6A6EAB00D77FD0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		246D12901A6A6EAB00D77FD0 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -41,8 +41,8 @@
 		246D12BE1A6ABF8400D77FD0 /* DilbertMenu.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DilbertMenu.xib; sourceTree = "<group>"; };
 		246D12C01A6AC06F00D77FD0 /* DilbertMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DilbertMenu.h; sourceTree = "<group>"; };
 		246D12C11A6AC06F00D77FD0 /* DilbertMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DilbertMenu.m; sourceTree = "<group>"; };
-		5D73F6CE14AA0C5931ABA9FD /* Pods_Dilbert_Me.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Dilbert_Me.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		CDB7089C1B13C7D92D267C50 /* Pods-Dilbert Me.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Dilbert Me.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Dilbert Me/Pods-Dilbert Me.debug.xcconfig"; sourceTree = "<group>"; };
+		378AE97F0A571A0556836FE9 /* Pods_Dilbert_Me.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Dilbert_Me.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EA5577466783ACAF56193A24 /* Pods-Dilbert Me.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Dilbert Me.release.xcconfig"; path = "Pods/Target Support Files/Pods-Dilbert Me/Pods-Dilbert Me.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,7 +53,7 @@
 				246D12BC1A6A807B00D77FD0 /* Cocoa.framework in Frameworks */,
 				246D12BA1A6A807600D77FD0 /* Quartz.framework in Frameworks */,
 				246D12B81A6A79D500D77FD0 /* QuickLook.framework in Frameworks */,
-				E3F55030FA1E07DB33E34251 /* Pods_Dilbert_Me.framework in Frameworks */,
+				5713859A32756E4EF5C888D7 /* Pods_Dilbert_Me.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,8 +65,8 @@
 			children = (
 				246D128D1A6A6EAA00D77FD0 /* Dilbert Me */,
 				246D128C1A6A6EAA00D77FD0 /* Products */,
-				94BBDD13278B5A1EDB045008 /* Pods */,
 				2FCEDF7A098E83B0CE729866 /* Frameworks */,
+				D23FC7D6FE64EDBB9C6EBC46 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -113,16 +113,16 @@
 				246D12BB1A6A807B00D77FD0 /* Cocoa.framework */,
 				246D12B91A6A807600D77FD0 /* Quartz.framework */,
 				246D12B71A6A79D500D77FD0 /* QuickLook.framework */,
-				5D73F6CE14AA0C5931ABA9FD /* Pods_Dilbert_Me.framework */,
+				378AE97F0A571A0556836FE9 /* Pods_Dilbert_Me.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		94BBDD13278B5A1EDB045008 /* Pods */ = {
+		D23FC7D6FE64EDBB9C6EBC46 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				CDB7089C1B13C7D92D267C50 /* Pods-Dilbert Me.debug.xcconfig */,
-				1BBE9967E9CDF0CCBEB644A2 /* Pods-Dilbert Me.release.xcconfig */,
+				0CFB944A3DD5B6CD1EF340FE /* Pods-Dilbert Me.debug.xcconfig */,
+				EA5577466783ACAF56193A24 /* Pods-Dilbert Me.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -134,12 +134,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 246D12AB1A6A6EAB00D77FD0 /* Build configuration list for PBXNativeTarget "Dilbert Me" */;
 			buildPhases = (
-				F6F9030A37253A4FED67CA2C /* Check Pods Manifest.lock */,
+				992ADA1D4B7F4D76C8901C99 /* [CP] Check Pods Manifest.lock */,
 				246D12871A6A6EAA00D77FD0 /* Sources */,
 				246D12881A6A6EAA00D77FD0 /* Frameworks */,
 				246D12891A6A6EAA00D77FD0 /* Resources */,
-				5F4167AA18A8837997907524 /* Copy Pods Resources */,
-				3C968807D4A90ABF91AB3D9C /* Embed Pods Frameworks */,
+				AE65A8961EC484B638E9D3D5 /* [CP] Embed Pods Frameworks */,
+				4A82A913CA938F8585B84F34 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -156,12 +156,13 @@
 		246D12831A6A6EAA00D77FD0 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0710;
+				LastUpgradeCheck = 0820;
 				ORGANIZATIONNAME = "Weiran Zhang";
 				TargetAttributes = {
 					246D128A1A6A6EAA00D77FD0 = {
 						CreatedOnToolsVersion = 6.1.1;
 						DevelopmentTeam = PZS9CJ467T;
+						LastSwiftMigration = 0820;
 					};
 				};
 			};
@@ -197,29 +198,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		3C968807D4A90ABF91AB3D9C /* Embed Pods Frameworks */ = {
+		4A82A913CA938F8585B84F34 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Dilbert Me/Pods-Dilbert Me-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		5F4167AA18A8837997907524 /* Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Copy Pods Resources";
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -227,19 +213,34 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Dilbert Me/Pods-Dilbert Me-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		F6F9030A37253A4FED67CA2C /* Check Pods Manifest.lock */ = {
+		992ADA1D4B7F4D76C8901C99 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Check Pods Manifest.lock";
+			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		AE65A8961EC484B638E9D3D5 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Dilbert Me/Pods-Dilbert Me-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -284,8 +285,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "-";
@@ -294,6 +297,7 @@
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -306,7 +310,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
@@ -326,8 +330,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "-";
@@ -336,13 +342,14 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
 			};
@@ -350,8 +357,9 @@
 		};
 		246D12AC1A6A6EAB00D77FD0 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CDB7089C1B13C7D92D267C50 /* Pods-Dilbert Me.debug.xcconfig */;
+			baseConfigurationReference = 0CFB944A3DD5B6CD1EF340FE /* Pods-Dilbert Me.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREFIX_HEADER = "Dilbert Me/DilbertMe-Prefix.pch";
@@ -359,13 +367,15 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "co.weiran.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
 		246D12AD1A6A6EAB00D77FD0 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1BBE9967E9CDF0CCBEB644A2 /* Pods-Dilbert Me.release.xcconfig */;
+			baseConfigurationReference = EA5577466783ACAF56193A24 /* Pods-Dilbert Me.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREFIX_HEADER = "Dilbert Me/DilbertMe-Prefix.pch";
@@ -373,6 +383,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "co.weiran.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};

@@ -1,50 +1,52 @@
 PODS:
-  - AFNetworking (2.5.4):
-    - AFNetworking/NSURLConnection (= 2.5.4)
-    - AFNetworking/NSURLSession (= 2.5.4)
-    - AFNetworking/Reachability (= 2.5.4)
-    - AFNetworking/Security (= 2.5.4)
-    - AFNetworking/Serialization (= 2.5.4)
-    - AFNetworking/UIKit (= 2.5.4)
-  - AFNetworking/NSURLConnection (2.5.4):
+  - AFNetworking (3.1.0):
+    - AFNetworking/NSURLSession (= 3.1.0)
+    - AFNetworking/Reachability (= 3.1.0)
+    - AFNetworking/Security (= 3.1.0)
+    - AFNetworking/Serialization (= 3.1.0)
+    - AFNetworking/UIKit (= 3.1.0)
+  - AFNetworking/NSURLSession (3.1.0):
     - AFNetworking/Reachability
     - AFNetworking/Security
     - AFNetworking/Serialization
-  - AFNetworking/NSURLSession (2.5.4):
-    - AFNetworking/Reachability
-    - AFNetworking/Security
-    - AFNetworking/Serialization
-  - AFNetworking/Reachability (2.5.4)
-  - AFNetworking/Security (2.5.4)
-  - AFNetworking/Serialization (2.5.4)
-  - HTMLReader (0.8)
-  - PromiseKit-AFNetworking (0.1.7):
-    - AFNetworking (~> 2.0)
-    - PromiseKit/Promise (~> 1.5)
-    - PromiseKit/When
-  - PromiseKit/Promise (1.6.0)
-  - PromiseKit/When (1.6.0):
-    - PromiseKit/Promise
-  - Realm (0.93.2):
-    - Realm/Headers (= 0.93.2)
-  - Realm/Headers (0.93.2)
-  - YLMoment (0.5.2)
+  - AFNetworking/Reachability (3.1.0)
+  - AFNetworking/Security (3.1.0)
+  - AFNetworking/Serialization (3.1.0)
+  - HTMLReader (2.0.3)
+  - PromiseKit-AFNetworking (0.7.0):
+    - AFNetworking (~> 3.1.0)
+    - PromiseKit/CorePromise (~> 4.0)
+  - PromiseKit/CorePromise (4.1.7)
+  - Realm (2.4.2):
+    - Realm/Headers (= 2.4.2)
+  - Realm/Headers (2.4.2)
+  - YLMoment (0.8.0)
 
 DEPENDENCIES:
   - AFNetworking
   - HTMLReader
-  - PromiseKit-AFNetworking
-  - PromiseKit/Promise (~> 1.x)
-  - PromiseKit/When (~> 1.x)
+  - PromiseKit-AFNetworking (from `https://github.com/csotiriou/AFNetworking-PromiseKit`)
+  - PromiseKit/CorePromise (~> 4.x)
   - Realm
   - YLMoment
 
-SPEC CHECKSUMS:
-  AFNetworking: 05edc0ac4c4c8cf57bcf4b84be5b0744b6d8e71e
-  HTMLReader: b4d19899a242c02e1ce4a2308584fe2a6bcb6f6b
-  PromiseKit: 6be651503d4af22830b5313be993c5a0ef77bf77
-  PromiseKit-AFNetworking: 364d4cb942a7278f5219c62dc822867655954a8f
-  Realm: 2fdd0ae74f730e190384e0338d8a0d3654df8220
-  YLMoment: 11348f13579ac6646309abafabb19057d5bd581b
+EXTERNAL SOURCES:
+  PromiseKit-AFNetworking:
+    :git: https://github.com/csotiriou/AFNetworking-PromiseKit
 
-COCOAPODS: 0.39.0
+CHECKOUT OPTIONS:
+  PromiseKit-AFNetworking:
+    :commit: fa77805dd70201acc2fa6c80b3d4eeccc9576fe7
+    :git: https://github.com/csotiriou/AFNetworking-PromiseKit
+
+SPEC CHECKSUMS:
+  AFNetworking: 5e0e199f73d8626b11e79750991f5d173d1f8b67
+  HTMLReader: 282f41e641eda8938cfcf8c7b7151f70955aee33
+  PromiseKit: 779f2e41faf62d854e7593026ddbcb0bb5c5002d
+  PromiseKit-AFNetworking: 775f9830235a2c89c99ce374cf75eaca55bba91d
+  Realm: d27b758e12d62a3371879a065d4c40aa212c5a54
+  YLMoment: 64a4758041b19824ac33ea38976d0fd6a7c224fd
+
+PODFILE CHECKSUM: c7ad6eb27c41b22d28679f7cb6803620804c27ad
+
+COCOAPODS: 1.2.0

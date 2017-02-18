@@ -18,31 +18,43 @@
 
 #import "RLMResults_Private.h"
 
-
 #import "RLMArray_Private.hpp"
-#import "RLMObject_Private.hpp"
+#import "RLMCollection_Private.hpp"
 #import "RLMObjectSchema_Private.hpp"
 #import "RLMObjectStore.h"
+#import "RLMObject_Private.hpp"
+#import "RLMObservation.hpp"
+#import "RLMProperty_Private.h"
 #import "RLMQueryUtil.hpp"
 #import "RLMRealm_Private.hpp"
 #import "RLMSchema_Private.h"
+#import "RLMThreadSafeReference_Private.hpp"
 #import "RLMUtil.hpp"
 
+#import "results.hpp"
+
 #import <objc/runtime.h>
+#import <objc/message.h>
 #import <realm/table_view.hpp>
+
+using namespace realm;
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wincomplete-implementation"
+@implementation RLMNotificationToken
+@end
+#pragma clang diagnostic pop
+
+@interface RLMResults () <RLMThreadConfined_Private>
+@end
 
 //
 // RLMResults implementation
 //
 @implementation RLMResults {
-    std::unique_ptr<realm::Query> _backingQuery;
-    realm::TableView _backingView;
-    BOOL _viewCreated;
-    RowIndexes::Sorter _sortOrder;
-
-@protected
+    realm::Results _results;
     RLMRealm *_realm;
-    NSString *_objectClassName;
+    RLMClassInfo *_info;
 }
 
 - (instancetype)initPrivate {
@@ -50,137 +62,116 @@
     return self;
 }
 
-+ (instancetype)resultsWithObjectClassName:(NSString *)objectClassName
-                                     query:(std::unique_ptr<realm::Query>)query
-                                     realm:(RLMRealm *)realm {
-    return [self resultsWithObjectClassName:objectClassName query:move(query) sort:RowIndexes::Sorter{} realm:realm];
+static void assertKeyPathIsNotNested(NSString *keyPath) {
+    if ([keyPath rangeOfString:@"."].location != NSNotFound) {
+        @throw RLMException(@"Nested key paths are not supported yet for KVC collection operators.");
+    }
 }
 
-+ (instancetype)resultsWithObjectClassName:(NSString *)objectClassName
-                                     query:(std::unique_ptr<realm::Query>)query
-                                      sort:(RowIndexes::Sorter const&)sorter
-                                     realm:(RLMRealm *)realm {
+[[gnu::noinline]]
+[[noreturn]]
+static void throwError(NSString *aggregateMethod) {
+    try {
+        throw;
+    }
+    catch (realm::InvalidTransactionException const&) {
+        @throw RLMException(@"Cannot modify Results outside of a write transaction");
+    }
+    catch (realm::IncorrectThreadException const&) {
+        @throw RLMException(@"Realm accessed from incorrect thread");
+    }
+    catch (realm::Results::InvalidatedException const&) {
+        @throw RLMException(@"RLMResults has been invalidated");
+    }
+    catch (realm::Results::DetatchedAccessorException const&) {
+        @throw RLMException(@"Object has been invalidated");
+    }
+    catch (realm::Results::IncorrectTableException const& e) {
+        @throw RLMException(@"Object type '%s' does not match RLMResults type '%s'.",
+                            e.actual.data(), e.expected.data());
+    }
+    catch (realm::Results::OutOfBoundsIndexException const& e) {
+        @throw RLMException(@"Index %zu is out of bounds (must be less than %zu)",
+                            e.requested, e.valid_count);
+    }
+    catch (realm::Results::UnsupportedColumnTypeException const& e) {
+        @throw RLMException(@"%@ is not supported for %@ property '%s'",
+                            aggregateMethod,
+                            RLMTypeToString((RLMPropertyType)e.column_type),
+                            e.column_name.data());
+    }
+}
+
+template<typename Function>
+static auto translateErrors(Function&& f, NSString *aggregateMethod=nil) {
+    try {
+        return f();
+    }
+    catch (...) {
+        throwError(aggregateMethod);
+    }
+}
+
++ (instancetype)resultsWithObjectInfo:(RLMClassInfo&)info
+                              results:(realm::Results)results {
     RLMResults *ar = [[self alloc] initPrivate];
-    ar->_objectClassName = objectClassName;
-    ar->_viewCreated = NO;
-    ar->_backingQuery = move(query);
-    ar->_sortOrder = sorter;
-    ar->_realm = realm;
-    ar->_objectSchema = realm.schema[objectClassName];
+    ar->_results = std::move(results);
+    ar->_realm = info.realm;
+    ar->_info = &info;
     return ar;
 }
 
-+ (instancetype)resultsWithObjectClassName:(NSString *)objectClassName
-                                     query:(std::unique_ptr<realm::Query>)query
-                                      view:(realm::TableView &&)view
-                                     realm:(RLMRealm *)realm {
-    RLMResults *ar = [[RLMResults alloc] initPrivate];
-    ar->_objectClassName = objectClassName;
-    ar->_viewCreated = YES;
-    ar->_backingView = std::move(view);
-    ar->_backingQuery = move(query);
-    ar->_realm = realm;
-    ar->_objectSchema = realm.schema[objectClassName];
-    return ar;
-}
-
-//
-// validation helper
-//
-static inline void RLMResultsValidateAttached(__unsafe_unretained RLMResults *const ar) {
-    if (ar->_viewCreated) {
-        // verify view is attached and up to date
-        if (!ar->_backingView.is_attached()) {
-            @throw RLMException(@"RLMResults is no longer valid");
-        }
-        ar->_backingView.sync_if_needed();
-    }
-    else if (ar->_backingQuery) {
-        // create backing view if needed
-        ar->_backingView = ar->_backingQuery->find_all();
-        ar->_viewCreated = YES;
-        if (!ar->_sortOrder.m_columns.empty()) {
-            ar->_backingView.sort(ar->_sortOrder.m_column_indexes, ar->_sortOrder.m_ascending);
-        }
-    }
-    // otherwise we're backed by a table and don't need to update anything
-}
-static inline void RLMResultsValidate(__unsafe_unretained RLMResults *const ar) {
-    RLMResultsValidateAttached(ar);
-    RLMCheckThread(ar->_realm);
++ (instancetype)emptyDetachedResults {
+    return [[self alloc] initPrivate];
 }
 
 static inline void RLMResultsValidateInWriteTransaction(__unsafe_unretained RLMResults *const ar) {
-    // first verify attached
-    RLMResultsValidate(ar);
-
-    if (!ar->_realm->_inWriteTransaction) {
-        @throw RLMException(@"Can't mutate a persisted array outside of a write transaction.");
-    }
+    ar->_realm->_realm->verify_thread();
+    ar->_realm->_realm->verify_in_write();
 }
 
-//
-// public method implementations
-//
+- (BOOL)isInvalidated {
+    return translateErrors([&] { return !_results.is_valid(); });
+}
+
 - (NSUInteger)count {
-    if (_viewCreated) {
-        RLMResultsValidate(self);
-        return _backingView.size();
-    }
-    else {
-        RLMCheckThread(_realm);
-        return _backingQuery->count();
-    }
+    return translateErrors([&] { return _results.size(); });
+}
+
+- (NSString *)objectClassName {
+    return RLMStringDataToNSString(_results.get_object_type());
+}
+
+- (RLMClassInfo *)objectInfo {
+    return _info;
 }
 
 - (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state
-                                  objects:(__unsafe_unretained id [])buffer
+                                  objects:(__unused __unsafe_unretained id [])buffer
                                     count:(NSUInteger)len {
-    RLMResultsValidate(self);
+    if (!_info) {
+        return 0;
+    }
 
-    __autoreleasing RLMCArrayHolder *items;
+    __autoreleasing RLMFastEnumerator *enumerator;
     if (state->state == 0) {
-        items = [[RLMCArrayHolder alloc] initWithSize:len];
-        state->extra[0] = (long)items;
+        enumerator = [[RLMFastEnumerator alloc] initWithCollection:self objectSchema:*_info];
+        state->extra[0] = (long)enumerator;
         state->extra[1] = self.count;
     }
     else {
-        // FIXME: mutationsPtr should be pointing to a value updated by core
-        // whenever the results are changed rather than doing this check
-        if (state->extra[1] != self.count) {
-            @throw RLMException(@"Collection was mutated while being enumerated.");
-        }
-        items = (__bridge id)(void *)state->extra[0];
-        [items resize:len];
+        enumerator = (__bridge id)(void *)state->extra[0];
     }
 
-    NSUInteger batchCount = 0, index = state->state, count = state->extra[1];
-
-    Class accessorClass = _objectSchema.accessorClass;
-    while (index < count && batchCount < len) {
-        // get acessor fot the object class
-        RLMObject *accessor = [[accessorClass alloc] initWithRealm:_realm schema:_objectSchema];
-        accessor->_row = (*_objectSchema.table)[[self indexInSource:index++]];
-        items->array[batchCount] = accessor;
-        buffer[batchCount] = accessor;
-        batchCount++;
-    }
-
-    for (NSUInteger i = batchCount; i < len; ++i) {
-        items->array[i] = nil;
-    }
-
-    state->itemsPtr = buffer;
-    state->state = index;
-    state->mutationsPtr = state->extra+1;
-
-    return batchCount;
+    return [enumerator countByEnumeratingWithState:state count:len];
 }
 
 - (NSUInteger)indexOfObjectWhere:(NSString *)predicateFormat, ... {
     va_list args;
-    RLM_VARARG(predicateFormat, args);
-    return [self indexOfObjectWhere:predicateFormat args:args];
+    va_start(args, predicateFormat);
+    NSUInteger index = [self indexOfObjectWhere:predicateFormat args:args];
+    va_end(args);
+    return index;
 }
 
 - (NSUInteger)indexOfObjectWhere:(NSString *)predicateFormat args:(va_list)args {
@@ -189,88 +180,169 @@ static inline void RLMResultsValidateInWriteTransaction(__unsafe_unretained RLMR
 }
 
 - (NSUInteger)indexOfObjectWithPredicate:(NSPredicate *)predicate {
-    RLMResultsValidate(self);
-
-    // copy array and apply new predicate creating a new query and view
-    auto query = [self cloneQuery];
-    RLMUpdateQueryWithPredicate(query.get(), predicate, _realm.schema, _realm.schema[self.objectClassName]);
-    size_t index = query->find();
-    if (index == realm::not_found) {
+    if (_results.get_mode() == Results::Mode::Empty) {
         return NSNotFound;
     }
-    return _backingView.find_by_source_ndx(index);
+
+    Query query = translateErrors([&] { return _results.get_query(); });
+    query.and_query(RLMPredicateToQuery(predicate, _info->rlmObjectSchema, _realm.schema, _realm.group));
+    query.sync_view_if_needed();
+
+#if REALM_VER_MAJOR >= 2
+    size_t indexInTable;
+    if (const auto& sort = _results.get_sort()) {
+        // A sort order is specified so we need to return the first match given that ordering.
+        TableView table_view = query.find_all();
+        table_view.sort(sort);
+        if (!table_view.size()) {
+            return NSNotFound;
+        }
+        indexInTable = table_view.get_source_ndx(0);
+    } else {
+        indexInTable = query.find();
+    }
+    if (indexInTable == realm::not_found) {
+        return NSNotFound;
+    }
+    return RLMConvertNotFound(_results.index_of(indexInTable));
+#else
+    TableView table_view;
+    if (const auto& sort = _results.get_sort()) {
+        // A sort order is specified so we need to return the first match given that ordering.
+        table_view = query.find_all();
+        table_view.sort(sort);
+    } else {
+        table_view = query.find_all(0, -1, 1);
+    }
+    if (!table_view.size()) {
+        return NSNotFound;
+    }
+    return _results.index_of(table_view.get_source_ndx(0));
+#endif
 }
 
 - (id)objectAtIndex:(NSUInteger)index {
-    RLMResultsValidate(self);
-
-    if (index >= self.count) {
-        @throw RLMException(@"Index is out of bounds.", @{@"index": @(index)});
-    }
-    return RLMCreateObjectAccessor(_realm, _objectSchema, [self indexInSource:index]);
+    return translateErrors([&] {
+        return RLMCreateObjectAccessor(_realm, *_info, _results.get(index));
+    });
 }
 
 - (id)firstObject {
-    RLMResultsValidate(self);
-
-    if (self.count) {
-        return [self objectAtIndex:0];
-    }
-    return nil;
+    auto row = translateErrors([&] { return _results.first(); });
+    return row ? RLMCreateObjectAccessor(_realm, *_info, *row) : nil;
 }
 
 - (id)lastObject {
-    RLMResultsValidate(self);
-
-    NSUInteger count = self.count;
-    if (count) {
-        return [self objectAtIndex:count-1];
-    }
-    return nil;
+    auto row = translateErrors([&] { return _results.last(); });
+    return row ? RLMCreateObjectAccessor(_realm, *_info, *row) : nil;
 }
 
 - (NSUInteger)indexOfObject:(RLMObject *)object {
-    // check attached for table and object
-    RLMResultsValidate(self);
-    if (object.invalidated) {
-        @throw RLMException(@"RLMObject is no longer valid");
-    }
-
-    // check that object types align
-    if (object->_row.get_table() != &_backingView.get_parent()) {
-        @throw RLMException(@"Object type does not match RLMResults");
-    }
-
-    size_t object_ndx = object->_row.get_index();
-    size_t result = _backingView.find_by_source_ndx(object_ndx);
-    if (result == realm::not_found) {
+    if (!object || (!object->_realm && !object.invalidated)) {
         return NSNotFound;
     }
 
-    return result;
+    return translateErrors([&] {
+        return RLMConvertNotFound(_results.index_of(object->_row));
+    });
+}
+
+- (id)valueForKeyPath:(NSString *)keyPath {
+    if ([keyPath characterAtIndex:0] == '@') {
+        if ([keyPath isEqualToString:@"@count"]) {
+            return @(self.count);
+        }
+        NSRange operatorRange = [keyPath rangeOfString:@"." options:NSLiteralSearch];
+        NSUInteger keyPathLength = keyPath.length;
+        NSUInteger separatorIndex = operatorRange.location != NSNotFound ? operatorRange.location : keyPathLength;
+        NSString *operatorName = [keyPath substringWithRange:NSMakeRange(1, separatorIndex - 1)];
+        SEL opSelector = NSSelectorFromString([NSString stringWithFormat:@"_%@ForKeyPath:", operatorName]);
+        BOOL isValidOperator = [self respondsToSelector:opSelector];
+        if (!isValidOperator) {
+            @throw RLMException(@"Unsupported KVC collection operator found in key path '%@'", keyPath);
+        }
+        else if (separatorIndex >= keyPathLength - 1) {
+            @throw RLMException(@"Missing key path for KVC collection operator %@ in key path '%@'", operatorName, keyPath);
+        }
+        NSString *operatorKeyPath = [keyPath substringFromIndex:separatorIndex + 1];
+        if (isValidOperator) {
+            return ((id(*)(id, SEL, id))objc_msgSend)(self, opSelector, operatorKeyPath);
+        }
+    }
+    return [super valueForKeyPath:keyPath];
 }
 
 - (id)valueForKey:(NSString *)key {
-    RLMResultsValidate(self);
-    const size_t size = _backingView.size();
-    return RLMCollectionValueForKey(key, _realm, _objectSchema, size, ^size_t(size_t index) {
-        return _backingView.get_source_ndx(index);
+    return translateErrors([&] {
+        return RLMCollectionValueForKey(self, key);
     });
 }
 
 - (void)setValue:(id)value forKey:(NSString *)key {
-    RLMResultsValidateInWriteTransaction(self);
-    const size_t size = _backingView.size();
-    RLMCollectionSetValueForKey(value, key, _realm, _objectSchema, size, ^size_t(size_t index) {
-        return _backingView.get_source_ndx(index);
+    translateErrors([&] { RLMResultsValidateInWriteTransaction(self); });
+    RLMCollectionSetValueForKey(self, key, value);
+}
+
+- (NSNumber *)_aggregateForKeyPath:(NSString *)keyPath method:(util::Optional<Mixed> (Results::*)(size_t))method
+                        methodName:(NSString *)methodName returnNilForEmpty:(BOOL)returnNilForEmpty {
+    assertKeyPathIsNotNested(keyPath);
+    return [self aggregate:keyPath method:method methodName:methodName returnNilForEmpty:returnNilForEmpty];
+}
+
+- (NSNumber *)_minForKeyPath:(NSString *)keyPath {
+    return [self _aggregateForKeyPath:keyPath method:&Results::min methodName:@"@min" returnNilForEmpty:YES];
+}
+
+- (NSNumber *)_maxForKeyPath:(NSString *)keyPath {
+    return [self _aggregateForKeyPath:keyPath method:&Results::max methodName:@"@max" returnNilForEmpty:YES];
+}
+
+- (NSNumber *)_sumForKeyPath:(NSString *)keyPath {
+    return [self _aggregateForKeyPath:keyPath method:&Results::sum methodName:@"@sum" returnNilForEmpty:NO];
+}
+
+- (NSNumber *)_avgForKeyPath:(NSString *)keyPath {
+    return [self _aggregateForKeyPath:keyPath method:&Results::average methodName:@"@avg" returnNilForEmpty:YES];
+}
+
+- (NSArray *)_unionOfObjectsForKeyPath:(NSString *)keyPath {
+    assertKeyPathIsNotNested(keyPath);
+    return translateErrors([&] {
+        return RLMCollectionValueForKey(self, keyPath);
     });
 }
 
+- (NSArray *)_distinctUnionOfObjectsForKeyPath:(NSString *)keyPath {
+    return [NSSet setWithArray:[self _unionOfObjectsForKeyPath:keyPath]].allObjects;
+}
+
+- (NSArray *)_unionOfArraysForKeyPath:(NSString *)keyPath {
+    assertKeyPathIsNotNested(keyPath);
+    if ([keyPath isEqualToString:@"self"]) {
+        @throw RLMException(@"self is not a valid key-path for a KVC array collection operator as 'unionOfArrays'.");
+    }
+
+    return translateErrors([&] {
+        NSArray *nestedResults = RLMCollectionValueForKey(self, keyPath);
+        NSMutableArray *flatArray = [NSMutableArray arrayWithCapacity:nestedResults.count];
+        for (id<RLMFastEnumerable> array in nestedResults) {
+            NSArray *nsArray = RLMCollectionValueForKey(array, @"self");
+            [flatArray addObjectsFromArray:nsArray];
+        }
+        return flatArray;
+    });
+}
+
+- (NSArray *)_distinctUnionOfArraysForKeyPath:(__unused NSString *)keyPath {
+    return [NSSet setWithArray:[self _unionOfArraysForKeyPath:keyPath]].allObjects;
+}
+
 - (RLMResults *)objectsWhere:(NSString *)predicateFormat, ... {
-    // validate predicate
     va_list args;
-    RLM_VARARG(predicateFormat, args);
-    return [self objectsWhere:predicateFormat args:args];
+    va_start(args, predicateFormat);
+    RLMResults *results = [self objectsWhere:predicateFormat args:args];
+    va_end(args);
+    return results;
 }
 
 - (RLMResults *)objectsWhere:(NSString *)predicateFormat args:(va_list)args {
@@ -278,349 +350,133 @@ static inline void RLMResultsValidateInWriteTransaction(__unsafe_unretained RLMR
 }
 
 - (RLMResults *)objectsWithPredicate:(NSPredicate *)predicate {
-    RLMResultsValidate(self);
+    return translateErrors([&] {
+        if (_results.get_mode() == Results::Mode::Empty) {
+            return self;
+        }
+        auto query = RLMPredicateToQuery(predicate, _info->rlmObjectSchema, _realm.schema, _realm.group);
+        return [RLMResults resultsWithObjectInfo:*_info results:_results.filter(std::move(query))];
+    });
+}
 
-    // copy array and apply new predicate creating a new query and view
-    auto query = [self cloneQuery];
-    RLMUpdateQueryWithPredicate(query.get(), predicate, _realm.schema, _realm.schema[self.objectClassName]);
-    return [RLMResults resultsWithObjectClassName:self.objectClassName
-                                            query:move(query)
-                                             sort:_backingView.m_sorting_predicate
-                                            realm:_realm];
+- (RLMResults *)sortedResultsUsingKeyPath:(NSString *)keyPath ascending:(BOOL)ascending {
+    return [self sortedResultsUsingDescriptors:@[[RLMSortDescriptor sortDescriptorWithKeyPath:keyPath ascending:ascending]]];
 }
 
 - (RLMResults *)sortedResultsUsingProperty:(NSString *)property ascending:(BOOL)ascending {
-    return [self sortedResultsUsingDescriptors:@[[RLMSortDescriptor sortDescriptorWithProperty:property ascending:ascending]]];
+    return [self sortedResultsUsingKeyPath:property ascending:ascending];
 }
 
-- (RLMResults *)sortedResultsUsingDescriptors:(NSArray *)properties {
-    RLMResultsValidate(self);
+- (RLMResults *)sortedResultsUsingDescriptors:(NSArray<RLMSortDescriptor *> *)properties {
+    if (properties.count == 0) {
+        return self;
+    }
+    return translateErrors([&] {
+        if (_results.get_mode() == Results::Mode::Empty) {
+            return self;
+        }
 
-    auto query = [self cloneQuery];
-    RLMResults *r = [RLMResults resultsWithObjectClassName:self.objectClassName query:move(query) realm:_realm];
-
-    // attach new table view
-    RLMResultsValidateAttached(r);
-    RLMUpdateViewWithOrder(r->_backingView, _realm.schema[self.objectClassName], properties);
-    return r;
+        return [RLMResults resultsWithObjectInfo:*_info results:_results.sort(RLMSortDescriptorFromDescriptors(*_info, properties))];
+    });
 }
 
 - (id)objectAtIndexedSubscript:(NSUInteger)index {
     return [self objectAtIndex:index];
 }
 
-template<typename TableType>
-static id minOfProperty(TableType const& table, RLMRealm *realm, NSString *objectClassName, NSString *property) {
-    if (table.size() == 0) {
+- (id)aggregate:(NSString *)property method:(util::Optional<Mixed> (Results::*)(size_t))method
+     methodName:(NSString *)methodName returnNilForEmpty:(BOOL)returnNilForEmpty {
+    if (_results.get_mode() == Results::Mode::Empty) {
+        return returnNilForEmpty ? nil : @0;
+    }
+    size_t column = _info->tableColumn(property);
+    auto value = translateErrors([&] { return (_results.*method)(column); }, methodName);
+    if (!value) {
         return nil;
     }
-
-    NSUInteger colIndex = RLMValidatedColumnIndex(realm.schema[objectClassName], property);
-    RLMPropertyType colType = RLMPropertyType(table.get_column_type(colIndex));
-
-    switch (colType) {
-        case RLMPropertyTypeInt:
-            return @(table.minimum_int(colIndex));
-        case RLMPropertyTypeDouble:
-            return @(table.minimum_double(colIndex));
-        case RLMPropertyTypeFloat:
-            return @(table.minimum_float(colIndex));
-        case RLMPropertyTypeDate: {
-            realm::DateTime dt = table.minimum_datetime(colIndex);
-            return [NSDate dateWithTimeIntervalSince1970:dt.get_datetime()];
-        }
-        default:
-            @throw [NSException exceptionWithName:@"RLMOperationNotSupportedException"
-                                           reason:@"minOfProperty only supported for int, float, double and date properties."
-                                         userInfo:nil];
-    }
+    return RLMMixedToObjc(*value);
 }
 
 - (id)minOfProperty:(NSString *)property {
-    RLMResultsValidate(self);
-    return minOfProperty(_backingView, _realm, _objectClassName, property);
-}
-
-template<typename TableType>
-static id maxOfProperty(TableType const& table, RLMRealm *realm, NSString *objectClassName, NSString *property) {
-    if (table.size() == 0) {
-        return nil;
-    }
-
-    NSUInteger colIndex = RLMValidatedColumnIndex(realm.schema[objectClassName], property);
-    RLMPropertyType colType = RLMPropertyType(table.get_column_type(colIndex));
-
-    switch (colType) {
-        case RLMPropertyTypeInt:
-            return @(table.maximum_int(colIndex));
-        case RLMPropertyTypeDouble:
-            return @(table.maximum_double(colIndex));
-        case RLMPropertyTypeFloat:
-            return @(table.maximum_float(colIndex));
-        case RLMPropertyTypeDate: {
-            realm::DateTime dt = table.maximum_datetime(colIndex);
-            return [NSDate dateWithTimeIntervalSince1970:dt.get_datetime()];
-        }
-        default:
-            @throw [NSException exceptionWithName:@"RLMOperationNotSupportedException"
-                                           reason:@"maxOfProperty only supported for int, float, double and date properties."
-                                         userInfo:nil];
-    }
+    return [self aggregate:property method:&Results::min methodName:@"minOfProperty" returnNilForEmpty:YES];
 }
 
 - (id)maxOfProperty:(NSString *)property {
-    RLMResultsValidate(self);
-    return maxOfProperty(_backingView, _realm, _objectClassName, property);
+    return [self aggregate:property method:&Results::max methodName:@"maxOfProperty" returnNilForEmpty:YES];
 }
 
-template<typename TableType>
-static NSNumber *sumOfProperty(TableType const& table, RLMRealm *realm, NSString *objectClassName, NSString *property) {
-    if (table.size() == 0) {
-        return @0;
-    }
-
-    NSUInteger colIndex = RLMValidatedColumnIndex(realm.schema[objectClassName], property);
-    RLMPropertyType colType = RLMPropertyType(table.get_column_type(colIndex));
-
-    switch (colType) {
-        case RLMPropertyTypeInt:
-            return @(table.sum_int(colIndex));
-        case RLMPropertyTypeDouble:
-            return @(table.sum_double(colIndex));
-        case RLMPropertyTypeFloat:
-            return @(table.sum_float(colIndex));
-        default:
-            @throw [NSException exceptionWithName:@"RLMOperationNotSupportedException"
-                                           reason:@"sumOfProperty only supported for int, float and double properties."
-                                         userInfo:nil];
-    }
+- (id)sumOfProperty:(NSString *)property {
+    return [self aggregate:property method:&Results::sum methodName:@"sumOfProperty" returnNilForEmpty:NO];
 }
 
--(NSNumber *)sumOfProperty:(NSString *)property {
-    RLMResultsValidate(self);
-    return sumOfProperty(_backingView, _realm, _objectClassName, property);
-}
-
-template<typename TableType>
-static NSNumber *averageOfProperty(TableType const& table, RLMRealm *realm, NSString *objectClassName, NSString *property) {
-    if (table.size() == 0) {
-        return nil;
-    }
-
-    NSUInteger colIndex = RLMValidatedColumnIndex(realm.schema[objectClassName], property);
-    RLMPropertyType colType = RLMPropertyType(table.get_column_type(colIndex));
-
-    switch (colType) {
-        case RLMPropertyTypeInt:
-            return @(table.average_int(colIndex));
-        case RLMPropertyTypeDouble:
-            return @(table.average_double(colIndex));
-        case RLMPropertyTypeFloat:
-            return @(table.average_float(colIndex));
-        default:
-            @throw [NSException exceptionWithName:@"RLMOperationNotSupportedException"
-                                           reason:@"averageOfProperty only supported for int, float and double properties."
-                                         userInfo:nil];
-    }
-}
-
--(NSNumber *)averageOfProperty:(NSString *)property {
-    RLMResultsValidate(self);
-    return averageOfProperty(_backingView, _realm, _objectClassName, property);
+- (id)averageOfProperty:(NSString *)property {
+    return [self aggregate:property method:&Results::average methodName:@"averageOfProperty" returnNilForEmpty:YES];
 }
 
 - (void)deleteObjectsFromRealm {
-    RLMResultsValidateInWriteTransaction(self);
-
-    // call clear to remove all from the realm
-    _backingView.clear();
+    return translateErrors([&] {
+        if (_results.get_mode() == Results::Mode::Table) {
+            RLMResultsValidateInWriteTransaction(self);
+            RLMClearTable(*_info);
+        }
+        else {
+            RLMTrackDeletions(_realm, ^{ _results.clear(); });
+        }
+    });
 }
 
 - (NSString *)description {
-    const NSUInteger maxObjects = 100;
-    NSMutableString *mString = [NSMutableString stringWithFormat:@"RLMResults <0x%lx> (\n", (long)self];
-    unsigned long index = 0, skipped = 0;
-    for (id obj in self) {
-        NSString *sub;
-        if ([obj respondsToSelector:@selector(descriptionWithMaxDepth:)]) {
-            sub = [obj descriptionWithMaxDepth:RLMDescriptionMaxDepth - 1];
-        }
-        else {
-            sub = [obj description];
-        }
-
-        // Indent child objects
-        NSString *objDescription = [sub stringByReplacingOccurrencesOfString:@"\n" withString:@"\n\t"];
-        [mString appendFormat:@"\t[%lu] %@,\n", index++, objDescription];
-        if (index >= maxObjects) {
-            skipped = self.count - maxObjects;
-            break;
-        }
-    }
-
-    // Remove last comma and newline characters
-    if(self.count > 0)
-        [mString deleteCharactersInRange:NSMakeRange(mString.length-2, 2)];
-    if (skipped) {
-        [mString appendFormat:@"\n\t... %lu objects skipped.", skipped];
-    }
-    [mString appendFormat:@"\n)"];
-    return [NSString stringWithString:mString];
-}
-
-- (std::unique_ptr<Query>)cloneQuery {
-    return std::make_unique<realm::Query>(*_backingQuery, realm::Query::TCopyExpressionTag{});
+    return RLMDescriptionWithMaxDepth(@"RLMResults", self, RLMDescriptionMaxDepth);
 }
 
 - (NSUInteger)indexInSource:(NSUInteger)index {
-    return _backingView.get_source_ndx(index);
+    return translateErrors([&] { return _results.get(index).get_index(); });
 }
 
-@end
-
-@implementation RLMTableResults {
-    realm::TableRef _table;
+- (realm::TableView)tableView {
+    return translateErrors([&] { return _results.get_tableview(); });
 }
 
-+ (RLMResults *)tableResultsWithObjectSchema:(RLMObjectSchema *)objectSchema realm:(RLMRealm *)realm {
-    RLMTableResults *results = [self resultsWithObjectClassName:objectSchema.className
-                                                          query:nullptr
-                                                          realm:realm];
-    results->_table.reset(objectSchema.table);
-    return results;
-}
-
-- (NSUInteger)count {
-    RLMCheckThread(_realm);
-    return _table->size();
-}
-
-- (id)valueForKey:(NSString *)key {
-    RLMResultsValidate(self);
-    const size_t size = _table->size();
-    return RLMCollectionValueForKey(key, _realm, _objectSchema, size, ^size_t(size_t index) {
-        return index;
-    });
-}
-
-- (void)setValue:(id)value forKey:(NSString *)key {
-    RLMResultsValidateInWriteTransaction(self);
-    const size_t size = _table->size();
-    RLMCollectionSetValueForKey(value, key, _realm, _objectSchema, size, ^size_t(size_t index) {
-        return index;
-    });
-}
-
-- (NSUInteger)indexOfObject:(RLMObject *)object {
-    RLMCheckThread(_realm);
-    if (object.invalidated) {
-        @throw RLMException(@"RLMObject is no longer valid");
-    }
-
-    // check that object types align
-    if (object->_row.get_table() != _table) {
-        @throw RLMException(@"Object type does not match RLMResults");
-    }
-
-    return RLMConvertNotFound(object->_row.get_index());
-}
-
-- (NSUInteger)indexOfObjectWithPredicate:(NSPredicate *)predicate {
-    RLMResultsValidate(self);
-
-    Query query = _table->where();
-    RLMUpdateQueryWithPredicate(&query, predicate, _realm.schema, _realm.schema[self.objectClassName]);
-    return RLMConvertNotFound(query.find());
-}
-
-- (id)minOfProperty:(NSString *)property {
-    RLMCheckThread(_realm);
-    return minOfProperty(*_table, _realm, _objectClassName, property);
-}
-
-- (id)maxOfProperty:(NSString *)property {
-    RLMCheckThread(_realm);
-    return maxOfProperty(*_table, _realm, _objectClassName, property);
-}
-
-- (NSNumber *)sumOfProperty:(NSString *)property {
-    RLMCheckThread(_realm);
-    return sumOfProperty(*_table, _realm, _objectClassName, property);
-}
-
-- (NSNumber *)averageOfProperty:(NSString *)property {
-    RLMCheckThread(_realm);
-    return averageOfProperty(*_table, _realm, _objectClassName, property);
-}
-
-- (void)deleteObjectsFromRealm {
-    RLMResultsValidateInWriteTransaction(self);
-    _table->clear();
-}
-
-- (std::unique_ptr<Query>)cloneQuery {
-    return std::make_unique<realm::Query>(_table->where(), realm::Query::TCopyExpressionTag{});
-}
-
-- (NSUInteger)indexInSource:(NSUInteger)index {
-    return index;
-}
-@end
-
-@implementation RLMEmptyResults
-
-+ (instancetype)emptyResultsWithObjectClassName:(NSString *)objectClassName realm:(RLMRealm *)realm {
-    RLMEmptyResults *results = [[RLMEmptyResults alloc] initPrivate];
-    results->_objectClassName = objectClassName;
-    results->_realm = realm;
-    return results;
-}
-
-- (NSUInteger)count {
-    return 0;
-}
-
+// The compiler complains about the method's argument type not matching due to
+// it not having the generic type attached, but it doesn't seem to be possible
+// to actually include the generic type
+// http://www.openradar.me/radar?id=6135653276319744
 #pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-parameter"
-
-- (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state
-                                  objects:(__unsafe_unretained id [])buffer
-                                    count:(NSUInteger)len {
-    return 0;
+#pragma clang diagnostic ignored "-Wmismatched-parameter-types"
+- (RLMNotificationToken *)addNotificationBlock:(void (^)(RLMResults *, RLMCollectionChange *, NSError *))block {
+    [_realm verifyNotificationsAreSupported];
+    return RLMAddNotificationBlock(self, _results, block, true);
 }
-
-- (NSUInteger)indexOfObject:(RLMObject *)object {
-    return NSNotFound;
-}
-
-- (NSUInteger)indexOfObjectWithPredicate:(NSPredicate *)predicate {
-    return NSNotFound;
-}
-
-- (id)objectAtIndex:(NSUInteger)index {
-    @throw RLMException(@"Index is out of bounds.", @{@"index": @(index)});
-}
-
-- (id)valueForKey:(NSString *)key {
-    RLMResultsValidate(self);
-    return @[];
-}
-
-- (void)setValue:(__unused id)value forKey:(__unused NSString *)key {
-    RLMResultsValidateInWriteTransaction(self);
-}
-
-- (RLMResults *)objectsWithPredicate:(NSPredicate *)predicate {
-    return self;
-}
-
-- (RLMResults *)sortedResultsUsingDescriptors:(NSArray *)properties {
-    return self;
-}
-
 #pragma clang diagnostic pop
 
-- (void)deleteObjectsFromRealm {
+- (BOOL)isAttached
+{
+    return !!_realm;
 }
 
+#pragma mark - Thread Confined Protocol Conformance
+
+- (std::unique_ptr<realm::ThreadSafeReferenceBase>)makeThreadSafeReference {
+    return std::make_unique<realm::ThreadSafeReference<Results>>(_realm->_realm->obtain_thread_safe_reference(_results));
+}
+
+- (id)objectiveCMetadata {
+    return nil;
+}
+
++ (instancetype)objectWithThreadSafeReference:(std::unique_ptr<realm::ThreadSafeReferenceBase>)reference
+                                     metadata:(__unused id)metadata
+                                        realm:(RLMRealm *)realm {
+    REALM_ASSERT_DEBUG(dynamic_cast<realm::ThreadSafeReference<Results> *>(reference.get()));
+    auto results_reference = static_cast<realm::ThreadSafeReference<Results> *>(reference.get());
+
+    Results results = realm->_realm->resolve_thread_safe_reference(std::move(*results_reference));
+
+    return [RLMResults resultsWithObjectInfo:realm->_info[RLMStringDataToNSString(results.get_object_type())]
+                                     results:std::move(results)];
+}
+
+@end
+
+@implementation RLMLinkingObjects
 @end

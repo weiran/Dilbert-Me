@@ -1,4 +1,8 @@
-## YLMoment [![Supported Plateforms](https://cocoapod-badges.herokuapp.com/p/YLMoment/badge.svg)](http://cocoadocs.org/docsets/YLMoment/) [![Version](https://cocoapod-badges.herokuapp.com/v/YLMoment/badge.svg)](http://cocoadocs.org/docsets/YLMoment/) [![Build Status](https://travis-ci.org/yannickl/YLMoment.png?branch=master)](https://travis-ci.org/YannickL/YLMoment) [![Coverage Status](https://coveralls.io/repos/YannickL/YLMoment/badge.png?branch=master)](https://coveralls.io/r/YannickL/YLMoment?branch=master)
+<p align="center">
+  <img src="http://yannickloriot.com/resources/ylmoment-logo.png" alt="YLMoment" />
+</p>
+
+[![License](https://cocoapod-badges.herokuapp.com/l/YLMoment/badge.svg)](http://cocoadocs.org/docsets/YLMoment/) [![Supported Platforms](https://cocoapod-badges.herokuapp.com/p/YLMoment/badge.svg)](http://cocoadocs.org/docsets/YLMoment/) [![Version](https://cocoapod-badges.herokuapp.com/v/YLMoment/badge.svg)](http://cocoadocs.org/docsets/YLMoment/) [![Build Status](https://travis-ci.org/yannickl/YLMoment.svg?branch=master)](https://travis-ci.org/yannickl/YLMoment) [![codecov](https://codecov.io/gh/yannickl/YLMoment/branch/master/graph/badge.svg)](https://codecov.io/gh/yannickl/YLMoment)
 
 YLMoment is a library which provides an high abstraction level for parsing, validating, manipulating, and formatting the dates in Objective-C.
 
@@ -6,53 +10,18 @@ Its API is inspired by the well known [moment.js](http://momentjs.com/) library,
 
 This library is designed to facilitate the manipulation of times, dates, calendars, and durations in Objective-C by providing a single, easy, and unified approach to dealing with them.
 
+<p align="center">
+    <a href="#getting-started">Getting Started</a> • <a href="#usage">Usage</a> • <a href="#installation">Installation</a> • <a href="#contact">Contact</a> • <a href="#license-mit">License</a>
+</p>
+
 ## Getting Started
 
 If you want have a quick overview of the project take a look to this [blog post](http://yannickloriot.com/2013/11/handle-times-dates-calendars-and-durations-like-a-pro-in-objective-c-with-YLMoment/).
 
-### Installation
-
-The recommended approach to use _YLMoment_ in your project is using the [CocoaPods](http://cocoapods.org/) package manager, as it provides flexible dependency management and dead simple installation.
-
-#### CocoaPods
-
-Install CocoaPods if not already available:
-
-``` bash
-$ [sudo] gem install cocoapods
-$ pod setup
-```
-Go to the directory of your Xcode project, and Create and Edit your Podfile and add YLMoment:
-
-``` bash
-$ cd /path/to/MyProject
-$ touch Podfile
-$ edit Podfile
-source 'https://github.com/CocoaPods/Specs.git'
-platform :ios, '5.0'
-# Or platform :osx, '10.8'
-pod 'YLMoment', '~> 0.2.0'
-```
-
-Install into your project:
-
-``` bash
-$ pod install
-```
-
-Open your project in Xcode from the .xcworkspace file (not the usual project file)
-
-``` bash
-$ open MyProject.xcworkspace
-```
-
-#### Manually
-
-[Download](https://github.com/YannickL/YLMoment/archive/master.zip) the project and copy the `YLMoment` folder into your project and then simply `#import "YLMoment.h"` in the file(s) you would like to use it in.
-
 ## Usage
 
 ### Formatting Dates
+
 ```objective-c
 YLMoment *moment = [YLMoment now];
 
@@ -63,6 +32,7 @@ NSLog(@"%@", [moment format]);                            // 2013-10-27T10:49:48
 ```
 
 ### Relative Times
+
 ```objective-c
 YLMoment *moment1 = [YLMoment momentWithDateAsString:@"20111031"];
 NSLog(@"%@", [moment1 fromNow]); // 2 years ago
@@ -76,6 +46,7 @@ NSLog(@"%@", [[[YLMoment now] startOf:@"hour"] fromNow]); // 11 minutes ago
 ```
 
 ### Time Zones
+
 ```objective-c
 // Uses my current time zone: here the CET time (GMT+1)
 YLMoment *now = [YLMoment now];
@@ -91,6 +62,9 @@ NSLog(@"%@", [utc format]); // 2014-01-18T17:51:10+0000
 ```
 
 ### Languages
+
+`YLMoment` supports a lot of languages (see the list below) and is easy to use.
+
 ```objective-c
 YLMoment *french = [[YLMoment now] addAmountOfTime:-3 forUnitKey:@"s"];
 [french setLocale:[NSLocale localeWithLocaleIdentifier:@"fr_FR"]];
@@ -109,6 +83,63 @@ YLMoment *english   = [[YLMoment now] subtractAmountOfTime:3 forUnitKey:@"s"];
 [english setLocale:[NSLocale localeWithLocaleIdentifier:@"en_US"]];
 NSLog(@"%@", [english fromMoment:reference]); // in 11 months
 ```
+
+## Supported languages
+
+Here the list of supported languages:
+- Albanian
+- Chinese
+- Dutch
+- English
+- French
+- German
+- Italian
+- Japanese
+- Portuguese
+- Spanish
+- Vietnamese
+
+All contribution is welcomed! ;)
+
+## Installation
+
+The recommended approach to use _YLMoment_ in your project is using the [CocoaPods](http://cocoapods.org/) package manager, as it provides flexible dependency management and dead simple installation.
+
+### CocoaPods
+
+Install CocoaPods if not already available:
+
+``` bash
+$ [sudo] gem install cocoapods
+$ pod setup
+```
+Go to the directory of your Xcode project, and Create and Edit your Podfile and add YLMoment:
+
+``` bash
+$ cd /path/to/MyProject
+$ touch Podfile
+$ edit Podfile
+source 'https://github.com/CocoaPods/Specs.git'
+platform :ios, '5.0'
+# Or platform :osx, '10.8'
+pod 'YLMoment', '~> 0.8.0'
+```
+
+Install into your project:
+
+``` bash
+$ pod install
+```
+
+Open your project in Xcode from the .xcworkspace file (not the usual project file)
+
+``` bash
+$ open MyProject.xcworkspace
+```
+
+### Manually
+
+[Download](https://github.com/YannickL/YLMoment/archive/master.zip) the project and copy the `YLMoment` folder into your project and then simply `#import "YLMoment.h"` in the file(s) you would like to use it in.
 
 ## Contact
 

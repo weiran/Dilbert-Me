@@ -32,6 +32,10 @@
     return @"identifier";
 }
 
++ (NSArray<NSString *> *)requiredProperties {
+    return @[@"identifier", @"date", @"imageCacheURLString"];
+}
+
 - (void)saveToCache {
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
     NSString *bundleName = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleIdentifier"];
