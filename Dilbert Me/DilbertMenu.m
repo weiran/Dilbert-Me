@@ -61,7 +61,8 @@
         [[QLPreviewPanel sharedPreviewPanel] orderOut:nil];
     } else {
         [[QLPreviewPanel sharedPreviewPanel] makeKeyAndOrderFront:nil];
-    }}
+    }
+}
 
 - (IBAction)didPressTodaysDilbert:(id)sender {
     [self showDilbert];
