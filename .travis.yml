@@ -1,7 +1,7 @@
 language: objective-c
 osx_image: xcode8.2
-xcode_workspace: Dilbert Me.xcworkspace
-xcode_scheme: Dilbert Me
+xcode_workspace: 'Dilbert Me.xcworkspace'
+xcode_scheme: 'Dilbert Me'
 before_install:
 - brew update
 - brew outdated xctool || brew upgrade xctool
