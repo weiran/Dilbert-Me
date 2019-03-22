@@ -27,7 +27,7 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        self.comics = [[Comic allObjects] sortedResultsUsingProperty:@"identifier" ascending:NO];
+        self.comics = [[Comic allObjects] sortedResultsUsingKeyPath:@"identifier" ascending:NO];
         self.sessionManager = [AFHTTPSessionManager manager];
         self.sessionManager.responseSerializer = [AFHTTPResponseSerializer serializer];
     }
@@ -62,7 +62,7 @@
     .then(^(NSArray* comics, BOOL hasNewerComics) {
         RLMRealm *realm = [RLMRealm defaultRealm];
         [realm beginWriteTransaction];
-        [realm addOrUpdateObjectsFromArray:comics];
+        [realm addOrUpdateObjects:comics];
         [realm commitWriteTransaction];
         return PMKManifold(hasNewerComics);
     })
