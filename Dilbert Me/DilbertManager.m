@@ -39,7 +39,7 @@
 }
 
 - (AnyPromise *)update {
-    return [self.sessionManager GET:@"http://dilbert.com" parameters:nil]
+    return [self.sessionManager GET:@"https://dilbert.com" parameters:nil]
     .then(^(id responseObject, NSURLSessionTask *task) {
         NSString *html = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
         HTMLDocument *document = [HTMLDocument documentWithString:html];
@@ -76,12 +76,17 @@
 - (AnyPromise *)parseComic:(HTMLElement *)element {
     return [AnyPromise promiseWithResolverBlock:^(PMKResolver resolve) {
         // get date
-        NSString *comicDateString = [[element firstNodeMatchingSelector:@"date span:first-of-type"] textContent];
+        NSString *comicDateString = [[element firstNodeMatchingSelector:@"date"] textContent];
         NSDate *comicDate = [[YLMoment momentWithDateAsString:comicDateString] date];
         
         // get image
         HTMLElement *todaysComicImgElement = [element firstNodeMatchingSelector:@"img.img-comic"];
         NSString *todaysComicImageURL = [todaysComicImgElement attributes][@"src"];
+        
+        // add protocol if none
+        if (![todaysComicImageURL hasPrefix:@"https:"]) {
+            todaysComicImageURL = [NSString stringWithFormat:@"https:%@", todaysComicImageURL];
+        }
         
         [self.sessionManager GET:todaysComicImageURL parameters:nil]
         .then(^(id responseObject) {
