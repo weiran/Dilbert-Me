@@ -1,6 +1,0 @@
-framework module Pods_Dilbert_Me {
-  umbrella header "Pods-Dilbert Me-umbrella.h"
-
-  export *
-  module * { export * }
-}
