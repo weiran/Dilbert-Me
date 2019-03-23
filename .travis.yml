@@ -1,10 +1,8 @@
 language: objective-c
-osx_image: xcode8.2
-xcode_workspace: DilbertMe.xcworkspace
-xcode_scheme: DilbertMe
+osx_image: xcode10.1
+xcode_workspace: "Dilbert Me.xcworkspace"
+xcode_scheme: Dilbert Me
 before_install:
-- brew update
-- brew outdated xctool || brew upgrade xctool
 - gem install xcpretty
 - pod repo update --silent
 install:
