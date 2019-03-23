@@ -23,6 +23,7 @@
 
 /* Begin PBXFileReference section */
 		0CFB944A3DD5B6CD1EF340FE /* Pods-Dilbert Me.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Dilbert Me.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Dilbert Me/Pods-Dilbert Me.debug.xcconfig"; sourceTree = "<group>"; };
+		245345E722465688001AF1CE /* Dilbert Me.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Dilbert Me.entitlements"; sourceTree = "<group>"; };
 		246D128B1A6A6EAA00D77FD0 /* Dilbert Me.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Dilbert Me.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		246D128F1A6A6EAB00D77FD0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		246D12901A6A6EAB00D77FD0 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -81,6 +82,7 @@
 		246D128D1A6A6EAA00D77FD0 /* Dilbert Me */ = {
 			isa = PBXGroup;
 			children = (
+				245345E722465688001AF1CE /* Dilbert Me.entitlements */,
 				246D12901A6A6EAB00D77FD0 /* AppDelegate.h */,
 				246D12911A6A6EAB00D77FD0 /* AppDelegate.m */,
 				246D12B11A6A711900D77FD0 /* DilbertManager.h */,
@@ -163,6 +165,14 @@
 						DevelopmentTeam = 2KB59GPA9B;
 						LastSwiftMigration = 0820;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.HardenedRuntime = {
+								enabled = 1;
+							};
+							com.apple.Sandbox = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -362,10 +372,12 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "Dilbert Me/Dilbert Me.entitlements";
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 2KB59GPA9B;
+				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_PREFIX_HEADER = "Dilbert Me/DilbertMe-Prefix.pch";
 				INFOPLIST_FILE = "Dilbert Me/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
@@ -382,10 +394,12 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "Dilbert Me/Dilbert Me.entitlements";
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 2KB59GPA9B;
+				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_PREFIX_HEADER = "Dilbert Me/DilbertMe-Prefix.pch";
 				INFOPLIST_FILE = "Dilbert Me/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
