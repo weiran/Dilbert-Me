@@ -1,16 +1,19 @@
-<div style="text-align: center">
+<p align="center">
   <img src="https://i.imgur.com/jCCxbRi.png" />
-  <h1>Dilbert Me</h1>
-</div>
+</p>
+
+<h1 align="center">Dilbert Me</h1>
 
 Dilbert - in your Mac's menu bar.
 
 [Download the latest release](https://github.com/weiran/Dilbert-Me/releases/latest)
 
-## Screenshots
+<h2 align="center">Screenshots</h2>
 
 ![](http://i.imgur.com/Y8n8Xfp.png)
-![](http://i.imgur.com/iHjdzl5.png)
+<p align="center">
+  <img src="https://i.imgur.com/jZdWbKT.png" />
+</p>
 
 Not affliated with Dilbert in any way, I just like the comics.
 
