@@ -370,7 +370,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 0CFB944A3DD5B6CD1EF340FE /* Pods-Dilbert Me.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "Dilbert Me/Dilbert Me.entitlements";
 				CODE_SIGN_IDENTITY = "Mac Developer";
@@ -392,7 +391,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EA5577466783ACAF56193A24 /* Pods-Dilbert Me.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "Dilbert Me/Dilbert Me.entitlements";
 				CODE_SIGN_IDENTITY = "Mac Developer";
